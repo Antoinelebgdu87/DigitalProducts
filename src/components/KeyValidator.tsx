@@ -172,10 +172,10 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
             <div className="w-8 h-8 bg-gradient-to-br from-red-600 to-red-700 rounded-full flex items-center justify-center">
               <Key className="w-4 h-4 text-white" />
             </div>
-            Validation de clé
+            Key Validation
           </DialogTitle>
           <DialogDescription className="text-gray-300">
-            Entrez votre clé pour accéder à{" "}
+            Enter your key to access{" "}
             <span className="font-semibold text-red-400">{productTitle}</span>
           </DialogDescription>
         </DialogHeader>
@@ -184,7 +184,7 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-3">
               <Label htmlFor="license" className="text-white text-base">
-                Clé de licence
+                License Key
               </Label>
               <div className="relative">
                 <Input
@@ -210,11 +210,9 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
                     </div>
                     <div className="space-y-1">
                       <p className="text-white font-medium">
-                        Validation en cours...
+                        Validation in progress...
                       </p>
-                      <p className="text-gray-400 text-sm">
-                        Vérification de la clé
-                      </p>
+                      <p className="text-gray-400 text-sm">Checking key</p>
                     </div>
                   </div>
                 </CardContent>
@@ -229,12 +227,12 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
               {isLoading ? (
                 <>
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                  Validation...
+                  Validating...
                 </>
               ) : (
                 <>
                   <CheckCircle className="w-5 h-5 mr-2" />
-                  Valider la clé
+                  Validate Key
                 </>
               )}
             </Button>
@@ -252,15 +250,17 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
 
                   <div className="text-center">
                     <h3 className="text-xl font-bold text-green-400 mb-2">
-                      Clé Validée !
+                      Key Validated!
                     </h3>
-                    <p className="text-gray-300">Votre accès a été confirmé</p>
+                    <p className="text-gray-300">
+                      Your access has been confirmed
+                    </p>
                   </div>
 
                   {validationResult.license && (
                     <div className="space-y-3 pt-4 border-t border-green-500/20">
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-400">Type de clé :</span>
+                        <span className="text-gray-400">Key type:</span>
                         <Badge
                           className={`${getCategoryColor(validationResult.license.category)} text-white`}
                         >
@@ -271,7 +271,7 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
                         </Badge>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-gray-400">Utilisations :</span>
+                        <span className="text-gray-400">Usage:</span>
                         <span className="text-white font-mono">
                           {validationResult.license.currentUsages} /{" "}
                           {validationResult.license.maxUsages}
@@ -293,7 +293,7 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
                     className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 py-6 text-lg font-semibold"
                   >
                     <Download className="w-5 h-5 mr-2" />
-                    Télécharger maintenant
+                    Download Now
                   </Button>
                 </CardContent>
               </Card>
@@ -308,11 +308,11 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
 
                   <div className="text-center">
                     <h3 className="text-xl font-bold text-red-400 mb-2">
-                      Clé Invalide
+                      Invalid Key
                     </h3>
                     <p className="text-gray-300">
-                      Cette clé est invalide, expirée ou a atteint sa limite
-                      d'utilisation
+                      This key is invalid, expired, or has reached its usage
+                      limit
                     </p>
                   </div>
 
@@ -325,7 +325,7 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
                     variant="outline"
                     className="w-full border-red-500/50 text-red-400 hover:bg-red-500/10 py-6 text-lg"
                   >
-                    Essayer une autre clé
+                    Try Another Key
                   </Button>
                 </CardContent>
               </Card>
@@ -339,7 +339,7 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
               variant="ghost"
               className="w-full text-gray-400 hover:text-white"
             >
-              Fermer
+              Close
             </Button>
           </div>
         )}
