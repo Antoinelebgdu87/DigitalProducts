@@ -641,8 +641,11 @@ const AdminDashboard: React.FC = () => {
                   const product = products.find(
                     (p) => p.id === license.productId,
                   );
-                  const isExpired = new Date() > license.expiresAt;
-                  const isActive = !isExpired && !license.isUsed;
+                  const isActive =
+                    license.isActive &&
+                    license.currentUsages < license.maxUsages;
+                  const usagePercentage =
+                    (license.currentUsages / license.maxUsages) * 100;
 
                   return (
                     <Card
@@ -651,38 +654,73 @@ const AdminDashboard: React.FC = () => {
                     >
                       <CardContent className="p-6">
                         <div className="flex items-center justify-between">
-                          <div className="space-y-2">
-                            <div className="flex items-center space-x-2">
+                          <div className="space-y-3 flex-1">
+                            <div className="flex items-center space-x-3">
                               <h3 className="text-lg font-semibold text-white">
                                 {product?.title || "Produit supprimé"}
                               </h3>
                               <Badge
+                                className={`${getCategoryColor(license.category)} text-white`}
+                              >
+                                <span className="mr-1">
+                                  {getCategoryIcon(license.category)}
+                                </span>
+                                {getCategoryLabel(license.category)}
+                              </Badge>
+                              <Badge
                                 variant={isActive ? "default" : "destructive"}
                                 className={
-                                  isActive ? "bg-green-600" : "bg-red-600"
+                                  isActive ? "bg-green-600" : "bg-gray-600"
                                 }
                               >
-                                {isActive ? "Active" : "Expirée"}
+                                {isActive ? "Active" : "Épuisée"}
                               </Badge>
                             </div>
-                            <div className="flex items-center space-x-4 text-sm text-gray-400">
-                              <span className="font-mono bg-gray-800 px-2 py-1 rounded">
-                                {license.code}
-                              </span>
-                              <div className="flex items-center space-x-1">
-                                <Calendar className="w-4 h-4" />
-                                <span>
-                                  Expire le {formatDate(license.expiresAt)}
+
+                            <div className="space-y-2">
+                              <div className="flex items-center space-x-4 text-sm">
+                                <span className="font-mono bg-gray-800 px-3 py-1 rounded text-white">
+                                  {license.code}
                                 </span>
+                                <span className="text-gray-400">
+                                  Créée le {formatDate(license.createdAt)}
+                                </span>
+                              </div>
+
+                              <div className="space-y-1">
+                                <div className="flex items-center justify-between text-sm">
+                                  <span className="text-gray-400">
+                                    Utilisations :
+                                  </span>
+                                  <span className="text-white font-mono">
+                                    {license.currentUsages} /{" "}
+                                    {license.maxUsages}
+                                  </span>
+                                </div>
+                                <div className="w-full bg-gray-700 rounded-full h-2">
+                                  <div
+                                    className={`h-2 rounded-full transition-all duration-300 ${
+                                      usagePercentage >= 100
+                                        ? "bg-red-600"
+                                        : usagePercentage >= 80
+                                          ? "bg-orange-500"
+                                          : "bg-green-600"
+                                    }`}
+                                    style={{
+                                      width: `${Math.min(usagePercentage, 100)}%`,
+                                    }}
+                                  />
+                                </div>
                               </div>
                             </div>
                           </div>
-                          <div className="flex items-center space-x-2">
+
+                          <div className="flex items-center space-x-2 ml-4">
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => copyLicenseCode(license.code)}
-                              className="border-gray-700"
+                              className="border-gray-700 hover:bg-gray-800"
                             >
                               <Copy className="w-4 h-4" />
                             </Button>
