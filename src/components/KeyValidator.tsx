@@ -91,7 +91,7 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!licenseCode.trim()) {
-      toast.error("Veuillez entrer une clé de licence");
+      toast.error("Please enter a license key");
       return;
     }
 
@@ -107,12 +107,12 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
       setShowResult(true);
 
       if (result.isValid) {
-        toast.success("🎉 Clé validée avec succès !");
+        toast.success("🎉 Key validated successfully!");
       } else {
-        toast.error("❌ Clé invalide ou épuisée");
+        toast.error("❌ Invalid or depleted key");
       }
     } catch (error) {
-      toast.error("Erreur lors de la validation");
+      toast.error("Validation error");
       setValidationResult({ isValid: false });
       setShowResult(true);
     } finally {
