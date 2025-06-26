@@ -98,7 +98,7 @@ const AdminDashboard: React.FC = () => {
     e.preventDefault();
     try {
       await addProduct(productForm);
-      toast.success("Produit ajouté avec succès !");
+      toast.success("Product added successfully!");
       setProductForm({
         title: "",
         description: "",
@@ -108,7 +108,7 @@ const AdminDashboard: React.FC = () => {
       });
       setShowProductDialog(false);
     } catch (error) {
-      toast.error("Erreur lors de l'ajout du produit");
+      toast.error("Error adding product");
     }
   };
 
@@ -120,16 +120,16 @@ const AdminDashboard: React.FC = () => {
         licenseForm.category,
         licenseForm.maxUsages,
       );
-      toast.success("Clé créée avec succès !");
+      toast.success("Key created successfully!");
 
       // Copy to clipboard
       navigator.clipboard.writeText(code);
-      toast.info("Code de clé copié dans le presse-papiers");
+      toast.info("Key code copied to clipboard");
 
       setLicenseForm({ productId: "", category: "compte", maxUsages: 1 });
       setShowLicenseDialog(false);
     } catch (error) {
-      toast.error("Erreur lors de la création de la clé");
+      toast.error("Error creating key");
     }
   };
 
@@ -140,16 +140,16 @@ const AdminDashboard: React.FC = () => {
         maintenanceForm.message,
       );
       toast.success(
-        `Mode maintenance ${maintenanceForm.isActive ? "activé" : "désactivé"}`,
+        `Maintenance mode ${maintenanceForm.isActive ? "enabled" : "disabled"}`,
       );
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour du mode maintenance");
+      toast.error("Error updating maintenance mode");
     }
   };
 
   const copyLicenseCode = (code: string) => {
     navigator.clipboard.writeText(code);
-    toast.success("Code copié dans le presse-papiers");
+    toast.success("Code copied to clipboard");
   };
 
   const formatDate = (date: Date) => {
@@ -284,17 +284,17 @@ const AdminDashboard: React.FC = () => {
                   <DialogContent className="bg-gray-900 border-gray-800 max-w-2xl">
                     <DialogHeader>
                       <DialogTitle className="text-white">
-                        Nouveau Produit
+                        New Product
                       </DialogTitle>
                       <DialogDescription className="text-gray-400">
-                        Ajoutez un nouveau produit à votre catalogue
+                        Add a new product to your catalog
                       </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleProductSubmit} className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="title" className="text-white">
-                            Titre
+                            Title
                           </Label>
                           <Input
                             id="title"
