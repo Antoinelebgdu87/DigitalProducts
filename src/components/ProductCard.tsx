@@ -10,7 +10,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Download, Lock } from "lucide-react";
 import { useLicenses } from "@/hooks/useLicenses";
-import LicenseInput from "./LicenseInput";
+import KeyValidator from "./KeyValidator";
 
 interface ProductCardProps {
   product: Product;
@@ -30,14 +30,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   };
 
-  const handleLicenseSubmit = async (licenseCode: string) => {
-    const isValid = await validateLicense(licenseCode, product.id);
-    if (isValid) {
-      window.open(product.downloadUrl, "_blank");
-      setShowLicenseInput(false);
-    } else {
-      throw new Error("Licence invalide ou expirée");
-    }
+  const handleLicenseValidate = async (licenseCode: string) => {
+    return await validateLicense(licenseCode, product.id);
+  };
+
+  const handleDownload = () => {
+    window.open(product.downloadUrl, "_blank");
   };
 
   return (
@@ -82,7 +80,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
         <CardFooter>
           <Button
-            onClick={handleDownload}
+            onClick={() => {
+              if (product.type === "free") {
+                window.open(product.downloadUrl, "_blank");
+              } else {
+                setShowLicenseInput(true);
+              }
+            }}
             className="w-full bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-red-500/50"
           >
             {product.type === "free" ? (
@@ -93,7 +97,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             ) : (
               <>
                 <Lock className="w-4 h-4 mr-2" />
-                Accéder avec licence
+                Accéder avec clé
               </>
             )}
           </Button>
@@ -101,10 +105,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       </Card>
 
       {showLicenseInput && (
-        <LicenseInput
+        <KeyValidator
           isOpen={showLicenseInput}
           onClose={() => setShowLicenseInput(false)}
-          onSubmit={handleLicenseSubmit}
+          onValidate={handleLicenseValidate}
+          onDownload={handleDownload}
           productTitle={product.title}
         />
       )}
