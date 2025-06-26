@@ -51,8 +51,8 @@ const MaintenancePage: React.FC<MaintenancePageProps> = ({ message }) => {
             {/* Decorative elements */}
             <div className="mb-8 p-6 border border-red-500/30 rounded-lg bg-red-500/5">
               <p className="text-gray-300 text-sm">
-                Notre équipe travaille activement pour améliorer votre
-                expérience. Nous serons de retour très bientôt !
+                Our team is actively working to improve your experience. We'll
+                be back very soon!
               </p>
             </div>
 
@@ -63,7 +63,7 @@ const MaintenancePage: React.FC<MaintenancePageProps> = ({ message }) => {
                 className="border-red-500/50 text-red-400 hover:bg-red-500/10 hover:border-red-500 transition-all duration-200"
               >
                 <Settings className="w-4 h-4 mr-2" />
-                Accès administrateur
+                Admin Access
               </Button>
             </Link>
           </CardContent>
@@ -74,15 +74,15 @@ const MaintenancePage: React.FC<MaintenancePageProps> = ({ message }) => {
           <div className="flex justify-center space-x-8 text-gray-500">
             <div className="text-center">
               <div className="w-16 h-16 border-2 border-red-500/30 rounded-full mx-auto mb-2 animate-spin" />
-              <p className="text-xs">Mise à jour</p>
+              <p className="text-xs">Update</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 border-2 border-red-500/30 rounded-full mx-auto mb-2 animate-pulse" />
-              <p className="text-xs">Optimisation</p>
+              <p className="text-xs">Optimization</p>
             </div>
             <div className="text-center">
               <div className="w-16 h-16 border-2 border-red-500/30 rounded-full mx-auto mb-2 animate-bounce" />
-              <p className="text-xs">Amélioration</p>
+              <p className="text-xs">Enhancement</p>
             </div>
           </div>
         </div>

@@ -323,8 +323,8 @@ const AdminDashboard: React.FC = () => {
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="free">Gratuit</SelectItem>
-                              <SelectItem value="paid">Payant</SelectItem>
+                              <SelectItem value="free">Free</SelectItem>
+                              <SelectItem value="paid">Paid</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -349,7 +349,7 @@ const AdminDashboard: React.FC = () => {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="imageUrl" className="text-white">
-                          URL de l'image
+                          Image URL
                         </Label>
                         <Input
                           id="imageUrl"
@@ -366,7 +366,7 @@ const AdminDashboard: React.FC = () => {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="downloadUrl" className="text-white">
-                          URL de téléchargement
+                          Download URL
                         </Label>
                         <Input
                           id="downloadUrl"
@@ -389,13 +389,13 @@ const AdminDashboard: React.FC = () => {
                           onClick={() => setShowProductDialog(false)}
                           className="border-gray-700"
                         >
-                          Annuler
+                          Cancel
                         </Button>
                         <Button
                           type="submit"
                           className="bg-red-600 hover:bg-red-700"
                         >
-                          Ajouter
+                          Add
                         </Button>
                       </DialogFooter>
                     </form>
