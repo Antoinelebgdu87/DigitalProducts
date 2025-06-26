@@ -30,13 +30,13 @@ const AdminLogin: React.FC = () => {
     try {
       const success = login(username, password);
       if (success) {
-        toast.success("Connexion réussie !");
+        toast.success("Login successful!");
         navigate("/admin/dashboard");
       } else {
-        toast.error("Identifiants incorrects");
+        toast.error("Incorrect credentials");
       }
     } catch (error) {
-      toast.error("Erreur lors de la connexion");
+      toast.error("Login error");
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +57,7 @@ const AdminLogin: React.FC = () => {
                 Administration
               </CardTitle>
               <CardDescription className="text-gray-300">
-                Accès sécurisé au panneau d'administration
+                Secure access to admin panel
               </CardDescription>
             </div>
           </CardHeader>
@@ -66,7 +66,7 @@ const AdminLogin: React.FC = () => {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-white">
-                  Nom d'utilisateur
+                  Username
                 </Label>
                 <Input
                   id="username"
@@ -82,7 +82,7 @@ const AdminLogin: React.FC = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-white">
-                  Mot de passe
+                  Password
                 </Label>
                 <div className="relative">
                   <Input
@@ -119,12 +119,12 @@ const AdminLogin: React.FC = () => {
                 {isLoading ? (
                   <>
                     <Lock className="w-4 h-4 mr-2 animate-pulse" />
-                    Connexion...
+                    Connecting...
                   </>
                 ) : (
                   <>
                     <Lock className="w-4 h-4 mr-2" />
-                    Se connecter
+                    Sign In
                   </>
                 )}
               </Button>
@@ -136,7 +136,7 @@ const AdminLogin: React.FC = () => {
                 className="w-full text-gray-400 hover:text-white"
                 onClick={() => navigate("/")}
               >
-                ← Retour à l'accueil
+                ← Back to Home
               </Button>
             </div>
           </CardContent>
