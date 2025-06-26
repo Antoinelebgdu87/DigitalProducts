@@ -503,17 +503,17 @@ const AdminDashboard: React.FC = () => {
                   <DialogContent className="bg-gray-900 border-gray-800">
                     <DialogHeader>
                       <DialogTitle className="text-white">
-                        Nouvelle Clé d'Accès
+                        New Access Key
                       </DialogTitle>
                       <DialogDescription className="text-gray-400">
-                        Créez une clé avec un nombre d'utilisations limité
+                        Create a key with limited number of uses
                       </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleCreateLicense} className="space-y-4">
                       <div className="grid grid-cols-2 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="productSelect" className="text-white">
-                            Produit
+                            Product
                           </Label>
                           <Select
                             value={licenseForm.productId}
@@ -525,7 +525,7 @@ const AdminDashboard: React.FC = () => {
                             }
                           >
                             <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                              <SelectValue placeholder="Sélectionner un produit" />
+                              <SelectValue placeholder="Select a product" />
                             </SelectTrigger>
                             <SelectContent>
                               {products
@@ -543,7 +543,7 @@ const AdminDashboard: React.FC = () => {
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="category" className="text-white">
-                            Catégorie
+                            Category
                           </Label>
                           <Select
                             value={licenseForm.category}
@@ -563,13 +563,13 @@ const AdminDashboard: React.FC = () => {
                               <SelectItem value="compte">
                                 <div className="flex items-center space-x-2">
                                   <User className="w-4 h-4" />
-                                  <span>Compte</span>
+                                  <span>Account</span>
                                 </div>
                               </SelectItem>
                               <SelectItem value="carte-cadeau">
                                 <div className="flex items-center space-x-2">
                                   <CreditCard className="w-4 h-4" />
-                                  <span>Carte Cadeau</span>
+                                  <span>Gift Card</span>
                                 </div>
                               </SelectItem>
                               <SelectItem value="cheat">
@@ -584,7 +584,7 @@ const AdminDashboard: React.FC = () => {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="maxUsages" className="text-white">
-                          Nombre d'utilisations autorisées
+                          Number of allowed uses
                         </Label>
                         <Select
                           value={licenseForm.maxUsages.toString()}
@@ -599,16 +599,14 @@ const AdminDashboard: React.FC = () => {
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="1">1 utilisation</SelectItem>
-                            <SelectItem value="3">3 utilisations</SelectItem>
-                            <SelectItem value="5">5 utilisations</SelectItem>
-                            <SelectItem value="10">10 utilisations</SelectItem>
-                            <SelectItem value="25">25 utilisations</SelectItem>
-                            <SelectItem value="50">50 utilisations</SelectItem>
-                            <SelectItem value="100">
-                              100 utilisations
-                            </SelectItem>
-                            <SelectItem value="999">Illimité (999)</SelectItem>
+                            <SelectItem value="1">1 use</SelectItem>
+                            <SelectItem value="3">3 uses</SelectItem>
+                            <SelectItem value="5">5 uses</SelectItem>
+                            <SelectItem value="10">10 uses</SelectItem>
+                            <SelectItem value="25">25 uses</SelectItem>
+                            <SelectItem value="50">50 uses</SelectItem>
+                            <SelectItem value="100">100 uses</SelectItem>
+                            <SelectItem value="999">Unlimited (999)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -626,7 +624,7 @@ const AdminDashboard: React.FC = () => {
                           className="bg-red-600 hover:bg-red-700"
                           disabled={!licenseForm.productId}
                         >
-                          Créer
+                          Create
                         </Button>
                       </DialogFooter>
                     </form>
