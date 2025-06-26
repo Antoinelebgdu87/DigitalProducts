@@ -27,14 +27,18 @@ const AppContent = () => {
   const { isMaintenanceMode, maintenanceMessage } = useMaintenance();
   const { isAuthenticated } = useAuth();
 
-  // If maintenance mode is active and user is not an authenticated admin, show maintenance page
-  if (isMaintenanceMode && !isAuthenticated) {
-    return <MaintenancePage message={maintenanceMessage} />;
-  }
-
   return (
     <Routes>
-      <Route path="/" element={<HomePage />} />
+      <Route
+        path="/"
+        element={
+          isMaintenanceMode && !isAuthenticated ? (
+            <MaintenancePage message={maintenanceMessage} />
+          ) : (
+            <HomePage />
+          )
+        }
+      />
       <Route path="/admin" element={<AdminLogin />} />
       <Route
         path="/admin/dashboard"
@@ -44,7 +48,16 @@ const AppContent = () => {
           </ProtectedRoute>
         }
       />
-      <Route path="*" element={<NotFound />} />
+      <Route
+        path="*"
+        element={
+          isMaintenanceMode && !isAuthenticated ? (
+            <MaintenancePage message={maintenanceMessage} />
+          ) : (
+            <NotFound />
+          )
+        }
+      />
     </Routes>
   );
 };
