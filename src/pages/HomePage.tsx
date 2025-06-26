@@ -23,7 +23,7 @@ const HomePage: React.FC = () => {
                   Digital Products Store
                 </h1>
                 <p className="text-gray-300 mt-2">
-                  Produits numériques premium • 100% anonyme
+                  Premium digital products • 100% anonymous
                 </p>
               </div>
               <Link to="/admin">
@@ -45,29 +45,27 @@ const HomePage: React.FC = () => {
             <div className="flex items-center justify-center py-20">
               <div className="text-center">
                 <Loader2 className="w-8 h-8 animate-spin text-red-500 mx-auto mb-4" />
-                <p className="text-gray-300">Chargement des produits...</p>
+                <p className="text-gray-300">Loading products...</p>
               </div>
             </div>
           ) : products.length === 0 ? (
             <div className="text-center py-20">
               <div className="text-6xl mb-4">📦</div>
               <h2 className="text-2xl font-semibold text-white mb-2">
-                Aucun produit disponible
+                No products available
               </h2>
-              <p className="text-gray-400">
-                Les produits seront bientôt disponibles.
-              </p>
+              <p className="text-gray-400">Products will be available soon.</p>
             </div>
           ) : (
             <>
               <div className="text-center mb-12">
                 <h2 className="text-3xl font-bold text-white mb-4">
-                  Nos Produits
+                  Our Products
                 </h2>
                 <p className="text-gray-300 max-w-2xl mx-auto">
-                  Découvrez notre collection de produits numériques. Les
-                  produits gratuits sont téléchargeables immédiatement, les
-                  produits payants nécessitent une licence temporaire.
+                  Discover our collection of digital products. Free products are
+                  downloadable immediately, paid products require a temporary
+                  license.
                 </p>
               </div>
 
@@ -84,8 +82,10 @@ const HomePage: React.FC = () => {
         <footer className="border-t border-gray-800/50 bg-black/20 backdrop-blur-sm mt-20">
           <div className="container mx-auto px-4 py-8">
             <div className="text-center text-gray-400">
-              <p>© 2024 Digital Products Store • Tous droits réservés</p>
-              <p className="text-sm mt-2">100% anonyme • Aucun compte requis</p>
+              <p>© 2025 Digital Products Store • All rights reserved</p>
+              <p className="text-sm mt-2">
+                100% anonymous • No account required
+              </p>
             </div>
           </div>
         </footer>
