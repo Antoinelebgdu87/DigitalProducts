@@ -443,7 +443,7 @@ const AdminDashboard: React.FC = () => {
                                     : "bg-red-600"
                                 }
                               >
-                                {product.type === "free" ? "Gratuit" : "Payant"}
+                                {product.type === "free" ? "Free" : "Paid"}
                               </Badge>
                               <span className="text-gray-500 text-xs">
                                 {formatDate(product.createdAt)}
@@ -483,10 +483,10 @@ const AdminDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-white">
-                    Gestion des Licences
+                    Keys Management
                   </h2>
                   <p className="text-gray-400">
-                    {activeLicenses.length} licence(s) active(s) sur{" "}
+                    {activeLicenses.length} active key(s) out of{" "}
                     {licenses.length} total
                   </p>
                 </div>
@@ -497,7 +497,7 @@ const AdminDashboard: React.FC = () => {
                   <DialogTrigger asChild>
                     <Button className="bg-red-600 hover:bg-red-700">
                       <Plus className="w-4 h-4 mr-2" />
-                      Créer une clé
+                      Create Key
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="bg-gray-900 border-gray-800">
@@ -671,7 +671,7 @@ const AdminDashboard: React.FC = () => {
                                   isActive ? "bg-green-600" : "bg-gray-600"
                                 }
                               >
-                                {isActive ? "Active" : "Épuisée"}
+                                {isActive ? "Active" : "Depleted"}
                               </Badge>
                             </div>
 
@@ -681,15 +681,13 @@ const AdminDashboard: React.FC = () => {
                                   {license.code}
                                 </span>
                                 <span className="text-gray-400">
-                                  Créée le {formatDate(license.createdAt)}
+                                  Created on {formatDate(license.createdAt)}
                                 </span>
                               </div>
 
                               <div className="space-y-1">
                                 <div className="flex items-center justify-between text-sm">
-                                  <span className="text-gray-400">
-                                    Utilisations :
-                                  </span>
+                                  <span className="text-gray-400">Usage:</span>
                                   <span className="text-white font-mono">
                                     {license.currentUsages} /{" "}
                                     {license.maxUsages}

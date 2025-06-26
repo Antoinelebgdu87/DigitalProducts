@@ -13,7 +13,7 @@ const MaintenanceContext = createContext<MaintenanceContextType | undefined>(
   undefined,
 );
 
-const DEFAULT_MESSAGE = "Update en cours, revenez plus tard 🛠️";
+const DEFAULT_MESSAGE = "Update in progress, come back later 🛠️";
 
 export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
