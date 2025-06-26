@@ -12,9 +12,11 @@ export interface License {
   id: string;
   productId: string;
   code: string;
-  expiresAt: Date;
+  category: "compte" | "carte-cadeau" | "cheat";
+  maxUsages: number;
+  currentUsages: number;
   createdAt: Date;
-  isUsed: boolean;
+  isActive: boolean;
 }
 
 export interface MaintenanceSettings {

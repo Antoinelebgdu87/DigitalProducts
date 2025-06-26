@@ -8,6 +8,7 @@ import {
   query,
   where,
   orderBy,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { License } from "@/types";
@@ -24,7 +25,6 @@ export const useLicenses = () => {
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
-        expiresAt: doc.data().expiresAt?.toDate() || new Date(),
       })) as License[];
       setLicenses(licensesData);
     } catch (error) {
@@ -50,16 +50,19 @@ export const useLicenses = () => {
 
   const createLicense = async (
     productId: string,
-    expiresAt: Date,
+    category: "compte" | "carte-cadeau" | "cheat",
+    maxUsages: number,
   ): Promise<string> => {
     try {
       const code = generateLicenseCode();
       await addDoc(collection(db, "licenses"), {
         productId,
         code,
-        expiresAt,
+        category,
+        maxUsages,
+        currentUsages: 0,
         createdAt: new Date(),
-        isUsed: false,
+        isActive: true,
       });
       await fetchLicenses(); // Refresh the list
       return code;
@@ -82,7 +85,7 @@ export const useLicenses = () => {
   const validateLicense = async (
     licenseCode: string,
     productId: string,
-  ): Promise<boolean> => {
+  ): Promise<{ isValid: boolean; license?: License }> => {
     try {
       const q = query(
         collection(db, "licenses"),
@@ -91,29 +94,32 @@ export const useLicenses = () => {
       );
       const querySnapshot = await getDocs(q);
 
-      if (querySnapshot.empty) return false;
+      if (querySnapshot.empty) return { isValid: false };
 
-      const license = querySnapshot.docs[0].data() as License;
-      const now = new Date();
-      const expiresAt = license.expiresAt.toDate
-        ? license.expiresAt.toDate()
-        : new Date(license.expiresAt);
+      const licenseDoc = querySnapshot.docs[0];
+      const license = licenseDoc.data() as License;
 
-      return expiresAt > now && !license.isUsed;
+      const isValid =
+        license.isActive && license.currentUsages < license.maxUsages;
+
+      if (isValid) {
+        // Increment usage count
+        await updateDoc(doc(db, "licenses", licenseDoc.id), {
+          currentUsages: license.currentUsages + 1,
+        });
+        await fetchLicenses(); // Refresh the list
+      }
+
+      return { isValid, license };
     } catch (error) {
       console.error("Error validating license:", error);
-      return false;
+      return { isValid: false };
     }
   };
 
   const getActiveLicenses = (): License[] => {
-    const now = new Date();
     return licenses.filter((license) => {
-      const expiresAt =
-        license.expiresAt instanceof Date
-          ? license.expiresAt
-          : new Date(license.expiresAt);
-      return expiresAt > now && !license.isUsed;
+      return license.isActive && license.currentUsages < license.maxUsages;
     });
   };
 
