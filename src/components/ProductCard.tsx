@@ -20,21 +20,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [showLicenseInput, setShowLicenseInput] = useState(false);
   const { validateLicense } = useLicenses();
 
-  const handleDownload = () => {
-    if (product.type === "free") {
-      // Direct download for free products
-      window.open(product.downloadUrl, "_blank");
-    } else {
-      // Show license input for paid products
-      setShowLicenseInput(true);
-    }
-  };
-
   const handleLicenseValidate = async (licenseCode: string) => {
     return await validateLicense(licenseCode, product.id);
   };
 
-  const handleDownload = () => {
+  const handleValidatedDownload = () => {
     window.open(product.downloadUrl, "_blank");
   };
 
@@ -109,7 +99,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           isOpen={showLicenseInput}
           onClose={() => setShowLicenseInput(false)}
           onValidate={handleLicenseValidate}
-          onDownload={handleDownload}
+          onDownload={handleValidatedDownload}
           productTitle={product.title}
         />
       )}
