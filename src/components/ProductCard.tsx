@@ -54,7 +54,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   : "bg-red-600 hover:bg-red-700"
               }
             >
-              {product.type === "free" ? "Gratuit" : "Payant"}
+              {product.type === "free" ? "Free" : "Paid"}
             </Badge>
           </div>
         </CardHeader>
@@ -82,12 +82,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.type === "free" ? (
               <>
                 <Download className="w-4 h-4 mr-2" />
-                Télécharger
+                Download
               </>
             ) : (
               <>
                 <Lock className="w-4 h-4 mr-2" />
-                Accéder avec clé
+                Access with key
               </>
             )}
           </Button>
