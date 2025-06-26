@@ -180,9 +180,9 @@ const AdminDashboard: React.FC = () => {
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case "compte":
-        return "Compte";
+        return "Account";
       case "carte-cadeau":
-        return "Carte Cadeau";
+        return "Gift Card";
       case "cheat":
         return "Cheat";
       default:
@@ -739,9 +739,9 @@ const AdminDashboard: React.FC = () => {
             <TabsContent value="maintenance" className="space-y-6">
               <Card className="border-gray-800 bg-gray-900/50">
                 <CardHeader>
-                  <CardTitle className="text-white">Mode Maintenance</CardTitle>
+                  <CardTitle className="text-white">Maintenance Mode</CardTitle>
                   <CardDescription className="text-gray-400">
-                    Activez le mode maintenance pour bloquer l'accès au site
+                    Enable maintenance mode to block site access
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -751,12 +751,12 @@ const AdminDashboard: React.FC = () => {
                         htmlFor="maintenance-toggle"
                         className="text-white text-base"
                       >
-                        Mode maintenance
+                        Maintenance mode
                       </Label>
                       <p className="text-gray-400 text-sm">
                         {maintenanceForm.isActive
-                          ? "Le site est actuellement en maintenance"
-                          : "Le site est accessible aux visiteurs"}
+                          ? "Site is currently under maintenance"
+                          : "Site is accessible to visitors"}
                       </p>
                     </div>
                     <Switch
@@ -773,7 +773,7 @@ const AdminDashboard: React.FC = () => {
 
                   <div className="space-y-2">
                     <Label htmlFor="maintenance-message" className="text-white">
-                      Message de maintenance
+                      Maintenance message
                     </Label>
                     <Textarea
                       id="maintenance-message"
@@ -786,7 +786,7 @@ const AdminDashboard: React.FC = () => {
                       }
                       className="bg-gray-800 border-gray-700 text-white"
                       rows={3}
-                      placeholder="Update en cours, revenez plus tard 🛠️"
+                      placeholder="Update in progress, come back later 🛠️"
                     />
                   </div>
 
@@ -794,7 +794,7 @@ const AdminDashboard: React.FC = () => {
                     onClick={handleMaintenanceToggle}
                     className="w-full bg-red-600 hover:bg-red-700"
                   >
-                    Appliquer les modifications
+                    Apply Changes
                   </Button>
                 </CardContent>
               </Card>

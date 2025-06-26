@@ -65,9 +65,9 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
   const getCategoryLabel = (category: string) => {
     switch (category) {
       case "compte":
-        return "Compte";
+        return "Account";
       case "carte-cadeau":
-        return "Carte Cadeau";
+        return "Gift Card";
       case "cheat":
         return "Cheat";
       default:

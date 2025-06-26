@@ -29,18 +29,18 @@ const NotFound: React.FC = () => {
             </h1>
 
             <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              Page introuvable
+              Page Not Found
             </h2>
 
             <p className="text-gray-300 mb-8 max-w-md mx-auto">
-              La page que vous recherchez n'existe pas ou a été déplacée.
+              The page you are looking for does not exist or has been moved.
             </p>
 
             {/* Action Button */}
             <Link to="/">
               <Button className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white font-semibold py-3 px-6 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-red-500/50">
                 <Home className="w-4 h-4 mr-2" />
-                Retour à l'accueil
+                Back to Home
               </Button>
             </Link>
 
