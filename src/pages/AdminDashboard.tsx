@@ -44,6 +44,9 @@ import {
   Calendar,
   Download,
   Shield,
+  User,
+  CreditCard,
+  Zap,
 } from "lucide-react";
 import BackgroundAnimation from "@/components/BackgroundAnimation";
 import { toast } from "sonner";
@@ -81,7 +84,8 @@ const AdminDashboard: React.FC = () => {
   const [showLicenseDialog, setShowLicenseDialog] = useState(false);
   const [licenseForm, setLicenseForm] = useState({
     productId: "",
-    duration: "24", // hours
+    category: "compte" as "compte" | "carte-cadeau" | "cheat",
+    maxUsages: 1,
   });
 
   // Maintenance form state
@@ -111,20 +115,21 @@ const AdminDashboard: React.FC = () => {
   const handleCreateLicense = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const expiresAt = new Date();
-      expiresAt.setHours(expiresAt.getHours() + parseInt(licenseForm.duration));
-
-      const code = await createLicense(licenseForm.productId, expiresAt);
-      toast.success("Licence créée avec succès !");
+      const code = await createLicense(
+        licenseForm.productId,
+        licenseForm.category,
+        licenseForm.maxUsages,
+      );
+      toast.success("Clé créée avec succès !");
 
       // Copy to clipboard
       navigator.clipboard.writeText(code);
-      toast.info("Code de licence copié dans le presse-papiers");
+      toast.info("Code de clé copié dans le presse-papiers");
 
-      setLicenseForm({ productId: "", duration: "24" });
+      setLicenseForm({ productId: "", category: "compte", maxUsages: 1 });
       setShowLicenseDialog(false);
     } catch (error) {
-      toast.error("Erreur lors de la création de la licence");
+      toast.error("Erreur lors de la création de la clé");
     }
   };
 
@@ -158,6 +163,45 @@ const AdminDashboard: React.FC = () => {
   };
 
   const activeLicenses = getActiveLicenses();
+
+  const getCategoryIcon = (category: string) => {
+    switch (category) {
+      case "compte":
+        return <User className="w-4 h-4" />;
+      case "carte-cadeau":
+        return <CreditCard className="w-4 h-4" />;
+      case "cheat":
+        return <Zap className="w-4 h-4" />;
+      default:
+        return <Key className="w-4 h-4" />;
+    }
+  };
+
+  const getCategoryLabel = (category: string) => {
+    switch (category) {
+      case "compte":
+        return "Compte";
+      case "carte-cadeau":
+        return "Carte Cadeau";
+      case "cheat":
+        return "Cheat";
+      default:
+        return category;
+    }
+  };
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case "compte":
+        return "bg-blue-600";
+      case "carte-cadeau":
+        return "bg-purple-600";
+      case "cheat":
+        return "bg-orange-600";
+      default:
+        return "bg-gray-600";
+    }
+  };
 
   return (
     <div className="min-h-screen relative">
@@ -455,63 +499,118 @@ const AdminDashboard: React.FC = () => {
                   <DialogTrigger asChild>
                     <Button className="bg-red-600 hover:bg-red-700">
                       <Plus className="w-4 h-4 mr-2" />
-                      Créer une licence
+                      Créer une clé
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="bg-gray-900 border-gray-800">
                     <DialogHeader>
                       <DialogTitle className="text-white">
-                        Nouvelle Licence
+                        Nouvelle Clé d'Accès
                       </DialogTitle>
                       <DialogDescription className="text-gray-400">
-                        Créez une licence temporaire pour un produit payant
+                        Créez une clé avec un nombre d'utilisations limité
                       </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleCreateLicense} className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="productSelect" className="text-white">
-                          Produit
-                        </Label>
-                        <Select
-                          value={licenseForm.productId}
-                          onValueChange={(value) =>
-                            setLicenseForm({ ...licenseForm, productId: value })
-                          }
-                        >
-                          <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                            <SelectValue placeholder="Sélectionner un produit" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {products
-                              .filter((p) => p.type === "paid")
-                              .map((product) => (
-                                <SelectItem key={product.id} value={product.id}>
-                                  {product.title}
-                                </SelectItem>
-                              ))}
-                          </SelectContent>
-                        </Select>
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="productSelect" className="text-white">
+                            Produit
+                          </Label>
+                          <Select
+                            value={licenseForm.productId}
+                            onValueChange={(value) =>
+                              setLicenseForm({
+                                ...licenseForm,
+                                productId: value,
+                              })
+                            }
+                          >
+                            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                              <SelectValue placeholder="Sélectionner un produit" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {products
+                                .filter((p) => p.type === "paid")
+                                .map((product) => (
+                                  <SelectItem
+                                    key={product.id}
+                                    value={product.id}
+                                  >
+                                    {product.title}
+                                  </SelectItem>
+                                ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="category" className="text-white">
+                            Catégorie
+                          </Label>
+                          <Select
+                            value={licenseForm.category}
+                            onValueChange={(
+                              value: "compte" | "carte-cadeau" | "cheat",
+                            ) =>
+                              setLicenseForm({
+                                ...licenseForm,
+                                category: value,
+                              })
+                            }
+                          >
+                            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="compte">
+                                <div className="flex items-center space-x-2">
+                                  <User className="w-4 h-4" />
+                                  <span>Compte</span>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="carte-cadeau">
+                                <div className="flex items-center space-x-2">
+                                  <CreditCard className="w-4 h-4" />
+                                  <span>Carte Cadeau</span>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="cheat">
+                                <div className="flex items-center space-x-2">
+                                  <Zap className="w-4 h-4" />
+                                  <span>Cheat</span>
+                                </div>
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="duration" className="text-white">
-                          Durée de validité (heures)
+                        <Label htmlFor="maxUsages" className="text-white">
+                          Nombre d'utilisations autorisées
                         </Label>
                         <Select
-                          value={licenseForm.duration}
+                          value={licenseForm.maxUsages.toString()}
                           onValueChange={(value) =>
-                            setLicenseForm({ ...licenseForm, duration: value })
+                            setLicenseForm({
+                              ...licenseForm,
+                              maxUsages: parseInt(value),
+                            })
                           }
                         >
                           <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="1">1 heure</SelectItem>
-                            <SelectItem value="6">6 heures</SelectItem>
-                            <SelectItem value="24">24 heures</SelectItem>
-                            <SelectItem value="72">3 jours</SelectItem>
-                            <SelectItem value="168">7 jours</SelectItem>
-                            <SelectItem value="720">30 jours</SelectItem>
+                            <SelectItem value="1">1 utilisation</SelectItem>
+                            <SelectItem value="3">3 utilisations</SelectItem>
+                            <SelectItem value="5">5 utilisations</SelectItem>
+                            <SelectItem value="10">10 utilisations</SelectItem>
+                            <SelectItem value="25">25 utilisations</SelectItem>
+                            <SelectItem value="50">50 utilisations</SelectItem>
+                            <SelectItem value="100">
+                              100 utilisations
+                            </SelectItem>
+                            <SelectItem value="999">Illimité (999)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
