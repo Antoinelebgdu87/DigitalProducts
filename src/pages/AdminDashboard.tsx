@@ -215,11 +215,9 @@ const AdminDashboard: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <Shield className="w-8 h-8 text-red-500" />
                 <div>
-                  <h1 className="text-2xl font-bold text-white">
-                    Panneau d'administration
-                  </h1>
+                  <h1 className="text-2xl font-bold text-white">Admin Panel</h1>
                   <p className="text-gray-400 text-sm">
-                    Gestion des produits et licences
+                    Products and licenses management
                   </p>
                 </div>
               </div>
@@ -229,7 +227,7 @@ const AdminDashboard: React.FC = () => {
                 className="border-red-500/50 text-red-400 hover:bg-red-500/10"
               >
                 <LogOut className="w-4 h-4 mr-2" />
-                Déconnexion
+                Logout
               </Button>
             </div>
           </div>
@@ -244,14 +242,14 @@ const AdminDashboard: React.FC = () => {
                 className="data-[state=active]:bg-red-600"
               >
                 <Package className="w-4 h-4 mr-2" />
-                Produits
+                Products
               </TabsTrigger>
               <TabsTrigger
                 value="licenses"
                 className="data-[state=active]:bg-red-600"
               >
                 <Key className="w-4 h-4 mr-2" />
-                Licences
+                Keys
               </TabsTrigger>
               <TabsTrigger
                 value="maintenance"
@@ -267,10 +265,10 @@ const AdminDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-bold text-white">
-                    Gestion des Produits
+                    Products Management
                   </h2>
                   <p className="text-gray-400">
-                    {products.length} produit(s) total
+                    {products.length} product(s) total
                   </p>
                 </div>
                 <Dialog
@@ -280,7 +278,7 @@ const AdminDashboard: React.FC = () => {
                   <DialogTrigger asChild>
                     <Button className="bg-red-600 hover:bg-red-700">
                       <Plus className="w-4 h-4 mr-2" />
-                      Ajouter un produit
+                      Add Product
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="bg-gray-900 border-gray-800 max-w-2xl">
