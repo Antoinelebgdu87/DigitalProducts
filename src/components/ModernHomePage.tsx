@@ -119,14 +119,7 @@ const ModernHomePage: React.FC = () => {
         className="relative z-10 pt-20 pb-32"
       >
         <div className="container mx-auto px-6 text-center">
-          <motion.div variants={itemVariants} className="mb-8">
-            <Badge
-              variant="outline"
-              className="px-4 py-2 text-sm border-red-500/50 text-red-400 bg-red-500/10 backdrop-blur-sm"
-            >
-              ✨ Premium Digital Marketplace
-            </Badge>
-          </motion.div>
+          <motion.div variants={itemVariants} className="mb-8" />
 
           <motion.h1
             variants={itemVariants}
