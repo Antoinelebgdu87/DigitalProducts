@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import ModernBackground from "./ModernBackground";
-import ProductCard from "./ProductCard";
+import ModernProductCard from "./ModernProductCard";
 
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
