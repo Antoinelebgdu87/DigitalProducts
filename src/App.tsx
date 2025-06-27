@@ -35,7 +35,7 @@ const AppContent = () => {
           isMaintenanceMode && !isAuthenticated ? (
             <MaintenancePage message={maintenanceMessage} />
           ) : (
-            <HomePage />
+            <ModernHomePage />
           )
         }
       />
