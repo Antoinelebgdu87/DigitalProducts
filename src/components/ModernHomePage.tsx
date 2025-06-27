@@ -288,7 +288,7 @@ const ModernHomePage: React.FC = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.9 + index * 0.1 }}
                 >
-                  <ProductCard product={product} />
+                  <ModernProductCard product={product} />
                 </motion.div>
               ))}
             </motion.div>
