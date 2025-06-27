@@ -8,7 +8,7 @@ import {
   MaintenanceProvider,
   useMaintenance,
 } from "@/context/MaintenanceContext";
-import HomePage from "./pages/HomePage";
+import ModernHomePage from "./components/ModernHomePage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import MaintenancePage from "./pages/MaintenancePage";
@@ -35,7 +35,7 @@ const AppContent = () => {
           isMaintenanceMode && !isAuthenticated ? (
             <MaintenancePage message={maintenanceMessage} />
           ) : (
-            <HomePage />
+            <ModernHomePage />
           )
         }
       />
