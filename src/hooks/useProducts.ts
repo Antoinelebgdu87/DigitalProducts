@@ -7,6 +7,7 @@ import {
   doc,
   orderBy,
   query,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Product } from "@/types";
@@ -61,11 +62,25 @@ export const useProducts = () => {
     }
   };
 
+  const updateProduct = async (
+    productId: string,
+    productData: Partial<Omit<Product, "id" | "createdAt">>,
+  ): Promise<void> => {
+    try {
+      await updateDoc(doc(db, "products", productId), productData);
+      await fetchProducts(); // Refresh the list
+    } catch (error) {
+      console.error("Error updating product:", error);
+      throw error;
+    }
+  };
+
   return {
     products,
     loading,
     addProduct,
     deleteProduct,
+    updateProduct,
     refetch: fetchProducts,
   };
 };
