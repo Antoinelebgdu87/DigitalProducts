@@ -47,6 +47,8 @@ import {
   User,
   CreditCard,
   Zap,
+  Euro,
+  Heart,
 } from "lucide-react";
 import BackgroundAnimation from "@/components/BackgroundAnimation";
 import { toast } from "sonner";
@@ -78,6 +80,8 @@ const AdminDashboard: React.FC = () => {
     imageUrl: "",
     downloadUrl: "",
     type: "free" as "free" | "paid",
+    price: 0,
+    lives: 1,
   });
 
   // License form state
@@ -105,6 +109,8 @@ const AdminDashboard: React.FC = () => {
         imageUrl: "",
         downloadUrl: "",
         type: "free",
+        price: 0,
+        lives: 1,
       });
       setShowProductDialog(false);
     } catch (error) {
@@ -329,6 +335,59 @@ const AdminDashboard: React.FC = () => {
                           </Select>
                         </div>
                       </div>
+                      {productForm.type === "paid" && (
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="price" className="text-white">
+                              Prix (€)
+                            </Label>
+                            <Input
+                              id="price"
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={productForm.price}
+                              onChange={(e) =>
+                                setProductForm({
+                                  ...productForm,
+                                  price: parseFloat(e.target.value) || 0,
+                                })
+                              }
+                              className="bg-gray-800 border-gray-700 text-white"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="lives" className="text-white">
+                              Nombre de vies
+                            </Label>
+                            <Select
+                              value={productForm.lives.toString()}
+                              onValueChange={(value) =>
+                                setProductForm({
+                                  ...productForm,
+                                  lives: parseInt(value),
+                                })
+                              }
+                            >
+                              <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="1">1 vie</SelectItem>
+                                <SelectItem value="3">3 vies</SelectItem>
+                                <SelectItem value="5">5 vies</SelectItem>
+                                <SelectItem value="10">10 vies</SelectItem>
+                                <SelectItem value="25">25 vies</SelectItem>
+                                <SelectItem value="50">50 vies</SelectItem>
+                                <SelectItem value="100">100 vies</SelectItem>
+                                <SelectItem value="999">
+                                  Illimité (999)
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      )}
                       <div className="space-y-2">
                         <Label htmlFor="description" className="text-white">
                           Description
@@ -445,6 +504,24 @@ const AdminDashboard: React.FC = () => {
                               >
                                 {product.type === "free" ? "Free" : "Paid"}
                               </Badge>
+                              {product.type === "paid" && product.price && (
+                                <Badge
+                                  variant="outline"
+                                  className="border-yellow-500 text-yellow-400"
+                                >
+                                  <Euro className="w-3 h-3 mr-1" />
+                                  {product.price.toFixed(2)}
+                                </Badge>
+                              )}
+                              {product.type === "paid" && product.lives && (
+                                <Badge
+                                  variant="outline"
+                                  className="border-pink-500 text-pink-400"
+                                >
+                                  <Heart className="w-3 h-3 mr-1" />
+                                  {product.lives} vies
+                                </Badge>
+                              )}
                               <span className="text-gray-500 text-xs">
                                 {formatDate(product.createdAt)}
                               </span>
