@@ -65,6 +65,7 @@ const AdminDashboard: React.FC = () => {
     products,
     addProduct,
     deleteProduct,
+    updateProduct,
     loading: productsLoading,
   } = useProducts();
   const {
@@ -151,7 +152,7 @@ const AdminDashboard: React.FC = () => {
     e.preventDefault();
     if (!editingProduct) return;
     try {
-      // Ici vous devriez ajouter une fonction updateProduct dans useProducts
+      await updateProduct(editingProduct.id, productForm);
       toast.success("Product updated successfully!");
       resetProductForm();
       setShowEditDialog(false);
@@ -559,6 +560,249 @@ const AdminDashboard: React.FC = () => {
                           className="bg-red-600 hover:bg-red-700"
                         >
                           Add
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+
+                {/* Dialog d'édition */}
+                <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+                  <DialogContent className="bg-gray-900 border-gray-800 max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="text-white">
+                        Modifier le produit
+                      </DialogTitle>
+                      <DialogDescription className="text-gray-400">
+                        Modifiez les informations de votre produit
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleUpdateProduct} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="edit-title" className="text-white">
+                            Title
+                          </Label>
+                          <Input
+                            id="edit-title"
+                            value={productForm.title}
+                            onChange={(e) =>
+                              setProductForm({
+                                ...productForm,
+                                title: e.target.value,
+                              })
+                            }
+                            className="bg-gray-800 border-gray-700 text-white"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="edit-type" className="text-white">
+                            Type
+                          </Label>
+                          <Select
+                            value={productForm.type}
+                            onValueChange={(value: "free" | "paid") =>
+                              setProductForm({ ...productForm, type: value })
+                            }
+                          >
+                            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="free">Free</SelectItem>
+                              <SelectItem value="paid">Paid</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      {productForm.type === "paid" && (
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="edit-price" className="text-white">
+                              Prix (€)
+                            </Label>
+                            <Input
+                              id="edit-price"
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={productForm.price}
+                              onChange={(e) =>
+                                setProductForm({
+                                  ...productForm,
+                                  price: parseFloat(e.target.value) || 0,
+                                })
+                              }
+                              className="bg-gray-800 border-gray-700 text-white"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="edit-lives" className="text-white">
+                              Nombre de vies
+                            </Label>
+                            <Select
+                              value={productForm.lives.toString()}
+                              onValueChange={(value) =>
+                                setProductForm({
+                                  ...productForm,
+                                  lives: parseInt(value),
+                                })
+                              }
+                            >
+                              <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="1">1 vie</SelectItem>
+                                <SelectItem value="3">3 vies</SelectItem>
+                                <SelectItem value="5">5 vies</SelectItem>
+                                <SelectItem value="10">10 vies</SelectItem>
+                                <SelectItem value="25">25 vies</SelectItem>
+                                <SelectItem value="50">50 vies</SelectItem>
+                                <SelectItem value="100">100 vies</SelectItem>
+                                <SelectItem value="999">
+                                  Illimité (999)
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      )}
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="edit-description"
+                          className="text-white"
+                        >
+                          Description
+                        </Label>
+                        <Textarea
+                          id="edit-description"
+                          value={productForm.description}
+                          onChange={(e) =>
+                            setProductForm({
+                              ...productForm,
+                              description: e.target.value,
+                            })
+                          }
+                          className="bg-gray-800 border-gray-700 text-white"
+                          rows={3}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-imageUrl" className="text-white">
+                          Image URL
+                        </Label>
+                        <Input
+                          id="edit-imageUrl"
+                          value={productForm.imageUrl}
+                          onChange={(e) =>
+                            setProductForm({
+                              ...productForm,
+                              imageUrl: e.target.value,
+                            })
+                          }
+                          className="bg-gray-800 border-gray-700 text-white"
+                          placeholder="https://example.com/image.jpg"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="edit-contentType"
+                          className="text-white"
+                        >
+                          Type de contenu
+                        </Label>
+                        <Select
+                          value={productForm.contentType}
+                          onValueChange={(value: "link" | "text") =>
+                            setProductForm({
+                              ...productForm,
+                              contentType: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="link">
+                              <div className="flex items-center space-x-2">
+                                <LinkIcon className="w-4 h-4" />
+                                <span>Lien de téléchargement</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="text">
+                              <div className="flex items-center space-x-2">
+                                <FileText className="w-4 h-4" />
+                                <span>Contenu texte (bloc-notes)</span>
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {productForm.contentType === "link" ? (
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="edit-downloadUrl"
+                            className="text-white"
+                          >
+                            Download URL
+                          </Label>
+                          <Input
+                            id="edit-downloadUrl"
+                            value={productForm.downloadUrl}
+                            onChange={(e) =>
+                              setProductForm({
+                                ...productForm,
+                                downloadUrl: e.target.value,
+                              })
+                            }
+                            className="bg-gray-800 border-gray-700 text-white"
+                            placeholder="https://example.com/download"
+                            required
+                          />
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <Label htmlFor="edit-content" className="text-white">
+                            Contenu du bloc-notes
+                          </Label>
+                          <Textarea
+                            id="edit-content"
+                            value={productForm.content}
+                            onChange={(e) =>
+                              setProductForm({
+                                ...productForm,
+                                content: e.target.value,
+                              })
+                            }
+                            className="bg-gray-800 border-gray-700 text-white"
+                            rows={8}
+                            placeholder="Entrez le contenu qui sera affiché dans le bloc-notes..."
+                            required
+                          />
+                        </div>
+                      )}
+                      <DialogFooter>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setShowEditDialog(false);
+                            setEditingProduct(null);
+                            resetProductForm();
+                          }}
+                          className="border-gray-700"
+                        >
+                          Annuler
+                        </Button>
+                        <Button
+                          type="submit"
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          Mettre à jour
                         </Button>
                       </DialogFooter>
                     </form>
