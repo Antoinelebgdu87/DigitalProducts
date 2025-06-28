@@ -125,7 +125,7 @@ const AdminDashboard: React.FC = () => {
       imageUrl: "",
       downloadUrl: "",
       type: "free",
-      contentType: "link",
+      contentType: "link", // Par défaut lien pour compatibilité
       content: "",
       price: 0,
       lives: 1,
@@ -140,7 +140,7 @@ const AdminDashboard: React.FC = () => {
       imageUrl: product.imageUrl,
       downloadUrl: product.downloadUrl,
       type: product.type,
-      contentType: product.contentType || "link",
+      contentType: product.contentType || "link", // Par défaut lien pour compatibilité
       content: product.content || "",
       price: product.price || 0,
       lives: product.lives || 1,

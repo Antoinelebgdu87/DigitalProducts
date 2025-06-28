@@ -23,7 +23,8 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   };
 
   const handleValidatedDownload = () => {
-    if (product.contentType === "link") {
+    // Si contentType n'est pas défini, utiliser "link" par défaut pour la compatibilité
+    if (!product.contentType || product.contentType === "link") {
       window.open(product.downloadUrl, "_blank");
     } else {
       setShowNotepad(true);
@@ -132,7 +133,11 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                   e.stopPropagation();
                   console.log("Button clicked!", product.type, product.title);
                   if (product.type === "free") {
-                    if (product.contentType === "link") {
+                    // Si contentType n'est pas défini, utiliser "link" par défaut pour la compatibilité
+                    if (
+                      !product.contentType ||
+                      product.contentType === "link"
+                    ) {
                       window.open(product.downloadUrl, "_blank");
                     } else {
                       setShowNotepad(true);
