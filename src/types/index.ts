@@ -5,6 +5,8 @@ export interface Product {
   imageUrl: string;
   type: "free" | "paid";
   downloadUrl: string;
+  contentType: "link" | "text";
+  content?: string;
   price?: number;
   lives?: number;
   createdAt: Date;

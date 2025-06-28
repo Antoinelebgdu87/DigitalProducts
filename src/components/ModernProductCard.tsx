@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Download, Lock, Star, Eye, ShoppingCart, Euro } from "lucide-react";
 import { useLicenses } from "@/hooks/useLicenses";
 import KeyValidator from "./KeyValidator";
+import NotepadViewer from "./NotepadViewer";
 
 interface ModernProductCardProps {
   product: Product;
@@ -13,6 +14,7 @@ interface ModernProductCardProps {
 
 const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   const [showLicenseInput, setShowLicenseInput] = useState(false);
+  const [showNotepad, setShowNotepad] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { validateLicense } = useLicenses();
 
@@ -21,7 +23,11 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   };
 
   const handleValidatedDownload = () => {
-    window.open(product.downloadUrl, "_blank");
+    if (product.contentType === "link") {
+      window.open(product.downloadUrl, "_blank");
+    } else {
+      setShowNotepad(true);
+    }
   };
 
   return (
@@ -104,21 +110,11 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
               </p>
             </div>
 
-            {/* Stats */}
-            <div className="flex items-center justify-between text-sm text-gray-400">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-1">
-                  <Download className="w-4 h-4" />
-                  <span>2.3k</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Eye className="w-4 h-4" />
-                  <span>12.5k</span>
-                </div>
-              </div>
+            {/* Prix */}
+            <div className="flex items-center justify-end text-sm">
               <div className="text-red-400 font-semibold flex items-center">
                 {product.type === "free" ? (
-                  "Free"
+                  "Gratuit"
                 ) : (
                   <>
                     <Euro className="w-4 h-4 mr-1" />
@@ -136,7 +132,11 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                   e.stopPropagation();
                   console.log("Button clicked!", product.type, product.title);
                   if (product.type === "free") {
-                    window.open(product.downloadUrl, "_blank");
+                    if (product.contentType === "link") {
+                      window.open(product.downloadUrl, "_blank");
+                    } else {
+                      setShowNotepad(true);
+                    }
                   } else {
                     setShowLicenseInput(true);
                   }
@@ -172,6 +172,15 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
           onValidate={handleLicenseValidate}
           onDownload={handleValidatedDownload}
           productTitle={product.title}
+        />
+      )}
+
+      {showNotepad && (
+        <NotepadViewer
+          isOpen={showNotepad}
+          onClose={() => setShowNotepad(false)}
+          title={product.title}
+          content={product.content || "Aucun contenu disponible."}
         />
       )}
     </>
