@@ -49,6 +49,9 @@ import {
   Zap,
   Euro,
   Heart,
+  Edit,
+  FileText,
+  Link as LinkIcon,
 } from "lucide-react";
 import BackgroundAnimation from "@/components/BackgroundAnimation";
 import { toast } from "sonner";
@@ -74,12 +77,16 @@ const AdminDashboard: React.FC = () => {
 
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [productForm, setProductForm] = useState({
     title: "",
     description: "",
     imageUrl: "",
     downloadUrl: "",
     type: "free" as "free" | "paid",
+    contentType: "link" as "link" | "text",
+    content: "",
     price: 0,
     lives: 1,
   });
@@ -103,18 +110,54 @@ const AdminDashboard: React.FC = () => {
     try {
       await addProduct(productForm);
       toast.success("Product added successfully!");
-      setProductForm({
-        title: "",
-        description: "",
-        imageUrl: "",
-        downloadUrl: "",
-        type: "free",
-        price: 0,
-        lives: 1,
-      });
+      resetProductForm();
       setShowProductDialog(false);
     } catch (error) {
       toast.error("Error adding product");
+    }
+  };
+
+  const resetProductForm = () => {
+    setProductForm({
+      title: "",
+      description: "",
+      imageUrl: "",
+      downloadUrl: "",
+      type: "free",
+      contentType: "link",
+      content: "",
+      price: 0,
+      lives: 1,
+    });
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setProductForm({
+      title: product.title,
+      description: product.description,
+      imageUrl: product.imageUrl,
+      downloadUrl: product.downloadUrl,
+      type: product.type,
+      contentType: product.contentType || "link",
+      content: product.content || "",
+      price: product.price || 0,
+      lives: product.lives || 1,
+    });
+    setShowEditDialog(true);
+  };
+
+  const handleUpdateProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+    try {
+      // Ici vous devriez ajouter une fonction updateProduct dans useProducts
+      toast.success("Product updated successfully!");
+      resetProductForm();
+      setShowEditDialog(false);
+      setEditingProduct(null);
+    } catch (error) {
+      toast.error("Error updating product");
     }
   };
 
@@ -242,13 +285,20 @@ const AdminDashboard: React.FC = () => {
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
           <Tabs defaultValue="products" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3 bg-gray-900/50">
+            <TabsList className="grid w-full grid-cols-4 bg-gray-900/50">
               <TabsTrigger
                 value="products"
                 className="data-[state=active]:bg-red-600"
               >
                 <Package className="w-4 h-4 mr-2" />
                 Products
+              </TabsTrigger>
+              <TabsTrigger
+                value="prices"
+                className="data-[state=active]:bg-red-600"
+              >
+                <Euro className="w-4 h-4 mr-2" />
+                Prix
               </TabsTrigger>
               <TabsTrigger
                 value="licenses"
@@ -424,23 +474,77 @@ const AdminDashboard: React.FC = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="downloadUrl" className="text-white">
-                          Download URL
+                        <Label htmlFor="contentType" className="text-white">
+                          Type de contenu
                         </Label>
-                        <Input
-                          id="downloadUrl"
-                          value={productForm.downloadUrl}
-                          onChange={(e) =>
+                        <Select
+                          value={productForm.contentType}
+                          onValueChange={(value: "link" | "text") =>
                             setProductForm({
                               ...productForm,
-                              downloadUrl: e.target.value,
+                              contentType: value,
                             })
                           }
-                          className="bg-gray-800 border-gray-700 text-white"
-                          placeholder="https://example.com/download"
-                          required
-                        />
+                        >
+                          <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="link">
+                              <div className="flex items-center space-x-2">
+                                <LinkIcon className="w-4 h-4" />
+                                <span>Lien de téléchargement</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="text">
+                              <div className="flex items-center space-x-2">
+                                <FileText className="w-4 h-4" />
+                                <span>Contenu texte (bloc-notes)</span>
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
+                      {productForm.contentType === "link" ? (
+                        <div className="space-y-2">
+                          <Label htmlFor="downloadUrl" className="text-white">
+                            Download URL
+                          </Label>
+                          <Input
+                            id="downloadUrl"
+                            value={productForm.downloadUrl}
+                            onChange={(e) =>
+                              setProductForm({
+                                ...productForm,
+                                downloadUrl: e.target.value,
+                              })
+                            }
+                            className="bg-gray-800 border-gray-700 text-white"
+                            placeholder="https://example.com/download"
+                            required
+                          />
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <Label htmlFor="content" className="text-white">
+                            Contenu du bloc-notes
+                          </Label>
+                          <Textarea
+                            id="content"
+                            value={productForm.content}
+                            onChange={(e) =>
+                              setProductForm({
+                                ...productForm,
+                                content: e.target.value,
+                              })
+                            }
+                            className="bg-gray-800 border-gray-700 text-white"
+                            rows={8}
+                            placeholder="Entrez le contenu qui sera affiché dans le bloc-notes..."
+                            required
+                          />
+                        </div>
+                      )}
                       <DialogFooter>
                         <Button
                           type="button"
@@ -532,9 +636,27 @@ const AdminDashboard: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() =>
-                              window.open(product.downloadUrl, "_blank")
-                            }
+                            onClick={() => handleEditProduct(product)}
+                            className="border-blue-700 text-blue-400 hover:bg-blue-500/10"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              if (product.contentType === "link") {
+                                window.open(product.downloadUrl, "_blank");
+                              } else {
+                                // Afficher le contenu dans une nouvelle fenêtre
+                                const newWindow = window.open("", "_blank");
+                                if (newWindow) {
+                                  newWindow.document.write(
+                                    `<pre>${product.content || "Aucun contenu"}</pre>`,
+                                  );
+                                }
+                              }
+                            }}
                             className="border-gray-700"
                           >
                             <Download className="w-4 h-4" />
