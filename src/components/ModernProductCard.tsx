@@ -96,15 +96,9 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
           {/* Content */}
           <div className="p-6 space-y-4">
             <div>
-              <motion.h3
-                className="text-xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors duration-300"
-                animate={{
-                  x: isHovered ? 4 : 0,
-                }}
-                transition={{ duration: 0.2 }}
-              >
+              <h3 className="text-xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors duration-300">
                 {product.title}
-              </motion.h3>
+              </h3>
               <p className="text-gray-300 text-sm leading-relaxed line-clamp-3">
                 {product.description}
               </p>
