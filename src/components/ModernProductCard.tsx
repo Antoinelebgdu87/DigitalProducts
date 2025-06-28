@@ -46,9 +46,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <div
-                  className="text-6xl filter grayscale group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300"
-                >
+                <div className="text-6xl filter grayscale group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
                   📦
                 </div>
               </div>
@@ -151,7 +149,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                 }}
                 className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-red-500/50 cursor-pointer pointer-events-auto"
                 size="lg"
-                style={{ pointerEvents: 'auto' }}
+                style={{ pointerEvents: "auto" }}
               >
                 {product.type === "free" ? (
                   <>
@@ -169,25 +167,9 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
           </div>
 
           {/* Animated border */}
-          <motion.div
-            className="absolute inset-0 rounded-3xl border-2 border-red-500/50 opacity-0 group-hover:opacity-100"
-            animate={{
-              borderColor: isHovered
-                ? [
-                    "rgba(239, 68, 68, 0.5)",
-                    "rgba(220, 38, 38, 0.8)",
-                    "rgba(239, 68, 68, 0.5)",
-                  ]
-                : "rgba(239, 68, 68, 0.5)",
-            }}
-            transition={{
-              duration: 2,
-              repeat: isHovered ? Infinity : 0,
-              ease: "easeInOut",
-            }}
-          />
+          <div className="absolute inset-0 rounded-3xl border-2 border-red-500/50 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300" />
         </div>
-      </motion.div>
+      </div>
 
       {showLicenseInput && (
         <KeyValidator
