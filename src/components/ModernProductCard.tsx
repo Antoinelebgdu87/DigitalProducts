@@ -3,9 +3,10 @@ import { motion } from "framer-motion";
 import { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Lock, Star, Eye, ShoppingCart } from "lucide-react";
+import { Download, Lock, Star, Eye, ShoppingCart, Euro } from "lucide-react";
 import { useLicenses } from "@/hooks/useLicenses";
 import KeyValidator from "./KeyValidator";
+import NotepadViewer from "./NotepadViewer";
 
 interface ModernProductCardProps {
   product: Product;
@@ -13,6 +14,7 @@ interface ModernProductCardProps {
 
 const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   const [showLicenseInput, setShowLicenseInput] = useState(false);
+  const [showNotepad, setShowNotepad] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { validateLicense } = useLicenses();
 
@@ -21,81 +23,59 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   };
 
   const handleValidatedDownload = () => {
-    window.open(product.downloadUrl, "_blank");
+    // Si contentType n'est pas défini, utiliser "link" par défaut pour la compatibilité
+    if (!product.contentType || product.contentType === "link") {
+      window.open(product.downloadUrl, "_blank");
+    } else {
+      setShowNotepad(true);
+    }
   };
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        whileHover={{ y: -8 }}
-        onHoverStart={() => setIsHovered(true)}
-        onHoverEnd={() => setIsHovered(false)}
-        className="group relative"
+      <div
+        className="group relative hover:-translate-y-2 transition-transform duration-300"
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
         {/* Glow effect */}
-        <motion.div
-          className="absolute -inset-1 bg-gradient-to-r from-red-600/20 via-red-500/20 to-red-400/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          animate={{
-            scale: isHovered ? 1.02 : 1,
-          }}
-          transition={{ duration: 0.3 }}
-        />
+        <div className="absolute -inset-1 bg-gradient-to-r from-red-600/20 via-red-500/20 to-red-400/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
         {/* Main card */}
         <div className="relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl">
           {/* Image container */}
           <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-gray-900 to-black">
             {product.imageUrl ? (
-              <motion.img
+              <img
                 src={product.imageUrl}
                 alt={product.title}
-                className="w-full h-full object-cover"
-                whileHover={{ scale: 1.1 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center">
-                <motion.div
-                  className="text-6xl filter grayscale"
-                  animate={{
-                    rotate: isHovered ? 10 : 0,
-                    scale: isHovered ? 1.1 : 1,
-                  }}
-                  transition={{ duration: 0.3 }}
-                >
+                <div className="text-6xl filter grayscale group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300">
                   📦
-                </motion.div>
+                </div>
               </div>
             )}
 
             {/* Overlay on hover */}
-            <motion.div
-              className="absolute inset-0 bg-black/60 flex items-center justify-center"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: isHovered ? 1 : 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              <motion.div
-                className="flex space-x-4"
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{
-                  scale: isHovered ? 1 : 0.8,
-                  opacity: isHovered ? 1 : 0,
-                }}
-                transition={{ duration: 0.2, delay: 0.1 }}
-              >
+            <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+              <div className="flex space-x-4">
                 <Button
                   size="sm"
                   variant="outline"
-                  className="bg-white/20 border-white/30 text-white hover:bg-white/30"
+                  className="bg-white/20 border-white/30 text-white hover:bg-white/30 pointer-events-auto"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    console.log("Preview clicked");
+                  }}
                 >
                   <Eye className="w-4 h-4 mr-2" />
                   Preview
                 </Button>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
 
             {/* Product type badge */}
             <div className="absolute top-4 left-4">
@@ -123,85 +103,72 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
           {/* Content */}
           <div className="p-6 space-y-4">
             <div>
-              <motion.h3
-                className="text-xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors duration-300"
-                animate={{
-                  x: isHovered ? 4 : 0,
-                }}
-                transition={{ duration: 0.2 }}
-              >
+              <h3 className="text-xl font-bold text-white mb-2 group-hover:text-red-400 transition-colors duration-300">
                 {product.title}
-              </motion.h3>
+              </h3>
               <p className="text-gray-300 text-sm leading-relaxed line-clamp-3">
                 {product.description}
               </p>
             </div>
 
-            {/* Stats */}
-            <div className="flex items-center justify-between text-sm text-gray-400">
-              <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-1">
-                  <Download className="w-4 h-4" />
-                  <span>2.3k</span>
-                </div>
-                <div className="flex items-center space-x-1">
-                  <Eye className="w-4 h-4" />
-                  <span>12.5k</span>
-                </div>
-              </div>
-              <div className="text-red-400 font-semibold">
-                {product.type === "free" ? "Free" : "$9.99"}
+            {/* Prix */}
+            <div className="flex items-center justify-end text-sm">
+              <div className="text-red-400 font-semibold flex items-center">
+                {product.type === "free" ? (
+                  "Gratuit"
+                ) : (
+                  <>
+                    <Euro className="w-4 h-4 mr-1" />
+                    {product.price?.toFixed(2) || "9.99"}
+                  </>
+                )}
               </div>
             </div>
 
             {/* Action button */}
-            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <div className="relative z-10">
               <Button
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  console.log("Button clicked!", product.type, product.title);
                   if (product.type === "free") {
-                    window.open(product.downloadUrl, "_blank");
+                    // Si contentType n'est pas défini, utiliser "link" par défaut pour la compatibilité
+                    if (
+                      !product.contentType ||
+                      product.contentType === "link"
+                    ) {
+                      window.open(product.downloadUrl, "_blank");
+                    } else {
+                      setShowNotepad(true);
+                    }
                   } else {
                     setShowLicenseInput(true);
                   }
                 }}
-                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-red-500/50 group"
+                className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-red-500/50 cursor-pointer pointer-events-auto"
                 size="lg"
+                style={{ pointerEvents: "auto" }}
               >
                 {product.type === "free" ? (
                   <>
-                    <Download className="w-5 h-5 mr-2 group-hover:animate-bounce" />
+                    <Download className="w-5 h-5 mr-2" />
                     Download Now
                   </>
                 ) : (
                   <>
-                    <ShoppingCart className="w-5 h-5 mr-2 group-hover:animate-pulse" />
-                    Get Access
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    Get Access Download Now
                   </>
                 )}
               </Button>
-            </motion.div>
+            </div>
           </div>
 
           {/* Animated border */}
-          <motion.div
-            className="absolute inset-0 rounded-3xl border-2 border-red-500/50 opacity-0 group-hover:opacity-100"
-            animate={{
-              borderColor: isHovered
-                ? [
-                    "rgba(239, 68, 68, 0.5)",
-                    "rgba(220, 38, 38, 0.8)",
-                    "rgba(239, 68, 68, 0.5)",
-                  ]
-                : "rgba(239, 68, 68, 0.5)",
-            }}
-            transition={{
-              duration: 2,
-              repeat: isHovered ? Infinity : 0,
-              ease: "easeInOut",
-            }}
-          />
+          <div className="absolute inset-0 rounded-3xl border-2 border-red-500/50 opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300" />
         </div>
-      </motion.div>
+      </div>
 
       {showLicenseInput && (
         <KeyValidator
@@ -210,6 +177,15 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
           onValidate={handleLicenseValidate}
           onDownload={handleValidatedDownload}
           productTitle={product.title}
+        />
+      )}
+
+      {showNotepad && (
+        <NotepadViewer
+          isOpen={showNotepad}
+          onClose={() => setShowNotepad(false)}
+          title={product.title}
+          content={product.content || "Aucun contenu disponible."}
         />
       )}
     </>

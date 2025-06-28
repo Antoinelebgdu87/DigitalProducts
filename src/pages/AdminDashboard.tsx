@@ -47,6 +47,11 @@ import {
   User,
   CreditCard,
   Zap,
+  Euro,
+  Heart,
+  Edit,
+  FileText,
+  Link as LinkIcon,
 } from "lucide-react";
 import BackgroundAnimation from "@/components/BackgroundAnimation";
 import { toast } from "sonner";
@@ -60,6 +65,7 @@ const AdminDashboard: React.FC = () => {
     products,
     addProduct,
     deleteProduct,
+    updateProduct,
     loading: productsLoading,
   } = useProducts();
   const {
@@ -72,12 +78,18 @@ const AdminDashboard: React.FC = () => {
 
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
+  const [showEditDialog, setShowEditDialog] = useState(false);
+  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [productForm, setProductForm] = useState({
     title: "",
     description: "",
     imageUrl: "",
     downloadUrl: "",
     type: "free" as "free" | "paid",
+    contentType: "link" as "link" | "text",
+    content: "",
+    price: 0,
+    lives: 1,
   });
 
   // License form state
@@ -99,16 +111,54 @@ const AdminDashboard: React.FC = () => {
     try {
       await addProduct(productForm);
       toast.success("Product added successfully!");
-      setProductForm({
-        title: "",
-        description: "",
-        imageUrl: "",
-        downloadUrl: "",
-        type: "free",
-      });
+      resetProductForm();
       setShowProductDialog(false);
     } catch (error) {
       toast.error("Error adding product");
+    }
+  };
+
+  const resetProductForm = () => {
+    setProductForm({
+      title: "",
+      description: "",
+      imageUrl: "",
+      downloadUrl: "",
+      type: "free",
+      contentType: "link", // Par défaut lien pour compatibilité
+      content: "",
+      price: 0,
+      lives: 1,
+    });
+  };
+
+  const handleEditProduct = (product: Product) => {
+    setEditingProduct(product);
+    setProductForm({
+      title: product.title,
+      description: product.description,
+      imageUrl: product.imageUrl,
+      downloadUrl: product.downloadUrl,
+      type: product.type,
+      contentType: product.contentType || "link", // Par défaut lien pour compatibilité
+      content: product.content || "",
+      price: product.price || 0,
+      lives: product.lives || 1,
+    });
+    setShowEditDialog(true);
+  };
+
+  const handleUpdateProduct = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingProduct) return;
+    try {
+      await updateProduct(editingProduct.id, productForm);
+      toast.success("Product updated successfully!");
+      resetProductForm();
+      setShowEditDialog(false);
+      setEditingProduct(null);
+    } catch (error) {
+      toast.error("Error updating product");
     }
   };
 
@@ -236,13 +286,20 @@ const AdminDashboard: React.FC = () => {
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
           <Tabs defaultValue="products" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-3 bg-gray-900/50">
+            <TabsList className="grid w-full grid-cols-4 bg-gray-900/50">
               <TabsTrigger
                 value="products"
                 className="data-[state=active]:bg-red-600"
               >
                 <Package className="w-4 h-4 mr-2" />
                 Products
+              </TabsTrigger>
+              <TabsTrigger
+                value="prices"
+                className="data-[state=active]:bg-red-600"
+              >
+                <Euro className="w-4 h-4 mr-2" />
+                Prix
               </TabsTrigger>
               <TabsTrigger
                 value="licenses"
@@ -329,6 +386,59 @@ const AdminDashboard: React.FC = () => {
                           </Select>
                         </div>
                       </div>
+                      {productForm.type === "paid" && (
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="price" className="text-white">
+                              Prix (€)
+                            </Label>
+                            <Input
+                              id="price"
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={productForm.price}
+                              onChange={(e) =>
+                                setProductForm({
+                                  ...productForm,
+                                  price: parseFloat(e.target.value) || 0,
+                                })
+                              }
+                              className="bg-gray-800 border-gray-700 text-white"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="lives" className="text-white">
+                              Nombre de vies
+                            </Label>
+                            <Select
+                              value={productForm.lives.toString()}
+                              onValueChange={(value) =>
+                                setProductForm({
+                                  ...productForm,
+                                  lives: parseInt(value),
+                                })
+                              }
+                            >
+                              <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="1">1 vie</SelectItem>
+                                <SelectItem value="3">3 vies</SelectItem>
+                                <SelectItem value="5">5 vies</SelectItem>
+                                <SelectItem value="10">10 vies</SelectItem>
+                                <SelectItem value="25">25 vies</SelectItem>
+                                <SelectItem value="50">50 vies</SelectItem>
+                                <SelectItem value="100">100 vies</SelectItem>
+                                <SelectItem value="999">
+                                  Illimité (999)
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      )}
                       <div className="space-y-2">
                         <Label htmlFor="description" className="text-white">
                           Description
@@ -365,23 +475,77 @@ const AdminDashboard: React.FC = () => {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="downloadUrl" className="text-white">
-                          Download URL
+                        <Label htmlFor="contentType" className="text-white">
+                          Type de contenu
                         </Label>
-                        <Input
-                          id="downloadUrl"
-                          value={productForm.downloadUrl}
-                          onChange={(e) =>
+                        <Select
+                          value={productForm.contentType}
+                          onValueChange={(value: "link" | "text") =>
                             setProductForm({
                               ...productForm,
-                              downloadUrl: e.target.value,
+                              contentType: value,
                             })
                           }
-                          className="bg-gray-800 border-gray-700 text-white"
-                          placeholder="https://example.com/download"
-                          required
-                        />
+                        >
+                          <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="link">
+                              <div className="flex items-center space-x-2">
+                                <LinkIcon className="w-4 h-4" />
+                                <span>Lien de téléchargement</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="text">
+                              <div className="flex items-center space-x-2">
+                                <FileText className="w-4 h-4" />
+                                <span>Contenu texte (bloc-notes)</span>
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
+                      {productForm.contentType === "link" ? (
+                        <div className="space-y-2">
+                          <Label htmlFor="downloadUrl" className="text-white">
+                            Download URL
+                          </Label>
+                          <Input
+                            id="downloadUrl"
+                            value={productForm.downloadUrl}
+                            onChange={(e) =>
+                              setProductForm({
+                                ...productForm,
+                                downloadUrl: e.target.value,
+                              })
+                            }
+                            className="bg-gray-800 border-gray-700 text-white"
+                            placeholder="https://example.com/download"
+                            required
+                          />
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <Label htmlFor="content" className="text-white">
+                            Contenu du bloc-notes
+                          </Label>
+                          <Textarea
+                            id="content"
+                            value={productForm.content}
+                            onChange={(e) =>
+                              setProductForm({
+                                ...productForm,
+                                content: e.target.value,
+                              })
+                            }
+                            className="bg-gray-800 border-gray-700 text-white"
+                            rows={8}
+                            placeholder="Entrez le contenu qui sera affiché dans le bloc-notes..."
+                            required
+                          />
+                        </div>
+                      )}
                       <DialogFooter>
                         <Button
                           type="button"
@@ -396,6 +560,249 @@ const AdminDashboard: React.FC = () => {
                           className="bg-red-600 hover:bg-red-700"
                         >
                           Add
+                        </Button>
+                      </DialogFooter>
+                    </form>
+                  </DialogContent>
+                </Dialog>
+
+                {/* Dialog d'édition */}
+                <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
+                  <DialogContent className="bg-gray-900 border-gray-800 max-w-2xl">
+                    <DialogHeader>
+                      <DialogTitle className="text-white">
+                        Modifier le produit
+                      </DialogTitle>
+                      <DialogDescription className="text-gray-400">
+                        Modifiez les informations de votre produit
+                      </DialogDescription>
+                    </DialogHeader>
+                    <form onSubmit={handleUpdateProduct} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="edit-title" className="text-white">
+                            Title
+                          </Label>
+                          <Input
+                            id="edit-title"
+                            value={productForm.title}
+                            onChange={(e) =>
+                              setProductForm({
+                                ...productForm,
+                                title: e.target.value,
+                              })
+                            }
+                            className="bg-gray-800 border-gray-700 text-white"
+                            required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="edit-type" className="text-white">
+                            Type
+                          </Label>
+                          <Select
+                            value={productForm.type}
+                            onValueChange={(value: "free" | "paid") =>
+                              setProductForm({ ...productForm, type: value })
+                            }
+                          >
+                            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="free">Free</SelectItem>
+                              <SelectItem value="paid">Paid</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      {productForm.type === "paid" && (
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="edit-price" className="text-white">
+                              Prix (€)
+                            </Label>
+                            <Input
+                              id="edit-price"
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={productForm.price}
+                              onChange={(e) =>
+                                setProductForm({
+                                  ...productForm,
+                                  price: parseFloat(e.target.value) || 0,
+                                })
+                              }
+                              className="bg-gray-800 border-gray-700 text-white"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="edit-lives" className="text-white">
+                              Nombre de vies
+                            </Label>
+                            <Select
+                              value={productForm.lives.toString()}
+                              onValueChange={(value) =>
+                                setProductForm({
+                                  ...productForm,
+                                  lives: parseInt(value),
+                                })
+                              }
+                            >
+                              <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="1">1 vie</SelectItem>
+                                <SelectItem value="3">3 vies</SelectItem>
+                                <SelectItem value="5">5 vies</SelectItem>
+                                <SelectItem value="10">10 vies</SelectItem>
+                                <SelectItem value="25">25 vies</SelectItem>
+                                <SelectItem value="50">50 vies</SelectItem>
+                                <SelectItem value="100">100 vies</SelectItem>
+                                <SelectItem value="999">
+                                  Illimité (999)
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      )}
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="edit-description"
+                          className="text-white"
+                        >
+                          Description
+                        </Label>
+                        <Textarea
+                          id="edit-description"
+                          value={productForm.description}
+                          onChange={(e) =>
+                            setProductForm({
+                              ...productForm,
+                              description: e.target.value,
+                            })
+                          }
+                          className="bg-gray-800 border-gray-700 text-white"
+                          rows={3}
+                          required
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="edit-imageUrl" className="text-white">
+                          Image URL
+                        </Label>
+                        <Input
+                          id="edit-imageUrl"
+                          value={productForm.imageUrl}
+                          onChange={(e) =>
+                            setProductForm({
+                              ...productForm,
+                              imageUrl: e.target.value,
+                            })
+                          }
+                          className="bg-gray-800 border-gray-700 text-white"
+                          placeholder="https://example.com/image.jpg"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label
+                          htmlFor="edit-contentType"
+                          className="text-white"
+                        >
+                          Type de contenu
+                        </Label>
+                        <Select
+                          value={productForm.contentType}
+                          onValueChange={(value: "link" | "text") =>
+                            setProductForm({
+                              ...productForm,
+                              contentType: value,
+                            })
+                          }
+                        >
+                          <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="link">
+                              <div className="flex items-center space-x-2">
+                                <LinkIcon className="w-4 h-4" />
+                                <span>Lien de téléchargement</span>
+                              </div>
+                            </SelectItem>
+                            <SelectItem value="text">
+                              <div className="flex items-center space-x-2">
+                                <FileText className="w-4 h-4" />
+                                <span>Contenu texte (bloc-notes)</span>
+                              </div>
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      {productForm.contentType === "link" ? (
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="edit-downloadUrl"
+                            className="text-white"
+                          >
+                            Download URL
+                          </Label>
+                          <Input
+                            id="edit-downloadUrl"
+                            value={productForm.downloadUrl}
+                            onChange={(e) =>
+                              setProductForm({
+                                ...productForm,
+                                downloadUrl: e.target.value,
+                              })
+                            }
+                            className="bg-gray-800 border-gray-700 text-white"
+                            placeholder="https://example.com/download"
+                            required
+                          />
+                        </div>
+                      ) : (
+                        <div className="space-y-2">
+                          <Label htmlFor="edit-content" className="text-white">
+                            Contenu du bloc-notes
+                          </Label>
+                          <Textarea
+                            id="edit-content"
+                            value={productForm.content}
+                            onChange={(e) =>
+                              setProductForm({
+                                ...productForm,
+                                content: e.target.value,
+                              })
+                            }
+                            className="bg-gray-800 border-gray-700 text-white"
+                            rows={8}
+                            placeholder="Entrez le contenu qui sera affiché dans le bloc-notes..."
+                            required
+                          />
+                        </div>
+                      )}
+                      <DialogFooter>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          onClick={() => {
+                            setShowEditDialog(false);
+                            setEditingProduct(null);
+                            resetProductForm();
+                          }}
+                          className="border-gray-700"
+                        >
+                          Annuler
+                        </Button>
+                        <Button
+                          type="submit"
+                          className="bg-blue-600 hover:bg-blue-700"
+                        >
+                          Mettre à jour
                         </Button>
                       </DialogFooter>
                     </form>
@@ -445,6 +852,24 @@ const AdminDashboard: React.FC = () => {
                               >
                                 {product.type === "free" ? "Free" : "Paid"}
                               </Badge>
+                              {product.type === "paid" && product.price && (
+                                <Badge
+                                  variant="outline"
+                                  className="border-yellow-500 text-yellow-400"
+                                >
+                                  <Euro className="w-3 h-3 mr-1" />
+                                  {product.price.toFixed(2)}
+                                </Badge>
+                              )}
+                              {product.type === "paid" && product.lives && (
+                                <Badge
+                                  variant="outline"
+                                  className="border-pink-500 text-pink-400"
+                                >
+                                  <Heart className="w-3 h-3 mr-1" />
+                                  {product.lives} vies
+                                </Badge>
+                              )}
                               <span className="text-gray-500 text-xs">
                                 {formatDate(product.createdAt)}
                               </span>
@@ -455,9 +880,27 @@ const AdminDashboard: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() =>
-                              window.open(product.downloadUrl, "_blank")
-                            }
+                            onClick={() => handleEditProduct(product)}
+                            className="border-blue-700 text-blue-400 hover:bg-blue-500/10"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              if (product.contentType === "link") {
+                                window.open(product.downloadUrl, "_blank");
+                              } else {
+                                // Afficher le contenu dans une nouvelle fenêtre
+                                const newWindow = window.open("", "_blank");
+                                if (newWindow) {
+                                  newWindow.document.write(
+                                    `<pre>${product.content || "Aucun contenu"}</pre>`,
+                                  );
+                                }
+                              }
+                            }}
                             className="border-gray-700"
                           >
                             <Download className="w-4 h-4" />
@@ -475,6 +918,108 @@ const AdminDashboard: React.FC = () => {
                     </CardContent>
                   </Card>
                 ))}
+              </div>
+            </TabsContent>
+
+            {/* Prix Tab */}
+            <TabsContent value="prices" className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-white">
+                  Gestion des Prix
+                </h2>
+                <p className="text-gray-400">
+                  Modifiez les prix et paramètres de vos produits payants
+                </p>
+              </div>
+
+              <div className="grid gap-4">
+                {products
+                  .filter((product) => product.type === "paid")
+                  .map((product) => (
+                    <Card
+                      key={product.id}
+                      className="border-gray-800 bg-gray-900/50"
+                    >
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-16 h-16 rounded-lg bg-gray-800 flex items-center justify-center overflow-hidden">
+                              {product.imageUrl ? (
+                                <img
+                                  src={product.imageUrl}
+                                  alt={product.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <Package className="w-6 h-6 text-gray-400" />
+                              )}
+                            </div>
+                            <div>
+                              <h3 className="text-lg font-semibold text-white">
+                                {product.title}
+                              </h3>
+                              <div className="flex items-center space-x-4 mt-2">
+                                <Badge
+                                  variant="outline"
+                                  className="border-yellow-500 text-yellow-400"
+                                >
+                                  <Euro className="w-3 h-3 mr-1" />
+                                  {product.price?.toFixed(2) || "0.00"}
+                                </Badge>
+                                <Badge
+                                  variant="outline"
+                                  className="border-pink-500 text-pink-400"
+                                >
+                                  <Heart className="w-3 h-3 mr-1" />
+                                  {product.lives || 1} vies
+                                </Badge>
+                                <Badge
+                                  variant="outline"
+                                  className={
+                                    product.contentType === "link"
+                                      ? "border-blue-500 text-blue-400"
+                                      : "border-green-500 text-green-400"
+                                  }
+                                >
+                                  {product.contentType === "link" ? (
+                                    <LinkIcon className="w-3 h-3 mr-1" />
+                                  ) : (
+                                    <FileText className="w-3 h-3 mr-1" />
+                                  )}
+                                  {product.contentType === "link"
+                                    ? "Lien"
+                                    : "Bloc-notes"}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditProduct(product)}
+                            className="border-blue-700 text-blue-400 hover:bg-blue-500/10"
+                          >
+                            <Edit className="w-4 h-4 mr-2" />
+                            Modifier
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                {products.filter((product) => product.type === "paid")
+                  .length === 0 && (
+                  <Card className="border-gray-800 bg-gray-900/50">
+                    <CardContent className="p-12 text-center">
+                      <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-white mb-2">
+                        Aucun produit payant
+                      </h3>
+                      <p className="text-gray-400">
+                        Créez des produits payants pour les gérer ici
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
               </div>
             </TabsContent>
 

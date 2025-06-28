@@ -154,6 +154,14 @@ const ModernHomePage: React.FC = () => {
             >
               <Button
                 size="lg"
+                onClick={() => {
+                  const productsSection = document.querySelector(
+                    '[data-section="products"]',
+                  );
+                  if (productsSection) {
+                    productsSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
                 className="px-8 py-4 text-lg bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-2xl shadow-2xl hover:shadow-red-500/50 transition-all duration-300"
               >
                 Explore Products
@@ -168,6 +176,14 @@ const ModernHomePage: React.FC = () => {
               <Button
                 variant="outline"
                 size="lg"
+                onClick={() => {
+                  const featuresSection = document.querySelector(
+                    '[data-section="features"]',
+                  );
+                  if (featuresSection) {
+                    featuresSection.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
                 className="px-8 py-4 text-lg border-white/30 text-white hover:bg-white/10 rounded-2xl backdrop-blur-sm"
               >
                 Learn More
@@ -178,6 +194,7 @@ const ModernHomePage: React.FC = () => {
           {/* Features Grid */}
           <motion.div
             variants={containerVariants}
+            data-section="features"
             className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto"
           >
             {features.map((feature, index) => (
@@ -203,6 +220,7 @@ const ModernHomePage: React.FC = () => {
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 0.5 }}
+        data-section="products"
         className="relative z-10 pb-20"
       >
         <div className="container mx-auto px-6">
