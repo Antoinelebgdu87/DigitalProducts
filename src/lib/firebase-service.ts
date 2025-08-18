@@ -20,13 +20,16 @@ export class FirebaseService {
 
   static async withRetry<T>(
     operation: () => Promise<T>,
-    retries = this.maxRetries
+    retries = this.maxRetries,
   ): Promise<T> {
     try {
       return await operation();
     } catch (error) {
       if (retries > 0 && this.isRetryableError(error)) {
-        console.warn(`Firebase operation failed, retrying... (${retries} left)`, error);
+        console.warn(
+          `Firebase operation failed, retrying... (${retries} left)`,
+          error,
+        );
         await this.delay(this.retryDelay);
         return this.withRetry(operation, retries - 1);
       }
@@ -46,7 +49,7 @@ export class FirebaseService {
   }
 
   private static delay(ms: number): Promise<void> {
-    return new Promise(resolve => setTimeout(resolve, ms));
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   static async getDocument(docRef: DocumentReference) {
@@ -71,7 +74,7 @@ export class FirebaseService {
   static createListener(
     docRef: DocumentReference | Query,
     onNext: (snapshot: any) => void,
-    onError?: (error: FirestoreError) => void
+    onError?: (error: FirestoreError) => void,
   ) {
     const errorHandler = (error: FirestoreError) => {
       console.error("Firebase listener error:", error);
