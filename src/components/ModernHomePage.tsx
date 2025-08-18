@@ -25,8 +25,9 @@ import { useUser } from "@/context/UserContext";
 
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
-  const { currentUser, checkUserStatus } = useUser();
+  const { currentUser, checkUserStatus, markWarningsAsRead } = useUser();
   const [showUsernameModal, setShowUsernameModal] = useState(false);
+  const [showWarningModal, setShowWarningModal] = useState(false);
 
   useEffect(() => {
     // Check if user needs to create a username
@@ -35,8 +36,21 @@ const ModernHomePage: React.FC = () => {
     } else {
       // Check if user is banned
       checkUserStatus();
+
+      // Check for unread warnings
+      const unreadWarnings = currentUser.warnings?.filter(w => !w.isRead) || [];
+      if (unreadWarnings.length > 0) {
+        setShowWarningModal(true);
+      }
     }
   }, [currentUser, checkUserStatus]);
+
+  const handleWarningClose = async () => {
+    if (currentUser) {
+      await markWarningsAsRead(currentUser.id);
+      setShowWarningModal(false);
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
