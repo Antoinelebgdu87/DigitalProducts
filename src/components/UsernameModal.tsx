@@ -121,9 +121,9 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
               "Créer mon compte"
             )}
           </Button>
-          <p className="text-xs text-gray-500 text-center">
+          <div className="text-xs text-gray-500 text-center">
             Votre pseudo sera visible par les autres utilisateurs
-          </p>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
