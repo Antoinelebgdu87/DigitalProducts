@@ -24,9 +24,9 @@ export const useProducts = () => {
       if (stored) {
         const productsData = JSON.parse(stored) as Product[];
         // Convert date strings back to Date objects
-        const parsedProducts = productsData.map(product => ({
+        const parsedProducts = productsData.map((product) => ({
           ...product,
-          createdAt: new Date(product.createdAt)
+          createdAt: new Date(product.createdAt),
         }));
         setProducts(parsedProducts);
       } else {

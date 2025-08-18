@@ -225,22 +225,23 @@ const AdminDashboard: React.FC = () => {
         validDate = date;
       }
       // If it's a Firestore Timestamp (has toDate method)
-      else if (date && typeof date.toDate === 'function') {
+      else if (date && typeof date.toDate === "function") {
         validDate = date.toDate();
       }
       // If it's a timestamp number
-      else if (typeof date === 'number') {
+      else if (typeof date === "number") {
         validDate = new Date(date);
       }
       // If it's a string
-      else if (typeof date === 'string') {
+      else if (typeof date === "string") {
         validDate = new Date(date);
       }
       // If it's an object with seconds and nanoseconds (Firestore timestamp object)
-      else if (date && typeof date === 'object' && 'seconds' in date) {
-        validDate = new Date(date.seconds * 1000 + (date.nanoseconds || 0) / 1000000);
-      }
-      else {
+      else if (date && typeof date === "object" && "seconds" in date) {
+        validDate = new Date(
+          date.seconds * 1000 + (date.nanoseconds || 0) / 1000000,
+        );
+      } else {
         return "Date invalide";
       }
 

@@ -25,9 +25,9 @@ export const useLicenses = () => {
       if (stored) {
         const licensesData = JSON.parse(stored) as License[];
         // Convert date strings back to Date objects
-        const parsedLicenses = licensesData.map(license => ({
+        const parsedLicenses = licensesData.map((license) => ({
           ...license,
-          createdAt: new Date(license.createdAt)
+          createdAt: new Date(license.createdAt),
         }));
         setLicenses(parsedLicenses);
       } else {
@@ -100,7 +100,7 @@ export const useLicenses = () => {
   ): Promise<{ isValid: boolean; license?: License }> => {
     try {
       const license = licenses.find(
-        (l) => l.code === licenseCode && l.productId === productId
+        (l) => l.code === licenseCode && l.productId === productId,
       );
 
       if (!license) return { isValid: false };
@@ -113,7 +113,7 @@ export const useLicenses = () => {
         const updatedLicenses = licenses.map((l) =>
           l.id === license.id
             ? { ...l, currentUsages: l.currentUsages + 1 }
-            : l
+            : l,
         );
         localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
         setLicenses(updatedLicenses);

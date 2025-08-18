@@ -104,15 +104,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Helper function to parse users with proper date conversion
   const parseUsers = (usersData: User[]): User[] => {
-    return usersData.map(user => ({
+    return usersData.map((user) => ({
       ...user,
       createdAt: new Date(user.createdAt),
       lastSeen: new Date(user.lastSeen),
       bannedAt: user.bannedAt ? new Date(user.bannedAt) : undefined,
-      warnings: (user.warnings || []).map(warning => ({
+      warnings: (user.warnings || []).map((warning) => ({
         ...warning,
-        createdAt: new Date(warning.createdAt)
-      }))
+        createdAt: new Date(warning.createdAt),
+      })),
     }));
   };
 
@@ -319,7 +319,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
             setCurrentUser(parsedUsers[userIndex]);
           }
 
-          console.log("⚠️ Avertissement ajouté:", parsedUsers[userIndex].username);
+          console.log(
+            "⚠️ Avertissement ajouté:",
+            parsedUsers[userIndex].username,
+          );
         }
       }
     } catch (error) {
