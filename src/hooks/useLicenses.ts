@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-  query,
-  where,
-  orderBy,
-  updateDoc,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
+// Temporarily comment out Firebase imports to debug
+// import {
+//   collection,
+//   addDoc,
+//   getDocs,
+//   deleteDoc,
+//   doc,
+//   query,
+//   where,
+//   orderBy,
+//   updateDoc,
+// } from "firebase/firestore";
+// import { db } from "@/lib/firebase";
 import { License } from "@/types";
 
 export const useLicenses = () => {
@@ -19,16 +20,17 @@ export const useLicenses = () => {
 
   const fetchLicenses = async () => {
     try {
-      const q = query(collection(db, "licenses"), orderBy("createdAt", "desc"));
-      const querySnapshot = await getDocs(q);
-      const licensesData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate() || new Date(),
-      })) as License[];
-      setLicenses(licensesData);
+      // Load from localStorage instead of Firebase
+      const stored = localStorage.getItem("licenses");
+      if (stored) {
+        const licensesData = JSON.parse(stored) as License[];
+        setLicenses(licensesData);
+      } else {
+        setLicenses([]);
+      }
     } catch (error) {
       console.error("Error fetching licenses:", error);
+      setLicenses([]);
     } finally {
       setLoading(false);
     }
