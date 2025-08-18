@@ -12,6 +12,8 @@ import {
   where as fsWhere,
   getDocs as fsGetDocs,
   Timestamp as fsTimestamp,
+  setDoc as fsSetDoc,
+  orderBy as fsOrderBy,
 } from "firebase/firestore";
 
 // Firebase configuration using environment variables
@@ -42,3 +44,5 @@ export const query = fsQuery;
 export const where = fsWhere;
 export const getDocs = fsGetDocs;
 export const Timestamp = fsTimestamp;
+export const setDoc = fsSetDoc;
+export const orderBy = fsOrderBy;

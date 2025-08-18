@@ -25,42 +25,76 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 // Main App Component with Maintenance Check
 const AppContent = () => {
-  const { isMaintenanceMode, maintenanceMessage } = useMaintenance();
-  const { isAuthenticated } = useAuth();
+  try {
+    const { isMaintenanceMode, maintenanceMessage, isLoading } =
+      useMaintenance();
+    const { isAuthenticated } = useAuth();
 
-  return (
-    <Routes>
-      <Route
-        path="/"
-        element={
-          isMaintenanceMode && !isAuthenticated ? (
-            <MaintenancePage message={maintenanceMessage} />
-          ) : (
-            <ModernHomePage />
-          )
-        }
-      />
-      <Route path="/admin" element={<AdminLogin />} />
-      <Route
-        path="/admin/dashboard"
-        element={
-          <ProtectedRoute>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="*"
-        element={
-          isMaintenanceMode && !isAuthenticated ? (
-            <MaintenancePage message={maintenanceMessage} />
-          ) : (
-            <NotFound />
-          )
-        }
-      />
-    </Routes>
-  );
+    // Show loading state while maintenance context is initializing
+    if (isLoading) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p>Chargement...</p>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <Routes>
+        <Route
+          path="/"
+          element={
+            isMaintenanceMode && !isAuthenticated ? (
+              <MaintenancePage message={maintenanceMessage} />
+            ) : (
+              <ModernHomePage />
+            )
+          }
+        />
+        <Route path="/admin" element={<AdminLogin />} />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="*"
+          element={
+            isMaintenanceMode && !isAuthenticated ? (
+              <MaintenancePage message={maintenanceMessage} />
+            ) : (
+              <NotFound />
+            )
+          }
+        />
+      </Routes>
+    );
+  } catch (error) {
+    console.error("Error in AppContent:", error);
+    // Fallback UI in case of context errors
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background text-foreground">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Erreur de chargement</h1>
+          <p className="text-muted-foreground mb-4">
+            Une erreur s'est produite lors du chargement de l'application.
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90"
+          >
+            Recharger la page
+          </button>
+        </div>
+      </div>
+    );
+  }
 };
 
 const App = () => (

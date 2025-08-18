@@ -1,65 +1,119 @@
 import { useState, useEffect } from "react";
-// Temporarily comment out Firebase imports to debug
-// import {
-//   collection,
-//   addDoc,
-//   getDocs,
-//   deleteDoc,
-//   doc,
-//   orderBy,
-//   query,
-//   updateDoc,
-// } from "firebase/firestore";
-// import { db } from "@/lib/firebase";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  deleteDoc,
+  doc,
+  orderBy,
+  query,
+  updateDoc,
+  onSnapshot,
+  Timestamp,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import { Product } from "@/types";
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchProducts = async () => {
-    try {
-      // Load from localStorage instead of Firebase
-      const stored = localStorage.getItem("products");
-      if (stored) {
-        const productsData = JSON.parse(stored) as Product[];
-        // Convert date strings back to Date objects
-        const parsedProducts = productsData.map((product) => ({
-          ...product,
-          createdAt: new Date(product.createdAt),
-        }));
-        setProducts(parsedProducts);
-      } else {
-        setProducts([]);
-      }
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
+  // Helper function to convert Firestore data to Product objects
+  const parseProduct = (productData: any): Product => {
+    return {
+      ...productData,
+      createdAt: productData.createdAt?.toDate() || new Date(),
+    };
   };
 
+  // Helper function to convert Product object to Firestore data
+  const productToFirestore = (product: Omit<Product, "id">) => {
+    return {
+      ...product,
+      createdAt: Timestamp.fromDate(product.createdAt),
+    };
+  };
+
+  // Real-time listener for products
   useEffect(() => {
-    fetchProducts();
+    const unsubscribe = onSnapshot(
+      query(collection(db, "products"), orderBy("createdAt", "desc")),
+      (snapshot) => {
+        try {
+          const productsData = snapshot.docs.map((doc) =>
+            parseProduct({ id: doc.id, ...doc.data() }),
+          );
+          setProducts(productsData);
+          console.log("📦 Produits Firebase chargés:", productsData.length);
+        } catch (error) {
+          console.error("Error parsing products:", error);
+          setProducts([]);
+        } finally {
+          setLoading(false);
+        }
+      },
+      (error) => {
+        console.error("Error fetching products:", error);
+        setProducts([]);
+        setLoading(false);
+      },
+    );
+
+    return () => unsubscribe();
   }, []);
 
-  const saveProducts = (newProducts: Product[]) => {
-    localStorage.setItem("products", JSON.stringify(newProducts));
-    setProducts(newProducts);
-  };
+  // Migrate existing localStorage data on first load
+  useEffect(() => {
+    const migrateLocalStorage = async () => {
+      try {
+        const stored = localStorage.getItem("products");
+        if (stored) {
+          const localProducts = JSON.parse(stored) as Product[];
+          console.log(
+            "🔄 Migration de",
+            localProducts.length,
+            "produits vers Firebase...",
+          );
+
+          // Check if Firebase already has data
+          const snapshot = await getDocs(collection(db, "products"));
+          if (snapshot.empty) {
+            // Migrate each product
+            for (const product of localProducts) {
+              const { id, ...productWithoutId } = product;
+              const productData = {
+                ...productWithoutId,
+                createdAt: new Date(product.createdAt),
+              };
+              await addDoc(
+                collection(db, "products"),
+                productToFirestore(productData),
+              );
+            }
+            console.log("✅ Migration des produits terminée");
+            // Remove from localStorage after successful migration
+            localStorage.removeItem("products");
+          }
+        }
+      } catch (error) {
+        console.error("Erreur lors de la migration des produits:", error);
+      }
+    };
+
+    migrateLocalStorage();
+  }, []);
 
   const addProduct = async (
     productData: Omit<Product, "id" | "createdAt">,
   ): Promise<void> => {
     try {
-      const newProduct: Product = {
+      const newProduct = {
         ...productData,
-        id: Date.now().toString(),
         createdAt: new Date(),
       };
-      const updatedProducts = [newProduct, ...products];
-      saveProducts(updatedProducts);
+
+      await addDoc(collection(db, "products"), productToFirestore(newProduct));
+      console.log("🎉 Nouveau produit Firebase créé:", productData.name);
     } catch (error) {
       console.error("Error adding product:", error);
       throw error;
@@ -68,8 +122,8 @@ export const useProducts = () => {
 
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
-      const updatedProducts = products.filter((p) => p.id !== productId);
-      saveProducts(updatedProducts);
+      await deleteDoc(doc(db, "products", productId));
+      console.log("🗑️ Produit Firebase supprimé:", productId);
     } catch (error) {
       console.error("Error deleting product:", error);
       throw error;
@@ -81,14 +135,17 @@ export const useProducts = () => {
     productData: Partial<Omit<Product, "id" | "createdAt">>,
   ): Promise<void> => {
     try {
-      const updatedProducts = products.map((p) =>
-        p.id === productId ? { ...p, ...productData } : p,
-      );
-      saveProducts(updatedProducts);
+      await updateDoc(doc(db, "products", productId), productData);
+      console.log("📝 Produit Firebase mis à jour:", productId);
     } catch (error) {
       console.error("Error updating product:", error);
       throw error;
     }
+  };
+
+  const fetchProducts = async () => {
+    // This function is kept for compatibility but real-time updates handle the data
+    console.log("📋 Produits gérés en temps réel via Firebase");
   };
 
   return {
