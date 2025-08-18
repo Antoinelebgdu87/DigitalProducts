@@ -85,8 +85,9 @@ export const useLicenses = () => {
 
   const deleteLicense = async (licenseId: string): Promise<void> => {
     try {
-      await deleteDoc(doc(db, "licenses", licenseId));
-      await fetchLicenses(); // Refresh the list
+      const updatedLicenses = licenses.filter((l) => l.id !== licenseId);
+      localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
+      setLicenses(updatedLicenses);
     } catch (error) {
       console.error("Error deleting license:", error);
       throw error;
