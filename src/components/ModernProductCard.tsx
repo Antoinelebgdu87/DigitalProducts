@@ -12,7 +12,7 @@ interface ModernProductCardProps {
   product: Product;
 }
 
-const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
+export const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   const [showLicenseInput, setShowLicenseInput] = useState(false);
   const [showNotepad, setShowNotepad] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -191,5 +191,3 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
     </>
   );
 };
-
-export default ModernProductCard;
