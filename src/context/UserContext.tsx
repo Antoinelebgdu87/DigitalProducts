@@ -167,6 +167,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     checkExistingUser();
+
+    return () => {
+      // No cleanup needed
+    };
   }, []);
 
   // Load all users from localStorage
