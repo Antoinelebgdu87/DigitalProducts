@@ -221,6 +221,36 @@ const AdminDashboard: React.FC = () => {
     }).format(date);
   };
 
+  const handleBanUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserId || !banReason.trim()) return;
+
+    try {
+      await banUser(selectedUserId, banReason);
+      toast.success("Utilisateur banni avec succès");
+      setShowBanDialog(false);
+      setBanReason("");
+      setSelectedUserId("");
+    } catch (error) {
+      toast.error("Erreur lors du bannissement");
+    }
+  };
+
+  const handleWarnUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserId || !warnReason.trim()) return;
+
+    try {
+      await addWarning(selectedUserId, warnReason);
+      toast.success("Avertissement envoyé avec succès");
+      setShowWarnDialog(false);
+      setWarnReason("");
+      setSelectedUserId("");
+    } catch (error) {
+      toast.error("Erreur lors de l'envoi de l'avertissement");
+    }
+  };
+
   const activeLicenses = getActiveLicenses();
 
   const getCategoryIcon = (category: string) => {
