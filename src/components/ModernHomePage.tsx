@@ -12,7 +12,7 @@ import { ModernBackground } from "./ModernBackground";
 export const ModernHomePage: React.FC = () => {
   const { products, isLoading } = useProducts();
   const { currentUser, markWarningsAsRead } = useUser();
-  const { isMaintenanceMode } = useMaintenance();
+  const { isMaintenanceMode, maintenanceMessage } = useMaintenance();
   const [showUsernameModal, setShowUsernameModal] = useState(false);
 
   useEffect(() => {
@@ -26,7 +26,7 @@ export const ModernHomePage: React.FC = () => {
 
   // Show maintenance page if maintenance mode is active
   if (isMaintenanceMode) {
-    return <MaintenancePage />;
+    return <MaintenancePage message={maintenanceMessage} />;
   }
 
   // Show ban modal if user is banned
