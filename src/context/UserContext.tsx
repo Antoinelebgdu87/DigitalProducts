@@ -94,6 +94,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           lastSeen: new Date(),
         };
         setCurrentUser(user);
+        saveUserToDatabase(user); // Make sure user is in the database
         console.log("🔵 Utilisateur existant chargé:", storedUsername);
       } else {
         // Check if user was supposed to have been created
