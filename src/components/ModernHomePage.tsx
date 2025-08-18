@@ -30,10 +30,11 @@ const ModernHomePage: React.FC = () => {
   const [showWarningModal, setShowWarningModal] = useState(false);
 
   useEffect(() => {
-    // Check if user needs to create a username
-    if (!currentUser) {
+    // Check if user needs to create a username (only if never created one)
+    const hasEverCreatedUser = localStorage.getItem("hasCreatedUser");
+    if (!currentUser && !hasEverCreatedUser) {
       setShowUsernameModal(true);
-    } else {
+    } else if (currentUser) {
       // Check if user is banned
       checkUserStatus();
 
