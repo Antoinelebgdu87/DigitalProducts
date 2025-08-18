@@ -214,18 +214,105 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const banUser = async (userId: string, reason: string): Promise<void> => {
-    // Simplified for debug
-    console.log("Ban user:", userId, reason);
+    try {
+      const stored = localStorage.getItem("allUsers");
+      if (stored) {
+        let allUsers: User[] = JSON.parse(stored);
+        const userIndex = allUsers.findIndex(u => u.id === userId);
+
+        if (userIndex >= 0) {
+          allUsers[userIndex] = {
+            ...allUsers[userIndex],
+            isBanned: true,
+            banReason: reason,
+            bannedAt: new Date(),
+          };
+
+          localStorage.setItem("allUsers", JSON.stringify(allUsers));
+          setUsers(allUsers);
+
+          // If it's the current user, update them too
+          if (currentUser?.id === userId) {
+            setCurrentUser(allUsers[userIndex]);
+          }
+
+          console.log("🚫 Utilisateur banni:", allUsers[userIndex].username);
+        }
+      }
+    } catch (error) {
+      console.error("Erreur lors du bannissement:", error);
+      throw error;
+    }
   };
 
   const addWarning = async (userId: string, reason: string): Promise<void> => {
-    // Simplified for debug
-    console.log("Add warning:", userId, reason);
+    try {
+      const stored = localStorage.getItem("allUsers");
+      if (stored) {
+        let allUsers: User[] = JSON.parse(stored);
+        const userIndex = allUsers.findIndex(u => u.id === userId);
+
+        if (userIndex >= 0) {
+          const newWarning: Warning = {
+            id: Date.now().toString(),
+            reason,
+            createdAt: new Date(),
+            isRead: false,
+          };
+
+          allUsers[userIndex] = {
+            ...allUsers[userIndex],
+            warnings: [...(allUsers[userIndex].warnings || []), newWarning],
+          };
+
+          localStorage.setItem("allUsers", JSON.stringify(allUsers));
+          setUsers(allUsers);
+
+          // If it's the current user, update them too
+          if (currentUser?.id === userId) {
+            setCurrentUser(allUsers[userIndex]);
+          }
+
+          console.log("⚠️ Avertissement ajouté:", allUsers[userIndex].username);
+        }
+      }
+    } catch (error) {
+      console.error("Erreur lors de l'ajout d'avertissement:", error);
+      throw error;
+    }
   };
 
   const markWarningsAsRead = async (userId: string): Promise<void> => {
-    // Simplified for debug
-    console.log("Mark warnings as read:", userId);
+    try {
+      const stored = localStorage.getItem("allUsers");
+      if (stored) {
+        let allUsers: User[] = JSON.parse(stored);
+        const userIndex = allUsers.findIndex(u => u.id === userId);
+
+        if (userIndex >= 0) {
+          allUsers[userIndex] = {
+            ...allUsers[userIndex],
+            warnings: (allUsers[userIndex].warnings || []).map(w => ({
+              ...w,
+              isRead: true,
+            })),
+          };
+
+          localStorage.setItem("allUsers", JSON.stringify(allUsers));
+          setUsers(allUsers);
+
+          // If it's the current user, update them too
+          if (currentUser?.id === userId) {
+            setCurrentUser(allUsers[userIndex]);
+          }
+
+          console.log("✅ Avertissements marqués comme lus:", allUsers[userIndex].username);
+        }
+      }
+    } catch (error) {
+      console.error("Erreur lors du marquage des avertissements:", error);
+      throw error;
+    }
   };
 
   const checkUserStatus = async (): Promise<void> => {
