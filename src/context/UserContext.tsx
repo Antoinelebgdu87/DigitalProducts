@@ -117,6 +117,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
             lastSeen: new Date(),
           };
           setCurrentUser(user);
+          saveUserToDatabase(user); // Add to database
           console.log("🟢 Utilisateur recrée:", username);
         } else {
           console.log("🟡 Aucun utilisateur trouvé - modal va s'afficher");
