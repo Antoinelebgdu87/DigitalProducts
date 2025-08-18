@@ -56,6 +56,7 @@ import {
 import StarfieldBackground from "@/components/StarfieldBackground";
 import { toast } from "sonner";
 import { Product } from "@/types";
+import { useUser } from "@/context/UserContext";
 
 const AdminDashboard: React.FC = () => {
   const { logout } = useAuth();
