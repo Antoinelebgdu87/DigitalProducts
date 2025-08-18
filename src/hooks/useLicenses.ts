@@ -24,7 +24,12 @@ export const useLicenses = () => {
       const stored = localStorage.getItem("licenses");
       if (stored) {
         const licensesData = JSON.parse(stored) as License[];
-        setLicenses(licensesData);
+        // Convert date strings back to Date objects
+        const parsedLicenses = licensesData.map(license => ({
+          ...license,
+          createdAt: new Date(license.createdAt)
+        }));
+        setLicenses(parsedLicenses);
       } else {
         setLicenses([]);
       }
