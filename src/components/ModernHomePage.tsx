@@ -31,12 +31,21 @@ export const ModernHomePage: React.FC = () => {
 
   // Show ban modal if user is banned
   if (currentUser?.isBanned) {
-    return <BanModal />;
+    return <BanModal isOpen={true} reason={currentUser.banReason || "No reason specified"} />;
   }
 
   // Show warning modal if user has unread warnings
   if (currentUser?.warnings?.some((w) => !w.isRead)) {
-    return <WarningModal />;
+    return <WarningModal
+      isOpen={true}
+      warnings={currentUser.warnings}
+      onClose={() => {
+        // Mark warnings as read when modal is closed
+        if (currentUser.id) {
+          // This would be handled by the UserContext
+        }
+      }}
+    />;
   }
 
   return (
