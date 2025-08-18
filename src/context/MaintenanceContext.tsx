@@ -34,6 +34,11 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
         // Ignore parse errors
       }
     }
+
+    // Return empty cleanup function to prevent unsubscribe errors
+    return () => {
+      // No cleanup needed for localStorage
+    };
   }, []);
 
   const setMaintenanceMode = async (
