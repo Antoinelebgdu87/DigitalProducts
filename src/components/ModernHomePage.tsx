@@ -11,7 +11,7 @@ import { ModernBackground } from "./ModernBackground";
 
 export const ModernHomePage: React.FC = () => {
   const { products, isLoading } = useProducts();
-  const { currentUser } = useUser();
+  const { currentUser, markWarningsAsRead } = useUser();
   const { isMaintenanceMode } = useMaintenance();
   const [showUsernameModal, setShowUsernameModal] = useState(false);
 
@@ -41,8 +41,8 @@ export const ModernHomePage: React.FC = () => {
       warnings={currentUser.warnings}
       onClose={() => {
         // Mark warnings as read when modal is closed
-        if (currentUser.id) {
-          // This would be handled by the UserContext
+        if (currentUser?.id) {
+          markWarningsAsRead(currentUser.id);
         }
       }}
     />;
