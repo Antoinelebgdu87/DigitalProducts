@@ -18,6 +18,7 @@ const BanModal: React.FC<BanModalProps> = ({ isOpen, reason }) => {
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent
         className="bg-red-900/95 border-red-700 backdrop-blur-xl max-w-md"
+        hideClose
       >
         <DialogHeader className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-red-600 rounded-full flex items-center justify-center animate-pulse-glow">
