@@ -1,18 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { 
-  collection, 
-  doc, 
-  setDoc, 
-  getDoc, 
-  onSnapshot, 
-  query, 
-  where, 
-  getDocs,
-  updateDoc,
-  addDoc,
-  Timestamp
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
+// Temporarily comment out Firebase imports to debug
+// import {
+//   collection,
+//   doc,
+//   setDoc,
+//   getDoc,
+//   onSnapshot,
+//   query,
+//   where,
+//   getDocs,
+//   updateDoc,
+//   addDoc,
+//   Timestamp
+// } from "firebase/firestore";
+// import { db } from "@/lib/firebase";
 
 export interface User {
   id: string;
