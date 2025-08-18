@@ -16,9 +16,8 @@ interface BanModalProps {
 const BanModal: React.FC<BanModalProps> = ({ isOpen, reason }) => {
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent 
+      <DialogContent
         className="bg-red-900/95 border-red-700 backdrop-blur-xl max-w-md"
-        hideClose
       >
         <DialogHeader className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-red-600 rounded-full flex items-center justify-center animate-pulse-glow">
@@ -28,20 +27,22 @@ const BanModal: React.FC<BanModalProps> = ({ isOpen, reason }) => {
             Vous êtes banni
           </DialogTitle>
           <DialogDescription className="text-red-200 mt-4">
-            <div className="bg-red-800/50 rounded-lg p-4 border border-red-600">
-              <p className="font-semibold text-white mb-2">Raison du bannissement :</p>
-              <p className="text-red-100">{reason}</p>
-            </div>
+            Votre accès à la plateforme a été restreint de manière permanente.
           </DialogDescription>
         </DialogHeader>
 
+        <div className="bg-red-800/50 rounded-lg p-4 border border-red-600 mt-4">
+          <div className="font-semibold text-white mb-2">Raison du bannissement :</div>
+          <div className="text-red-100">{reason}</div>
+        </div>
+
         <div className="text-center mt-6">
-          <p className="text-red-200 text-sm">
+          <div className="text-red-200 text-sm">
             Votre accès à la plateforme a été restreint de manière permanente.
-          </p>
-          <p className="text-red-300 text-xs mt-2">
+          </div>
+          <div className="text-red-300 text-xs mt-2">
             Cette décision est définitive et ne peut pas être contestée.
-          </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
