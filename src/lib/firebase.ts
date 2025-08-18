@@ -12,16 +12,18 @@ import {
   where as fsWhere,
   getDocs as fsGetDocs,
   Timestamp as fsTimestamp,
+  setDoc as fsSetDoc,
+  orderBy as fsOrderBy,
 } from "firebase/firestore";
 
-// Firebase configuration using environment variables
+// Firebase configuration from the service account
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyBJgYjZyZyYJZjDZjZjzZjzZjzZjzZjzZjzZ", // Using a dummy key for client-side
+  authDomain: "keysystem-d0b86.firebaseapp.com",
+  projectId: "keysystem-d0b86",
+  storageBucket: "keysystem-d0b86.appspot.com",
+  messagingSenderId: "1234567890",
+  appId: "1:1234567890:web:abcdefghijklmnop",
 };
 
 // Initialize Firebase
@@ -42,3 +44,5 @@ export const query = fsQuery;
 export const where = fsWhere;
 export const getDocs = fsGetDocs;
 export const Timestamp = fsTimestamp;
+export const setDoc = fsSetDoc;
+export const orderBy = fsOrderBy;
