@@ -25,6 +25,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     if (authStatus === "true") {
       setIsAuthenticated(true);
     }
+
+    // Return empty cleanup function to prevent unsubscribe errors
+    return () => {
+      // No cleanup needed for localStorage
+    };
   }, []);
 
   const login = (username: string, password: string): boolean => {
