@@ -99,27 +99,24 @@ export const useLicenses = () => {
     productId: string,
   ): Promise<{ isValid: boolean; license?: License }> => {
     try {
-      const q = query(
-        collection(db, "licenses"),
-        where("code", "==", licenseCode),
-        where("productId", "==", productId),
+      const license = licenses.find(
+        (l) => l.code === licenseCode && l.productId === productId
       );
-      const querySnapshot = await getDocs(q);
 
-      if (querySnapshot.empty) return { isValid: false };
-
-      const licenseDoc = querySnapshot.docs[0];
-      const license = licenseDoc.data() as License;
+      if (!license) return { isValid: false };
 
       const isValid =
         license.isActive && license.currentUsages < license.maxUsages;
 
       if (isValid) {
         // Increment usage count
-        await updateDoc(doc(db, "licenses", licenseDoc.id), {
-          currentUsages: license.currentUsages + 1,
-        });
-        await fetchLicenses(); // Refresh the list
+        const updatedLicenses = licenses.map((l) =>
+          l.id === license.id
+            ? { ...l, currentUsages: l.currentUsages + 1 }
+            : l
+        );
+        localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
+        setLicenses(updatedLicenses);
       }
 
       return { isValid, license };
