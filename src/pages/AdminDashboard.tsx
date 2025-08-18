@@ -294,7 +294,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen relative">
-      <StarfieldBackground />
+      <SimpleStarsBackground />
 
       <div className="relative z-10">
         {/* Header */}
