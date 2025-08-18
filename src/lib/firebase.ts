@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { 
+import {
   collection as fsCollection,
   doc as fsDoc,
   addDoc as fsAddDoc,
@@ -11,7 +11,7 @@ import {
   query as fsQuery,
   where as fsWhere,
   getDocs as fsGetDocs,
-  Timestamp as fsTimestamp
+  Timestamp as fsTimestamp,
 } from "firebase/firestore";
 
 // Firebase configuration using environment variables
