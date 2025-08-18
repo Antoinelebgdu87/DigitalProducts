@@ -118,32 +118,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const createUsername = async (username?: string): Promise<User> => {
     try {
       const finalUsername = username || generateRandomUsername();
-      
-      // Check if username already exists
-      const usernameQuery = query(
-        collection(db, "users"),
-        where("username", "==", finalUsername)
-      );
-      const existingUsers = await getDocs(usernameQuery);
-      
-      if (!existingUsers.empty) {
-        throw new Error("Username already exists");
-      }
 
-      const userData = {
-        username: finalUsername,
-        isOnline: true,
-        isBanned: false,
-        warnings: [],
-        createdAt: Timestamp.now(),
-        lastSeen: Timestamp.now(),
-      };
+      // Simplified - just use localStorage for now
+      const userId = Date.now().toString();
+      localStorage.setItem("userId", userId);
+      localStorage.setItem("username", finalUsername);
 
-      const docRef = await addDoc(collection(db, "users"), userData);
-      localStorage.setItem("userId", docRef.id);
-      
       const newUser: User = {
-        id: docRef.id,
+        id: userId,
         username: finalUsername,
         isOnline: true,
         isBanned: false,
