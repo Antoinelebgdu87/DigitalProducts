@@ -273,14 +273,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           };
 
           localStorage.setItem("allUsers", JSON.stringify(allUsers));
-          setUsers(allUsers);
+          const parsedUsers = parseUsers(allUsers);
+          setUsers(parsedUsers);
 
           // If it's the current user, update them too
           if (currentUser?.id === userId) {
-            setCurrentUser(allUsers[userIndex]);
+            setCurrentUser(parsedUsers[userIndex]);
           }
 
-          console.log("🚫 Utilisateur banni:", allUsers[userIndex].username);
+          console.log("🚫 Utilisateur banni:", parsedUsers[userIndex].username);
         }
       }
     } catch (error) {
