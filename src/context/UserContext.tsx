@@ -102,6 +102,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[] | null>(null);
 
+  // Helper function to parse users with proper date conversion
+  const parseUsers = (usersData: User[]): User[] => {
+    return usersData.map(user => ({
+      ...user,
+      createdAt: new Date(user.createdAt),
+      lastSeen: new Date(user.lastSeen),
+      bannedAt: user.bannedAt ? new Date(user.bannedAt) : undefined,
+      warnings: (user.warnings || []).map(warning => ({
+        ...warning,
+        createdAt: new Date(warning.createdAt)
+      }))
+    }));
+  };
+
   // Check user status on load
   useEffect(() => {
     const checkExistingUser = async () => {
