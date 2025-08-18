@@ -78,38 +78,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   // Check user status on load
   useEffect(() => {
     const checkExistingUser = async () => {
+      // Simplified for debug - just check localStorage
       const storedUserId = localStorage.getItem("userId");
-      if (storedUserId) {
-        try {
-          const userDoc = await getDoc(doc(db, "users", storedUserId));
-          if (userDoc.exists()) {
-            const userData = userDoc.data();
-            const user: User = {
-              id: userDoc.id,
-              username: userData.username,
-              isOnline: true,
-              isBanned: userData.isBanned || false,
-              banReason: userData.banReason,
-              bannedAt: userData.bannedAt?.toDate(),
-              warnings: userData.warnings || [],
-              createdAt: userData.createdAt?.toDate() || new Date(),
-              lastSeen: new Date(),
-            };
-            
-            // Update user as online
-            await updateDoc(doc(db, "users", storedUserId), {
-              isOnline: true,
-              lastSeen: Timestamp.now(),
-            });
-            
-            setCurrentUser(user);
-          } else {
-            localStorage.removeItem("userId");
-          }
-        } catch (error) {
-          console.error("Error checking existing user:", error);
-          localStorage.removeItem("userId");
-        }
+      const storedUsername = localStorage.getItem("username");
+
+      if (storedUserId && storedUsername) {
+        const user: User = {
+          id: storedUserId,
+          username: storedUsername,
+          isOnline: true,
+          isBanned: false,
+          warnings: [],
+          createdAt: new Date(),
+          lastSeen: new Date(),
+        };
+        setCurrentUser(user);
       }
     };
 
