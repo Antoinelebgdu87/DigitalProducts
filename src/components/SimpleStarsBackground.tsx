@@ -37,7 +37,7 @@ const SimpleStarsBackground: React.FC = () => {
           y: Math.random() * window.innerHeight,
           size: Math.random() * 2 + 0.5,
           opacity: Math.random() * 0.8 + 0.2,
-          twinkleSpeed: Math.random() * 0.02 + 0.01,
+          twinkleSpeed: Math.random() * 0.08 + 0.04,
           currentOpacity: Math.random() * 0.8 + 0.2,
         });
       }
@@ -50,13 +50,13 @@ const SimpleStarsBackground: React.FC = () => {
       ctx.fillStyle = "rgba(12, 12, 12, 1)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      timeRef.current += 0.016; // ~60fps
+      timeRef.current += 0.064; // ~60fps mais plus rapide
 
       starsRef.current.forEach((star) => {
         // Simple twinkle effect
         star.currentOpacity =
           star.opacity +
-          Math.sin(timeRef.current * star.twinkleSpeed * 100) * 0.3;
+          Math.sin(timeRef.current * star.twinkleSpeed * 100) * 0.6;
         star.currentOpacity = Math.max(0.1, Math.min(1, star.currentOpacity));
 
         // Draw star

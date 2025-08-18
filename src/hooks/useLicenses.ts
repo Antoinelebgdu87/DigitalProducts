@@ -24,7 +24,12 @@ export const useLicenses = () => {
       const stored = localStorage.getItem("licenses");
       if (stored) {
         const licensesData = JSON.parse(stored) as License[];
-        setLicenses(licensesData);
+        // Convert date strings back to Date objects
+        const parsedLicenses = licensesData.map((license) => ({
+          ...license,
+          createdAt: new Date(license.createdAt),
+        }));
+        setLicenses(parsedLicenses);
       } else {
         setLicenses([]);
       }
@@ -57,7 +62,8 @@ export const useLicenses = () => {
   ): Promise<string> => {
     try {
       const code = generateLicenseCode();
-      await addDoc(collection(db, "licenses"), {
+      const newLicense: License = {
+        id: Date.now().toString(),
         productId,
         code,
         category,
@@ -65,8 +71,11 @@ export const useLicenses = () => {
         currentUsages: 0,
         createdAt: new Date(),
         isActive: true,
-      });
-      await fetchLicenses(); // Refresh the list
+      };
+
+      const updatedLicenses = [newLicense, ...licenses];
+      localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
+      setLicenses(updatedLicenses);
       return code;
     } catch (error) {
       console.error("Error creating license:", error);
@@ -76,8 +85,9 @@ export const useLicenses = () => {
 
   const deleteLicense = async (licenseId: string): Promise<void> => {
     try {
-      await deleteDoc(doc(db, "licenses", licenseId));
-      await fetchLicenses(); // Refresh the list
+      const updatedLicenses = licenses.filter((l) => l.id !== licenseId);
+      localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
+      setLicenses(updatedLicenses);
     } catch (error) {
       console.error("Error deleting license:", error);
       throw error;
@@ -89,27 +99,24 @@ export const useLicenses = () => {
     productId: string,
   ): Promise<{ isValid: boolean; license?: License }> => {
     try {
-      const q = query(
-        collection(db, "licenses"),
-        where("code", "==", licenseCode),
-        where("productId", "==", productId),
+      const license = licenses.find(
+        (l) => l.code === licenseCode && l.productId === productId,
       );
-      const querySnapshot = await getDocs(q);
 
-      if (querySnapshot.empty) return { isValid: false };
-
-      const licenseDoc = querySnapshot.docs[0];
-      const license = licenseDoc.data() as License;
+      if (!license) return { isValid: false };
 
       const isValid =
         license.isActive && license.currentUsages < license.maxUsages;
 
       if (isValid) {
         // Increment usage count
-        await updateDoc(doc(db, "licenses", licenseDoc.id), {
-          currentUsages: license.currentUsages + 1,
-        });
-        await fetchLicenses(); // Refresh the list
+        const updatedLicenses = licenses.map((l) =>
+          l.id === license.id
+            ? { ...l, currentUsages: l.currentUsages + 1 }
+            : l,
+        );
+        localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
+        setLicenses(updatedLicenses);
       }
 
       return { isValid, license };

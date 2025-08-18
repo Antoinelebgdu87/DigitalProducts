@@ -112,18 +112,9 @@ const ModernHomePage: React.FC = () => {
       >
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
-            <motion.div
-              className="flex items-center space-x-4"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 400, damping: 10 }}
-            >
-              <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-xl">D</span>
-              </div>
-              <span className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                DigitalHub
-              </span>
-            </motion.div>
+            <div className="text-xl bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent pl-4">
+              DigitalHub
+            </div>
 
             <div className="flex items-center space-x-3">
               {currentUser && (
@@ -171,9 +162,6 @@ const ModernHomePage: React.FC = () => {
               Digital Products
             </span>
             <br />
-            <span className="bg-gradient-to-r from-red-400 via-red-500 to-red-600 bg-clip-text text-transparent">
-              Redefined
-            </span>
           </motion.h1>
 
           <motion.p
@@ -318,9 +306,6 @@ const ModernHomePage: React.FC = () => {
               transition={{ duration: 0.6 }}
               className="text-center py-20"
             >
-              <div className="w-24 h-24 mx-auto mb-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center">
-                <span className="text-white font-bold text-4xl">D</span>
-              </div>
               <h3 className="text-2xl font-bold text-white mb-4">
                 Coming Soon
               </h3>
@@ -360,19 +345,11 @@ const ModernHomePage: React.FC = () => {
       >
         <div className="container mx-auto px-6 py-12">
           <div className="text-center">
-            <div className="flex items-center justify-center space-x-4 mb-6">
-              <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-lg">D</span>
-              </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                DigitalHub
-              </span>
+            <div className="text-2xl bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-6 pl-4">
+              DigitalHub
             </div>
             <p className="text-gray-400 mb-4">
               © 2025 DigitalHub • All rights reserved
-            </p>
-            <p className="text-sm text-gray-500">
-              Premium digital marketplace • 100% anonymous • Instant access
             </p>
           </div>
         </div>

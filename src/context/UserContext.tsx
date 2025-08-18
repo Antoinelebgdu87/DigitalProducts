@@ -102,6 +102,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[] | null>(null);
 
+  // Helper function to parse users with proper date conversion
+  const parseUsers = (usersData: User[]): User[] => {
+    return usersData.map((user) => ({
+      ...user,
+      createdAt: new Date(user.createdAt),
+      lastSeen: new Date(user.lastSeen),
+      bannedAt: user.bannedAt ? new Date(user.bannedAt) : undefined,
+      warnings: (user.warnings || []).map((warning) => ({
+        ...warning,
+        createdAt: new Date(warning.createdAt),
+      })),
+    }));
+  };
+
   // Check user status on load
   useEffect(() => {
     const checkExistingUser = async () => {
@@ -162,8 +176,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         const stored = localStorage.getItem("allUsers");
         if (stored) {
           const usersData = JSON.parse(stored) as User[];
-          setUsers(usersData);
-          console.log("📋 Utilisateurs chargés:", usersData.length);
+          const parsedUsers = parseUsers(usersData);
+          setUsers(parsedUsers);
+          console.log("📋 Utilisateurs chargés:", parsedUsers.length);
         } else {
           setUsers([]);
           console.log("📋 Aucun utilisateur dans la base");
@@ -258,14 +273,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           };
 
           localStorage.setItem("allUsers", JSON.stringify(allUsers));
-          setUsers(allUsers);
+          const parsedUsers = parseUsers(allUsers);
+          setUsers(parsedUsers);
 
           // If it's the current user, update them too
           if (currentUser?.id === userId) {
-            setCurrentUser(allUsers[userIndex]);
+            setCurrentUser(parsedUsers[userIndex]);
           }
 
-          console.log("🚫 Utilisateur banni:", allUsers[userIndex].username);
+          console.log("🚫 Utilisateur banni:", parsedUsers[userIndex].username);
         }
       }
     } catch (error) {
@@ -295,14 +311,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           };
 
           localStorage.setItem("allUsers", JSON.stringify(allUsers));
-          setUsers(allUsers);
+          const parsedUsers = parseUsers(allUsers);
+          setUsers(parsedUsers);
 
           // If it's the current user, update them too
           if (currentUser?.id === userId) {
-            setCurrentUser(allUsers[userIndex]);
+            setCurrentUser(parsedUsers[userIndex]);
           }
 
-          console.log("⚠️ Avertissement ajouté:", allUsers[userIndex].username);
+          console.log(
+            "⚠️ Avertissement ajouté:",
+            parsedUsers[userIndex].username,
+          );
         }
       }
     } catch (error) {
@@ -328,16 +348,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           };
 
           localStorage.setItem("allUsers", JSON.stringify(allUsers));
-          setUsers(allUsers);
+          const parsedUsers = parseUsers(allUsers);
+          setUsers(parsedUsers);
 
           // If it's the current user, update them too
           if (currentUser?.id === userId) {
-            setCurrentUser(allUsers[userIndex]);
+            setCurrentUser(parsedUsers[userIndex]);
           }
 
           console.log(
             "✅ Avertissements marqués comme lus:",
-            allUsers[userIndex].username,
+            parsedUsers[userIndex].username,
           );
         }
       }

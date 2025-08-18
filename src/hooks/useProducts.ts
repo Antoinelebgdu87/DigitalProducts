@@ -23,7 +23,12 @@ export const useProducts = () => {
       const stored = localStorage.getItem("products");
       if (stored) {
         const productsData = JSON.parse(stored) as Product[];
-        setProducts(productsData);
+        // Convert date strings back to Date objects
+        const parsedProducts = productsData.map((product) => ({
+          ...product,
+          createdAt: new Date(product.createdAt),
+        }));
+        setProducts(parsedProducts);
       } else {
         setProducts([]);
       }
