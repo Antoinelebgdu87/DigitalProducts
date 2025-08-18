@@ -57,6 +57,7 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent
         className="bg-gray-900/95 border-gray-800 backdrop-blur-xl max-w-md"
+        hideClose
       >
         <DialogHeader className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center">
