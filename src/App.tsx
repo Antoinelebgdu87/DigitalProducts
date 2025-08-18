@@ -26,7 +26,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 // Main App Component with Maintenance Check
 const AppContent = () => {
   try {
-    const { isMaintenanceMode, maintenanceMessage, isLoading } = useMaintenance();
+    const { isMaintenanceMode, maintenanceMessage, isLoading } =
+      useMaintenance();
     const { isAuthenticated } = useAuth();
 
     // Show loading state while maintenance context is initializing
