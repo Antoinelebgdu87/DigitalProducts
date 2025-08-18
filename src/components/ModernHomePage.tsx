@@ -19,6 +19,8 @@ import { Link } from "react-router-dom";
 import StarfieldBackground from "./StarfieldBackground";
 import ModernProductCard from "./ModernProductCard";
 import UsernameModal from "./UsernameModal";
+import BanModal from "./BanModal";
+import WarningModal from "./WarningModal";
 import { useUser } from "@/context/UserContext";
 
 const ModernHomePage: React.FC = () => {
