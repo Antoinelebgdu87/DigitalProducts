@@ -99,87 +99,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     checkExistingUser();
   }, []);
 
-  // Listen to users collection
+  // Temporarily simplified - no Firebase listeners
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      collection(db, "users"),
-      (snapshot) => {
-        const usersData: User[] = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            username: data.username,
-            isOnline: data.isOnline || false,
-            isBanned: data.isBanned || false,
-            banReason: data.banReason,
-            bannedAt: data.bannedAt?.toDate(),
-            warnings: data.warnings || [],
-            createdAt: data.createdAt?.toDate() || new Date(),
-            lastSeen: data.lastSeen?.toDate() || new Date(),
-          };
-        });
-        setUsers(usersData);
-      },
-      (error) => {
-        console.error("Error listening to users:", error);
-      }
-    );
-
-    return () => unsubscribe();
+    // Mock users data
+    setUsers([]);
   }, []);
 
-  // Listen to current user changes
+  // Simplified user changes listener
   useEffect(() => {
-    if (!currentUser?.id) return;
-
-    const unsubscribe = onSnapshot(
-      doc(db, "users", currentUser.id),
-      (doc) => {
-        if (doc.exists()) {
-          const userData = doc.data();
-          const updatedUser: User = {
-            id: doc.id,
-            username: userData.username,
-            isOnline: userData.isOnline || false,
-            isBanned: userData.isBanned || false,
-            banReason: userData.banReason,
-            bannedAt: userData.bannedAt?.toDate(),
-            warnings: userData.warnings || [],
-            createdAt: userData.createdAt?.toDate() || new Date(),
-            lastSeen: userData.lastSeen?.toDate() || new Date(),
-          };
-          setCurrentUser(updatedUser);
-        }
-      },
-      (error) => {
-        console.error("Error listening to current user:", error);
-      }
-    );
-
-    return () => unsubscribe();
+    // No Firebase listener for now
   }, [currentUser?.id]);
 
-  // Set user offline on beforeunload
+  // Simplified beforeunload
   useEffect(() => {
-    const handleBeforeUnload = async () => {
-      if (currentUser?.id) {
-        try {
-          await updateDoc(doc(db, "users", currentUser.id), {
-            isOnline: false,
-            lastSeen: Timestamp.now(),
-          });
-        } catch (error) {
-          console.error("Error setting user offline:", error);
-        }
-      }
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-      handleBeforeUnload();
-    };
+    // No Firebase operations for now
   }, [currentUser?.id]);
 
   const createUsername = async (username?: string): Promise<User> => {
