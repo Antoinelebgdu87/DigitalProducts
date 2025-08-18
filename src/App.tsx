@@ -71,9 +71,11 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <MaintenanceProvider>
-            <div className="dark min-h-screen bg-background text-foreground">
-              <AppContent />
-            </div>
+            <UserProvider>
+              <div className="dark min-h-screen bg-background text-foreground">
+                <AppContent />
+              </div>
+            </UserProvider>
           </MaintenanceProvider>
         </AuthProvider>
       </BrowserRouter>
