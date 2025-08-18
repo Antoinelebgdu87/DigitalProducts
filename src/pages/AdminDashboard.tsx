@@ -76,6 +76,7 @@ const AdminDashboard: React.FC = () => {
     getActiveLicenses,
     loading: licensesLoading,
   } = useLicenses();
+  const { users, banUser, addWarning } = useUser();
 
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
