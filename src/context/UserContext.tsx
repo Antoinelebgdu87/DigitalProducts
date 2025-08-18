@@ -194,6 +194,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     };
 
     loadAllUsers();
+
+    return () => {
+      // No cleanup needed
+    };
   }, []);
 
   // Simplified user changes listener
