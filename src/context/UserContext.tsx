@@ -162,8 +162,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         const stored = localStorage.getItem("allUsers");
         if (stored) {
           const usersData = JSON.parse(stored) as User[];
-          setUsers(usersData);
-          console.log("📋 Utilisateurs chargés:", usersData.length);
+          // Convert date strings back to Date objects
+          const parsedUsers = usersData.map(user => ({
+            ...user,
+            createdAt: new Date(user.createdAt),
+            lastSeen: new Date(user.lastSeen),
+            bannedAt: user.bannedAt ? new Date(user.bannedAt) : undefined,
+            warnings: (user.warnings || []).map(warning => ({
+              ...warning,
+              createdAt: new Date(warning.createdAt)
+            }))
+          }));
+          setUsers(parsedUsers);
+          console.log("📋 Utilisateurs chargés:", parsedUsers.length);
         } else {
           setUsers([]);
           console.log("📋 Aucun utilisateur dans la base");
