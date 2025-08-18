@@ -1,170 +1,162 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 
-// Check if we're in development and should use mock
-const USE_MOCK = true; // Set to false when you have proper Firebase web config
+// Use mock for development to avoid connection issues
+const USE_MOCK = true;
 
-// Mock Firebase implementation
-class MockDoc {
-  constructor(public id: string, public data: any) {}
-  
-  exists() {
-    return true;
-  }
-  
-  data() {
-    return this.data;
-  }
-}
+// Simple in-memory mock database
+class MockDatabase {
+  private data: { [collection: string]: { [id: string]: any } } = {};
+  private listeners: { [path: string]: ((data: any) => void)[] } = {};
 
-class MockCollection {
-  private storageKey: string;
-  private listeners: Map<string, (snapshot: any) => void> = new Map();
-
-  constructor(collectionName: string) {
-    this.storageKey = `mock_firebase_${collectionName}`;
-  }
-
-  private getDocs(): MockDoc[] {
-    const stored = localStorage.getItem(this.storageKey);
-    if (!stored) return [];
-    
-    try {
-      const parsed = JSON.parse(stored);
-      return parsed.map((item: any) => new MockDoc(item.id, item.data));
-    } catch {
-      return [];
+  // Get collection data
+  getCollection(name: string) {
+    if (!this.data[name]) {
+      this.data[name] = {};
     }
+    return this.data[name];
   }
 
-  private saveDocs(docs: MockDoc[]) {
-    const serializable = docs.map(doc => ({ id: doc.id, data: doc.data }));
-    localStorage.setItem(this.storageKey, JSON.stringify(serializable));
-    this.notifyListeners(docs);
-  }
-
-  private notifyListeners(docs: MockDoc[]) {
-    this.listeners.forEach(callback => {
-      const snapshot = {
-        docs: docs,
-        empty: docs.length === 0
-      };
-      callback(snapshot);
-    });
-  }
-
-  async addDoc(data: any) {
-    const docs = this.getDocs();
+  // Add document
+  addDoc(collectionName: string, data: any) {
+    const collection = this.getCollection(collectionName);
     const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-    const newDoc = new MockDoc(id, {
+    
+    collection[id] = {
       ...data,
       createdAt: new Date(),
       lastSeen: new Date()
-    });
-    docs.push(newDoc);
-    this.saveDocs(docs);
+    };
+    
+    this.notifyListeners(collectionName);
     return { id };
   }
 
-  async getDoc(id: string) {
-    const docs = this.getDocs();
-    const doc = docs.find(d => d.id === id);
+  // Get document
+  getDoc(collectionName: string, id: string) {
+    const collection = this.getCollection(collectionName);
+    const doc = collection[id];
+    
     return {
       id,
       exists: () => !!doc,
-      data: () => doc?.data || null
+      data: () => doc || null
     };
   }
 
-  async updateDoc(id: string, updates: any) {
-    const docs = this.getDocs();
-    const docIndex = docs.findIndex(d => d.id === id);
-    if (docIndex >= 0) {
-      docs[docIndex].data = { ...docs[docIndex].data, ...updates };
-      this.saveDocs(docs);
+  // Update document
+  updateDoc(collectionName: string, id: string, updates: any) {
+    const collection = this.getCollection(collectionName);
+    if (collection[id]) {
+      collection[id] = { ...collection[id], ...updates };
+      this.notifyListeners(collectionName);
+      this.notifyListeners(`${collectionName}/${id}`);
     }
   }
 
-  async deleteDoc(id: string) {
-    const docs = this.getDocs();
-    const filteredDocs = docs.filter(d => d.id !== id);
-    this.saveDocs(filteredDocs);
+  // Delete document
+  deleteDoc(collectionName: string, id: string) {
+    const collection = this.getCollection(collectionName);
+    delete collection[id];
+    this.notifyListeners(collectionName);
   }
 
-  onSnapshot(callback: (snapshot: any) => void) {
-    const listenerId = Math.random().toString(36);
-    this.listeners.set(listenerId, callback);
+  // Get all docs
+  getDocs(collectionName: string) {
+    const collection = this.getCollection(collectionName);
+    const docs = Object.entries(collection).map(([id, data]) => ({
+      id,
+      data: () => data,
+      exists: () => true
+    }));
     
-    // Call immediately with current data
-    this.notifyListeners(this.getDocs());
+    return {
+      docs,
+      empty: docs.length === 0
+    };
+  }
+
+  // Query with where clause
+  queryWhere(collectionName: string, field: string, operator: string, value: any) {
+    const collection = this.getCollection(collectionName);
+    const docs = Object.entries(collection)
+      .filter(([id, data]) => {
+        const fieldValue = data[field];
+        switch (operator) {
+          case '==': return fieldValue === value;
+          case '!=': return fieldValue !== value;
+          case '>': return fieldValue > value;
+          case '<': return fieldValue < value;
+          case '>=': return fieldValue >= value;
+          case '<=': return fieldValue <= value;
+          default: return false;
+        }
+      })
+      .map(([id, data]) => ({
+        id,
+        data: () => data,
+        exists: () => true
+      }));
+    
+    return {
+      docs,
+      empty: docs.length === 0
+    };
+  }
+
+  // Listen to changes
+  onSnapshot(path: string, callback: (data: any) => void) {
+    if (!this.listeners[path]) {
+      this.listeners[path] = [];
+    }
+    this.listeners[path].push(callback);
+
+    // Immediately call with current data
+    if (path.includes('/')) {
+      // Document listener
+      const [collectionName, docId] = path.split('/');
+      const doc = this.getDoc(collectionName, docId);
+      callback(doc);
+    } else {
+      // Collection listener
+      const snapshot = this.getDocs(path);
+      callback(snapshot);
+    }
 
     // Return unsubscribe function
     return () => {
-      this.listeners.delete(listenerId);
-    };
-  }
-
-  where(field: string, operator: string, value: any) {
-    return {
-      get: async () => {
-        const docs = this.getDocs();
-        const filtered = docs.filter(doc => {
-          const fieldValue = doc.data[field];
-          switch (operator) {
-            case '==': return fieldValue === value;
-            case '!=': return fieldValue !== value;
-            case '>': return fieldValue > value;
-            case '<': return fieldValue < value;
-            case '>=': return fieldValue >= value;
-            case '<=': return fieldValue <= value;
-            default: return false;
-          }
-        });
-        return {
-          empty: filtered.length === 0,
-          docs: filtered
-        };
+      if (this.listeners[path]) {
+        const index = this.listeners[path].indexOf(callback);
+        if (index > -1) {
+          this.listeners[path].splice(index, 1);
+        }
       }
     };
   }
-}
 
-class MockFirestore {
-  private collections: Map<string, MockCollection> = new Map();
-
-  collection(name: string) {
-    if (!this.collections.has(name)) {
-      this.collections.set(name, new MockCollection(name));
+  // Notify listeners
+  private notifyListeners(path: string) {
+    if (this.listeners[path]) {
+      this.listeners[path].forEach(callback => {
+        if (path.includes('/')) {
+          // Document listener
+          const [collectionName, docId] = path.split('/');
+          const doc = this.getDoc(collectionName, docId);
+          callback(doc);
+        } else {
+          // Collection listener
+          const snapshot = this.getDocs(path);
+          callback(snapshot);
+        }
+      });
     }
-    return this.collections.get(name)!;
-  }
-
-  doc(collectionName: string, docId: string) {
-    const collection = this.collection(collectionName);
-    return {
-      get: () => collection.getDoc(docId),
-      update: (data: any) => collection.updateDoc(docId, data),
-      delete: () => collection.deleteDoc(docId),
-      onSnapshot: (callback: any) => {
-        const unsubscribe = collection.onSnapshot((snapshot) => {
-          const doc = snapshot.docs.find((d: any) => d.id === docId);
-          if (doc) {
-            callback(doc);
-          } else {
-            callback({
-              exists: () => false,
-              data: () => null,
-              id: docId
-            });
-          }
-        });
-        return unsubscribe;
-      }
-    };
   }
 }
 
-// Web app Firebase configuration (placeholder - needs real web app config)
+// Global mock database instance
+const mockDB = new MockDatabase();
+
+// Web app Firebase configuration (placeholder)
 const firebaseConfig = {
   apiKey: "AIzaSyBGX8nLq7yPYDqpvSHxXzBUfH9UNjWy1Zc",
   authDomain: "keysystem-d0b86.firebaseapp.com",
@@ -177,21 +169,23 @@ const firebaseConfig = {
 let db: any;
 
 if (USE_MOCK) {
-  // Use mock Firebase for development
-  db = new MockFirestore();
+  // Mock database that mimics Firestore behavior
+  db = { _mock: true };
   console.log("🔧 Using Mock Firebase for development");
 } else {
-  // Use real Firebase
   const app = initializeApp(firebaseConfig);
   db = getFirestore(app);
 }
 
-// Mock Firebase functions that match the real API
+// Mock Firebase functions
 export { db };
 
 export const collection = (database: any, collectionName: string) => {
   if (USE_MOCK) {
-    return database.collection(collectionName);
+    return {
+      _collection: collectionName,
+      _isMockCollection: true
+    };
   } else {
     const { collection: realCollection } = require("firebase/firestore");
     return realCollection(database, collectionName);
@@ -200,7 +194,11 @@ export const collection = (database: any, collectionName: string) => {
 
 export const doc = (database: any, collectionName: string, docId: string) => {
   if (USE_MOCK) {
-    return database.doc(collectionName, docId);
+    return {
+      _collection: collectionName,
+      _docId: docId,
+      _isMockDoc: true
+    };
   } else {
     const { doc: realDoc } = require("firebase/firestore");
     return realDoc(database, collectionName, docId);
@@ -208,8 +206,8 @@ export const doc = (database: any, collectionName: string, docId: string) => {
 };
 
 export const addDoc = async (collectionRef: any, data: any) => {
-  if (USE_MOCK) {
-    return await collectionRef.addDoc(data);
+  if (USE_MOCK && collectionRef._isMockCollection) {
+    return mockDB.addDoc(collectionRef._collection, data);
   } else {
     const { addDoc: realAddDoc } = require("firebase/firestore");
     return await realAddDoc(collectionRef, data);
@@ -217,8 +215,8 @@ export const addDoc = async (collectionRef: any, data: any) => {
 };
 
 export const getDoc = async (docRef: any) => {
-  if (USE_MOCK) {
-    return await docRef.get();
+  if (USE_MOCK && docRef._isMockDoc) {
+    return mockDB.getDoc(docRef._collection, docRef._docId);
   } else {
     const { getDoc: realGetDoc } = require("firebase/firestore");
     return await realGetDoc(docRef);
@@ -226,8 +224,8 @@ export const getDoc = async (docRef: any) => {
 };
 
 export const updateDoc = async (docRef: any, data: any) => {
-  if (USE_MOCK) {
-    return await docRef.update(data);
+  if (USE_MOCK && docRef._isMockDoc) {
+    return mockDB.updateDoc(docRef._collection, docRef._docId, data);
   } else {
     const { updateDoc: realUpdateDoc } = require("firebase/firestore");
     return await realUpdateDoc(docRef, data);
@@ -235,8 +233,8 @@ export const updateDoc = async (docRef: any, data: any) => {
 };
 
 export const deleteDoc = async (docRef: any) => {
-  if (USE_MOCK) {
-    return await docRef.delete();
+  if (USE_MOCK && docRef._isMockDoc) {
+    return mockDB.deleteDoc(docRef._collection, docRef._docId);
   } else {
     const { deleteDoc: realDeleteDoc } = require("firebase/firestore");
     return await realDeleteDoc(docRef);
@@ -245,7 +243,11 @@ export const deleteDoc = async (docRef: any) => {
 
 export const onSnapshot = (ref: any, callback: any) => {
   if (USE_MOCK) {
-    return ref.onSnapshot(callback);
+    if (ref._isMockCollection) {
+      return mockDB.onSnapshot(ref._collection, callback);
+    } else if (ref._isMockDoc) {
+      return mockDB.onSnapshot(`${ref._collection}/${ref._docId}`, callback);
+    }
   } else {
     const { onSnapshot: realOnSnapshot } = require("firebase/firestore");
     return realOnSnapshot(ref, callback);
@@ -254,8 +256,11 @@ export const onSnapshot = (ref: any, callback: any) => {
 
 export const query = (collectionRef: any, ...constraints: any[]) => {
   if (USE_MOCK) {
-    // For mock, return the collection ref itself (simplified)
-    return collectionRef;
+    return {
+      ...collectionRef,
+      _constraints: constraints,
+      _isMockQuery: true
+    };
   } else {
     const { query: realQuery } = require("firebase/firestore");
     return realQuery(collectionRef, ...constraints);
@@ -263,17 +268,22 @@ export const query = (collectionRef: any, ...constraints: any[]) => {
 };
 
 export const where = (field: string, operator: string, value: any) => {
-  if (USE_MOCK) {
-    return { field, operator, value };
-  } else {
-    const { where: realWhere } = require("firebase/firestore");
-    return realWhere(field, operator, value);
-  }
+  return { field, operator, value, _isMockWhere: true };
 };
 
 export const getDocs = async (queryRef: any) => {
-  if (USE_MOCK) {
-    return await queryRef.where('', '==', '').get(); // This is a hack for mock
+  if (USE_MOCK && queryRef._isMockQuery) {
+    // Handle where constraints
+    const whereConstraint = queryRef._constraints?.find((c: any) => c._isMockWhere);
+    if (whereConstraint) {
+      return mockDB.queryWhere(
+        queryRef._collection, 
+        whereConstraint.field, 
+        whereConstraint.operator, 
+        whereConstraint.value
+      );
+    }
+    return mockDB.getDocs(queryRef._collection);
   } else {
     const { getDocs: realGetDocs } = require("firebase/firestore");
     return await realGetDocs(queryRef);
