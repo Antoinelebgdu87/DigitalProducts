@@ -62,7 +62,8 @@ export const useLicenses = () => {
   ): Promise<string> => {
     try {
       const code = generateLicenseCode();
-      await addDoc(collection(db, "licenses"), {
+      const newLicense: License = {
+        id: Date.now().toString(),
         productId,
         code,
         category,
@@ -70,8 +71,11 @@ export const useLicenses = () => {
         currentUsages: 0,
         createdAt: new Date(),
         isActive: true,
-      });
-      await fetchLicenses(); // Refresh the list
+      };
+
+      const updatedLicenses = [newLicense, ...licenses];
+      localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
+      setLicenses(updatedLicenses);
       return code;
     } catch (error) {
       console.error("Error creating license:", error);
