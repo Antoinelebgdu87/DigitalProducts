@@ -81,6 +81,12 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
           error,
         );
         // Keep localStorage values or defaults
+        // If permissions error, use default values
+        if (error instanceof Error && error.message.includes('permissions')) {
+          console.log("⚠️ Permissions Firebase manquantes - utilisation des valeurs par défaut");
+          setIsMaintenanceMode(false);
+          setMaintenanceMessage(DEFAULT_MESSAGE);
+        }
       } finally {
         if (isMounted) {
           setIsLoading(false);
