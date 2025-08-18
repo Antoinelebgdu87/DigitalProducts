@@ -195,11 +195,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   // Simplified user changes listener
   useEffect(() => {
     // No Firebase listener for now
+    return () => {
+      // No cleanup needed
+    };
   }, [currentUser?.id]);
 
   // Simplified beforeunload
   useEffect(() => {
     // No Firebase operations for now
+    return () => {
+      // No cleanup needed
+    };
   }, [currentUser?.id]);
 
   const saveUserToDatabase = (user: User) => {
