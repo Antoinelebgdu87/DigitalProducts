@@ -23,6 +23,18 @@ import { useUser } from "@/context/UserContext";
 
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
+  const { currentUser, checkUserStatus } = useUser();
+  const [showUsernameModal, setShowUsernameModal] = useState(false);
+
+  useEffect(() => {
+    // Check if user needs to create a username
+    if (!currentUser) {
+      setShowUsernameModal(true);
+    } else {
+      // Check if user is banned
+      checkUserStatus();
+    }
+  }, [currentUser, checkUserStatus]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
