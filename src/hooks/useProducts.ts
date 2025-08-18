@@ -54,18 +54,29 @@ export const useProducts = () => {
       },
       (error) => {
         console.error("Error fetching products:", error);
-        if (error.message && (error.message.includes('permissions') || error.message.includes('Missing or insufficient'))) {
-          console.log("⚠️ Permissions Firebase manquantes pour les produits - mode dégradé");
+        if (
+          error.message &&
+          (error.message.includes("permissions") ||
+            error.message.includes("Missing or insufficient"))
+        ) {
+          console.log(
+            "⚠️ Permissions Firebase manquantes pour les produits - mode dégradé",
+          );
           // Fallback: essayer de charger depuis localStorage
           try {
             const stored = localStorage.getItem("products");
             if (stored) {
               const localProducts = JSON.parse(stored);
-              console.log("📦 Fallback: produits chargés depuis localStorage", localProducts.length);
-              setProducts(localProducts.map((p: any) => ({
-                ...p,
-                createdAt: new Date(p.createdAt)
-              })));
+              console.log(
+                "📦 Fallback: produits chargés depuis localStorage",
+                localProducts.length,
+              );
+              setProducts(
+                localProducts.map((p: any) => ({
+                  ...p,
+                  createdAt: new Date(p.createdAt),
+                })),
+              );
             }
           } catch (localError) {
             console.log("⚠️ Aucun produit local trouvé");
