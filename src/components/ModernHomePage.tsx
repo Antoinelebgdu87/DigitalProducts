@@ -16,7 +16,7 @@ import {
   User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import StarfieldBackground from "./StarfieldBackground";
+import SimpleStarsBackground from "./SimpleStarsBackground";
 import ModernProductCard from "./ModernProductCard";
 import UsernameModal from "./UsernameModal";
 import BanModal from "./BanModal";
