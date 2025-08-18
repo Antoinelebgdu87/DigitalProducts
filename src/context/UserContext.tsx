@@ -158,6 +158,31 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     // No Firebase operations for now
   }, [currentUser?.id]);
 
+  const saveUserToDatabase = (user: User) => {
+    try {
+      // Get all users from localStorage
+      const stored = localStorage.getItem("allUsers");
+      let allUsers: User[] = stored ? JSON.parse(stored) : [];
+
+      // Check if user already exists
+      const existingIndex = allUsers.findIndex(u => u.id === user.id);
+      if (existingIndex >= 0) {
+        // Update existing user
+        allUsers[existingIndex] = user;
+      } else {
+        // Add new user
+        allUsers.push(user);
+      }
+
+      // Save back to localStorage
+      localStorage.setItem("allUsers", JSON.stringify(allUsers));
+      setUsers(allUsers);
+      console.log("💾 Utilisateur sauvegardé dans la base:", user.username);
+    } catch (error) {
+      console.error("Erreur lors de la sauvegarde:", error);
+    }
+  };
+
   const createUsername = async (username?: string): Promise<User> => {
     try {
       const finalUsername = username || generateRandomUsername();
@@ -179,6 +204,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       };
 
       setCurrentUser(newUser);
+      saveUserToDatabase(newUser);
       console.log("🎉 Nouvel utilisateur créé:", finalUsername);
       return newUser;
     } catch (error) {
