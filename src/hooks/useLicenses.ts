@@ -28,7 +28,7 @@ export const useLicenses = () => {
   };
 
   // Helper function to convert License object to Firestore data
-  const licenseToFirestore = (license: Omit<License, 'id'>) => {
+  const licenseToFirestore = (license: Omit<License, "id">) => {
     return {
       ...license,
       createdAt: Timestamp.fromDate(license.createdAt),
@@ -41,8 +41,8 @@ export const useLicenses = () => {
       query(collection(db, "licenses"), orderBy("createdAt", "desc")),
       (snapshot) => {
         try {
-          const licensesData = snapshot.docs.map(doc => 
-            parseLicense({ id: doc.id, ...doc.data() })
+          const licensesData = snapshot.docs.map((doc) =>
+            parseLicense({ id: doc.id, ...doc.data() }),
           );
           setLicenses(licensesData);
           console.log("🔑 Licences Firebase chargées:", licensesData.length);
@@ -57,7 +57,7 @@ export const useLicenses = () => {
         console.error("Error fetching licenses:", error);
         setLicenses([]);
         setLoading(false);
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -70,8 +70,12 @@ export const useLicenses = () => {
         const stored = localStorage.getItem("licenses");
         if (stored) {
           const localLicenses = JSON.parse(stored) as License[];
-          console.log("🔄 Migration de", localLicenses.length, "licences vers Firebase...");
-          
+          console.log(
+            "🔄 Migration de",
+            localLicenses.length,
+            "licences vers Firebase...",
+          );
+
           // Check if Firebase already has data
           const snapshot = await getDocs(collection(db, "licenses"));
           if (snapshot.empty) {
@@ -82,7 +86,10 @@ export const useLicenses = () => {
                 ...licenseWithoutId,
                 createdAt: new Date(license.createdAt),
               };
-              await addDoc(collection(db, "licenses"), licenseToFirestore(licenseData));
+              await addDoc(
+                collection(db, "licenses"),
+                licenseToFirestore(licenseData),
+              );
             }
             console.log("✅ Migration des licences terminée");
             // Remove from localStorage after successful migration
@@ -151,11 +158,11 @@ export const useLicenses = () => {
       const q = query(
         collection(db, "licenses"),
         where("code", "==", licenseCode),
-        where("productId", "==", productId)
+        where("productId", "==", productId),
       );
-      
+
       const snapshot = await getDocs(q);
-      
+
       if (snapshot.empty) {
         return { isValid: false };
       }
@@ -163,7 +170,8 @@ export const useLicenses = () => {
       const licenseDoc = snapshot.docs[0];
       const license = parseLicense({ id: licenseDoc.id, ...licenseDoc.data() });
 
-      const isValid = license.isActive && license.currentUsages < license.maxUsages;
+      const isValid =
+        license.isActive && license.currentUsages < license.maxUsages;
 
       if (isValid) {
         // Increment usage count

@@ -140,17 +140,17 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         if (storedUserId && storedUsername) {
           // Load user from Firebase
           const userDoc = await getDoc(doc(db, "users", storedUserId));
-          
+
           if (userDoc.exists()) {
             const userData = parseUser({ id: userDoc.id, ...userDoc.data() });
             setCurrentUser(userData);
-            
+
             // Update online status
             await updateDoc(doc(db, "users", storedUserId), {
               isOnline: true,
               lastSeen: Timestamp.now(),
             });
-            
+
             console.log("🔵 Utilisateur Firebase chargé:", storedUsername);
           } else {
             // User not in Firebase, recreate
@@ -182,8 +182,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       query(collection(db, "users"), orderBy("createdAt", "desc")),
       (snapshot) => {
         try {
-          const usersData = snapshot.docs.map(doc => 
-            parseUser({ id: doc.id, ...doc.data() })
+          const usersData = snapshot.docs.map((doc) =>
+            parseUser({ id: doc.id, ...doc.data() }),
           );
           setUsers(usersData);
           console.log("📋 Utilisateurs Firebase chargés:", usersData.length);
@@ -195,7 +195,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       (error) => {
         console.error("Erreur listener utilisateurs:", error);
         setUsers([]);
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -215,7 +215,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       },
       (error) => {
         console.error("Erreur listener utilisateur actuel:", error);
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -316,11 +316,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         };
 
         const updatedWarnings = [...(userData.warnings || []), newWarning];
-        
+
         await updateDoc(doc(db, "users", userId), {
           warnings: updatedWarnings,
         });
-        
+
         console.log("⚠️ Avertissement Firebase ajouté:", userId);
       }
     } catch (error) {
@@ -342,7 +342,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         await updateDoc(doc(db, "users", userId), {
           warnings: updatedWarnings,
         });
-        
+
         console.log("✅ Avertissements Firebase marqués comme lus:", userId);
       }
     } catch (error) {
@@ -353,7 +353,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const checkUserStatus = async (): Promise<void> => {
     if (!currentUser?.id) return;
-    
+
     try {
       const userDoc = await getDoc(doc(db, "users", currentUser.id));
       if (userDoc.exists()) {

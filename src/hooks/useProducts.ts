@@ -27,7 +27,7 @@ export const useProducts = () => {
   };
 
   // Helper function to convert Product object to Firestore data
-  const productToFirestore = (product: Omit<Product, 'id'>) => {
+  const productToFirestore = (product: Omit<Product, "id">) => {
     return {
       ...product,
       createdAt: Timestamp.fromDate(product.createdAt),
@@ -40,8 +40,8 @@ export const useProducts = () => {
       query(collection(db, "products"), orderBy("createdAt", "desc")),
       (snapshot) => {
         try {
-          const productsData = snapshot.docs.map(doc => 
-            parseProduct({ id: doc.id, ...doc.data() })
+          const productsData = snapshot.docs.map((doc) =>
+            parseProduct({ id: doc.id, ...doc.data() }),
           );
           setProducts(productsData);
           console.log("📦 Produits Firebase chargés:", productsData.length);
@@ -56,7 +56,7 @@ export const useProducts = () => {
         console.error("Error fetching products:", error);
         setProducts([]);
         setLoading(false);
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -69,8 +69,12 @@ export const useProducts = () => {
         const stored = localStorage.getItem("products");
         if (stored) {
           const localProducts = JSON.parse(stored) as Product[];
-          console.log("🔄 Migration de", localProducts.length, "produits vers Firebase...");
-          
+          console.log(
+            "🔄 Migration de",
+            localProducts.length,
+            "produits vers Firebase...",
+          );
+
           // Check if Firebase already has data
           const snapshot = await getDocs(collection(db, "products"));
           if (snapshot.empty) {
@@ -81,7 +85,10 @@ export const useProducts = () => {
                 ...productWithoutId,
                 createdAt: new Date(product.createdAt),
               };
-              await addDoc(collection(db, "products"), productToFirestore(productData));
+              await addDoc(
+                collection(db, "products"),
+                productToFirestore(productData),
+              );
             }
             console.log("✅ Migration des produits terminée");
             // Remove from localStorage after successful migration
@@ -104,7 +111,7 @@ export const useProducts = () => {
         ...productData,
         createdAt: new Date(),
       };
-      
+
       await addDoc(collection(db, "products"), productToFirestore(newProduct));
       console.log("🎉 Nouveau produit Firebase créé:", productData.name);
     } catch (error) {

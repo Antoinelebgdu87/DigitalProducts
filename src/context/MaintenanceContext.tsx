@@ -26,20 +26,28 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const initializeMaintenanceSettings = async () => {
       try {
-        const maintenanceDoc = await getDoc(doc(db, "settings", MAINTENANCE_DOC_ID));
-        
+        const maintenanceDoc = await getDoc(
+          doc(db, "settings", MAINTENANCE_DOC_ID),
+        );
+
         if (!maintenanceDoc.exists()) {
           // Create default settings if they don't exist
           const defaultSettings = {
             isActive: false,
             message: DEFAULT_MESSAGE,
           };
-          
-          await setDoc(doc(db, "settings", MAINTENANCE_DOC_ID), defaultSettings);
+
+          await setDoc(
+            doc(db, "settings", MAINTENANCE_DOC_ID),
+            defaultSettings,
+          );
           console.log("🛠️ Paramètres de maintenance Firebase initialisés");
         }
       } catch (error) {
-        console.error("Erreur lors de l'initialisation des paramètres de maintenance:", error);
+        console.error(
+          "Erreur lors de l'initialisation des paramètres de maintenance:",
+          error,
+        );
       }
     };
 
@@ -55,11 +63,17 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
           const data = doc.data();
           setIsMaintenanceMode(data.isActive || false);
           setMaintenanceMessage(data.message || DEFAULT_MESSAGE);
-          console.log("🛠️ Paramètres de maintenance Firebase mis à jour:", data);
+          console.log(
+            "🛠️ Paramètres de maintenance Firebase mis à jour:",
+            data,
+          );
         }
       },
       (error) => {
-        console.error("Erreur lors de l'écoute des paramètres de maintenance:", error);
+        console.error(
+          "Erreur lors de l'écoute des paramètres de maintenance:",
+          error,
+        );
         // Fallback to localStorage in case of error
         const stored = localStorage.getItem("maintenanceMode");
         if (stored) {
@@ -71,7 +85,7 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
             // Ignore parse errors
           }
         }
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -84,10 +98,14 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
         const stored = localStorage.getItem("maintenanceMode");
         if (stored) {
           const localData = JSON.parse(stored);
-          console.log("🔄 Migration des paramètres de maintenance vers Firebase...");
-          
+          console.log(
+            "🔄 Migration des paramètres de maintenance vers Firebase...",
+          );
+
           // Check if Firebase already has data
-          const maintenanceDoc = await getDoc(doc(db, "settings", MAINTENANCE_DOC_ID));
+          const maintenanceDoc = await getDoc(
+            doc(db, "settings", MAINTENANCE_DOC_ID),
+          );
           if (!maintenanceDoc.exists()) {
             // Migrate to Firebase
             await setDoc(doc(db, "settings", MAINTENANCE_DOC_ID), {
@@ -100,7 +118,10 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
           }
         }
       } catch (error) {
-        console.error("Erreur lors de la migration des paramètres de maintenance:", error);
+        console.error(
+          "Erreur lors de la migration des paramètres de maintenance:",
+          error,
+        );
       }
     };
 
@@ -115,11 +136,14 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
       const data = { isActive, message };
       await setDoc(doc(db, "settings", MAINTENANCE_DOC_ID), data);
       console.log("🛠️ Mode maintenance Firebase mis à jour:", data);
-      
+
       // Also update localStorage as backup
       localStorage.setItem("maintenanceMode", JSON.stringify(data));
     } catch (error) {
-      console.error("Erreur lors de la mise à jour du mode maintenance:", error);
+      console.error(
+        "Erreur lors de la mise à jour du mode maintenance:",
+        error,
+      );
       // Fallback to localStorage
       const data = { isActive, message };
       localStorage.setItem("maintenanceMode", JSON.stringify(data));
