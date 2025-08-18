@@ -381,6 +381,23 @@ const ModernHomePage: React.FC = () => {
         isOpen={showUsernameModal}
         onClose={() => setShowUsernameModal(false)}
       />
+
+      {/* Ban Modal */}
+      {currentUser?.isBanned && (
+        <BanModal
+          isOpen={true}
+          reason={currentUser.banReason || "Aucune raison spécifiée"}
+        />
+      )}
+
+      {/* Warning Modal */}
+      {currentUser && (
+        <WarningModal
+          isOpen={showWarningModal}
+          warnings={currentUser.warnings || []}
+          onClose={handleWarningClose}
+        />
+      )}
     </div>
   );
 };
