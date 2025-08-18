@@ -265,8 +265,8 @@ const AdminDashboard: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <Shield className="w-8 h-8 text-red-500" />
                 <div>
-                  <h1 className="text-2xl font-bold text-white">Admin Panel</h1>
-                  <p className="text-gray-400 text-sm">
+                  <h1 className="text-xl font-semibold text-white">Admin Panel</h1>
+                  <p className="text-gray-400 text-xs">
                     Products and licenses management
                   </p>
                 </div>
