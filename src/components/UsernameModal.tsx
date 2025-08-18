@@ -100,9 +100,9 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
                 <RefreshCw className="w-4 h-4" />
               </Button>
             </div>
-            <p className="text-xs text-gray-500">
+            <div className="text-xs text-gray-500">
               Ou utilisez le pseudo généré automatiquement
-            </p>
+            </div>
           </div>
         </div>
 
