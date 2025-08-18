@@ -8,6 +8,7 @@ import {
   MaintenanceProvider,
   useMaintenance,
 } from "@/context/MaintenanceContext";
+import { UserProvider } from "@/context/UserContext";
 import ModernHomePage from "./components/ModernHomePage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -70,9 +71,11 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <MaintenanceProvider>
-            <div className="dark min-h-screen bg-background text-foreground">
-              <AppContent />
-            </div>
+            <UserProvider>
+              <div className="dark min-h-screen bg-background text-foreground">
+                <AppContent />
+              </div>
+            </UserProvider>
           </MaintenanceProvider>
         </AuthProvider>
       </BrowserRouter>

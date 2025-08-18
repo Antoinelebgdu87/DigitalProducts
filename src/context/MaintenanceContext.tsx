@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+// Temporarily comment out Firebase imports to debug
+// import { doc, onSnapshot, setDoc } from "firebase/firestore";
+// import { db } from "@/lib/firebase";
 import { MaintenanceSettings } from "@/types";
 
 interface MaintenanceContextType {
@@ -22,28 +23,28 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
   const [maintenanceMessage, setMaintenanceMessage] = useState(DEFAULT_MESSAGE);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      doc(db, "settings", "maintenance"),
-      (doc) => {
-        if (doc.exists()) {
-          const data = doc.data() as MaintenanceSettings;
-          setIsMaintenanceMode(data.isActive);
-          setMaintenanceMessage(data.message || DEFAULT_MESSAGE);
-        }
-      },
-    );
-
-    return () => unsubscribe();
+    // Simplified for debug - load from localStorage
+    const stored = localStorage.getItem("maintenanceMode");
+    if (stored) {
+      try {
+        const data = JSON.parse(stored);
+        setIsMaintenanceMode(data.isActive || false);
+        setMaintenanceMessage(data.message || DEFAULT_MESSAGE);
+      } catch {
+        // Ignore parse errors
+      }
+    }
   }, []);
 
   const setMaintenanceMode = async (
     isActive: boolean,
     message: string = DEFAULT_MESSAGE,
   ) => {
-    await setDoc(doc(db, "settings", "maintenance"), {
-      isActive,
-      message,
-    });
+    // Save to localStorage instead of Firebase
+    const data = { isActive, message };
+    localStorage.setItem("maintenanceMode", JSON.stringify(data));
+    setIsMaintenanceMode(isActive);
+    setMaintenanceMessage(message);
   };
 
   return (

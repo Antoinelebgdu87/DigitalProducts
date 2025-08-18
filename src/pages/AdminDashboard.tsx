@@ -53,9 +53,10 @@ import {
   FileText,
   Link as LinkIcon,
 } from "lucide-react";
-import BackgroundAnimation from "@/components/BackgroundAnimation";
+import SimpleStarsBackground from "@/components/SimpleStarsBackground";
 import { toast } from "sonner";
 import { Product } from "@/types";
+import { useUser } from "@/context/UserContext";
 
 const AdminDashboard: React.FC = () => {
   const { logout } = useAuth();
@@ -75,6 +76,7 @@ const AdminDashboard: React.FC = () => {
     getActiveLicenses,
     loading: licensesLoading,
   } = useLicenses();
+  const { users, banUser, addWarning } = useUser();
 
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
@@ -105,6 +107,13 @@ const AdminDashboard: React.FC = () => {
     isActive: isMaintenanceMode,
     message: maintenanceMessage,
   });
+
+  // User management states
+  const [showBanDialog, setShowBanDialog] = useState(false);
+  const [showWarnDialog, setShowWarnDialog] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [banReason, setBanReason] = useState("");
+  const [warnReason, setWarnReason] = useState("");
 
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -212,6 +221,36 @@ const AdminDashboard: React.FC = () => {
     }).format(date);
   };
 
+  const handleBanUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserId || !banReason.trim()) return;
+
+    try {
+      await banUser(selectedUserId, banReason);
+      toast.success("Utilisateur banni avec succès");
+      setShowBanDialog(false);
+      setBanReason("");
+      setSelectedUserId("");
+    } catch (error) {
+      toast.error("Erreur lors du bannissement");
+    }
+  };
+
+  const handleWarnUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserId || !warnReason.trim()) return;
+
+    try {
+      await addWarning(selectedUserId, warnReason);
+      toast.success("Avertissement envoyé avec succès");
+      setShowWarnDialog(false);
+      setWarnReason("");
+      setSelectedUserId("");
+    } catch (error) {
+      toast.error("Erreur lors de l'envoi de l'avertissement");
+    }
+  };
+
   const activeLicenses = getActiveLicenses();
 
   const getCategoryIcon = (category: string) => {
@@ -255,7 +294,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen relative">
-      <BackgroundAnimation />
+      <SimpleStarsBackground />
 
       <div className="relative z-10">
         {/* Header */}
@@ -265,8 +304,10 @@ const AdminDashboard: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <Shield className="w-8 h-8 text-red-500" />
                 <div>
-                  <h1 className="text-2xl font-bold text-white">Admin Panel</h1>
-                  <p className="text-gray-400 text-sm">
+                  <h1 className="text-xl font-semibold text-white">
+                    Admin Panel
+                  </h1>
+                  <p className="text-gray-400 text-xs">
                     Products and licenses management
                   </p>
                 </div>
@@ -286,13 +327,20 @@ const AdminDashboard: React.FC = () => {
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
           <Tabs defaultValue="products" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-4 bg-gray-900/50">
+            <TabsList className="grid w-full grid-cols-5 bg-gray-900/50">
               <TabsTrigger
                 value="products"
                 className="data-[state=active]:bg-red-600"
               >
                 <Package className="w-4 h-4 mr-2" />
                 Products
+              </TabsTrigger>
+              <TabsTrigger
+                value="users"
+                className="data-[state=active]:bg-red-600"
+              >
+                <User className="w-4 h-4 mr-2" />
+                Users
               </TabsTrigger>
               <TabsTrigger
                 value="prices"
@@ -321,10 +369,10 @@ const AdminDashboard: React.FC = () => {
             <TabsContent value="products" className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold text-white">
+                  <h2 className="text-lg font-semibold text-white">
                     Products Management
                   </h2>
-                  <p className="text-gray-400">
+                  <p className="text-gray-400 text-sm">
                     {products.length} product(s) total
                   </p>
                 </div>
@@ -919,6 +967,229 @@ const AdminDashboard: React.FC = () => {
                   </Card>
                 ))}
               </div>
+            </TabsContent>
+
+            {/* Users Tab */}
+            <TabsContent value="users" className="space-y-6">
+              <div>
+                <h2 className="text-lg font-semibold text-white">
+                  Users Management
+                </h2>
+                <p className="text-gray-400 text-sm">
+                  {users?.length || 0} user(s) total •{" "}
+                  {users?.filter((u) => u.isOnline).length || 0} online
+                </p>
+              </div>
+
+              <div className="grid gap-4">
+                {users?.map((user) => (
+                  <Card
+                    key={user.id}
+                    className="border-gray-800 bg-gray-900/50"
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-4">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center">
+                            <User className="w-6 h-6 text-white" />
+                          </div>
+                          <div>
+                            <div className="flex items-center space-x-2">
+                              <h3 className="text-base font-medium text-white">
+                                {user.username}
+                              </h3>
+                              <Badge
+                                variant={
+                                  user.isOnline ? "default" : "secondary"
+                                }
+                                className={
+                                  user.isOnline
+                                    ? "bg-green-600 text-white"
+                                    : "bg-gray-600 text-gray-200"
+                                }
+                              >
+                                {user.isOnline ? "En ligne" : "Hors ligne"}
+                              </Badge>
+                              {user.isBanned && (
+                                <Badge
+                                  variant="destructive"
+                                  className="bg-red-600 text-white"
+                                >
+                                  Banni
+                                </Badge>
+                              )}
+                              {user.warnings && user.warnings.length > 0 && (
+                                <Badge
+                                  variant="outline"
+                                  className="border-orange-500 text-orange-400"
+                                >
+                                  {user.warnings.length} warn(s)
+                                </Badge>
+                              )}
+                            </div>
+                            <div className="flex items-center space-x-4 mt-1 text-xs text-gray-400">
+                              <span>Créé: {formatDate(user.createdAt)}</span>
+                              <span>
+                                Dernière connexion: {formatDate(user.lastSeen)}
+                              </span>
+                            </div>
+                            {user.isBanned && user.banReason && (
+                              <div className="mt-2 p-2 bg-red-900/50 rounded border border-red-700">
+                                <p className="text-red-200 text-xs">
+                                  <strong>Raison:</strong> {user.banReason}
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {!user.isBanned && (
+                            <>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedUserId(user.id);
+                                  setShowWarnDialog(true);
+                                }}
+                                className="border-orange-700 text-orange-400 hover:bg-orange-500/10"
+                              >
+                                Warn
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedUserId(user.id);
+                                  setShowBanDialog(true);
+                                }}
+                                className="border-red-700 text-red-400 hover:bg-red-500/10"
+                              >
+                                Ban
+                              </Button>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+                {(!users || users.length === 0) && (
+                  <Card className="border-gray-800 bg-gray-900/50">
+                    <CardContent className="p-12 text-center">
+                      <User className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-semibold text-white mb-2">
+                        Aucun utilisateur
+                      </h3>
+                      <p className="text-gray-400">
+                        Les utilisateurs apparaîtront ici une fois connectés
+                      </p>
+                    </CardContent>
+                  </Card>
+                )}
+              </div>
+
+              {/* Ban Dialog */}
+              <Dialog open={showBanDialog} onOpenChange={setShowBanDialog}>
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Bannir l'utilisateur
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      Cette action est définitive et irréversible.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleBanUser} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="banReason" className="text-white">
+                        Raison du bannissement
+                      </Label>
+                      <Textarea
+                        id="banReason"
+                        value={banReason}
+                        onChange={(e) => setBanReason(e.target.value)}
+                        className="bg-gray-800 border-gray-700 text-white"
+                        placeholder="Spécifiez la raison du bannissement..."
+                        required
+                        rows={3}
+                      />
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowBanDialog(false);
+                          setBanReason("");
+                          setSelectedUserId("");
+                        }}
+                        className="border-gray-700"
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-red-600 hover:bg-red-700"
+                        disabled={!banReason.trim()}
+                      >
+                        Bannir définitivement
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+
+              {/* Warning Dialog */}
+              <Dialog open={showWarnDialog} onOpenChange={setShowWarnDialog}>
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Avertir l'utilisateur
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      L'utilisateur recevra cet avertissement immédiatement.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleWarnUser} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="warnReason" className="text-white">
+                        Raison de l'avertissement
+                      </Label>
+                      <Textarea
+                        id="warnReason"
+                        value={warnReason}
+                        onChange={(e) => setWarnReason(e.target.value)}
+                        className="bg-gray-800 border-gray-700 text-white"
+                        placeholder="Spécifiez la raison de l'avertissement..."
+                        required
+                        rows={3}
+                      />
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowWarnDialog(false);
+                          setWarnReason("");
+                          setSelectedUserId("");
+                        }}
+                        className="border-gray-700"
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-orange-600 hover:bg-orange-700"
+                        disabled={!warnReason.trim()}
+                      >
+                        Envoyer l'avertissement
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
 
             {/* Prix Tab */}

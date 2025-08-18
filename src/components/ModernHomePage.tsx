@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
@@ -13,14 +13,46 @@ import {
   Zap,
   Globe,
   ArrowRight,
-  Sparkles,
+  User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import ModernBackground from "./ModernBackground";
+import SimpleStarsBackground from "./SimpleStarsBackground";
 import ModernProductCard from "./ModernProductCard";
+import UsernameModal from "./UsernameModal";
+import BanModal from "./BanModal";
+import WarningModal from "./WarningModal";
+import { useUser } from "@/context/UserContext";
 
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
+  const { currentUser, checkUserStatus, markWarningsAsRead } = useUser();
+  const [showUsernameModal, setShowUsernameModal] = useState(false);
+  const [showWarningModal, setShowWarningModal] = useState(false);
+
+  useEffect(() => {
+    // Check if user needs to create a username (only if never created one)
+    const hasEverCreatedUser = localStorage.getItem("hasCreatedUser");
+    if (!currentUser && !hasEverCreatedUser) {
+      setShowUsernameModal(true);
+    } else if (currentUser) {
+      // Check if user is banned
+      checkUserStatus();
+
+      // Check for unread warnings
+      const unreadWarnings =
+        currentUser.warnings?.filter((w) => !w.isRead) || [];
+      if (unreadWarnings.length > 0) {
+        setShowWarningModal(true);
+      }
+    }
+  }, [currentUser, checkUserStatus]);
+
+  const handleWarningClose = async () => {
+    if (currentUser) {
+      await markWarningsAsRead(currentUser.id);
+      setShowWarningModal(false);
+    }
+  };
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -69,7 +101,7 @@ const ModernHomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <ModernBackground />
+      <SimpleStarsBackground />
 
       {/* Navigation */}
       <motion.nav
@@ -86,27 +118,37 @@ const ModernHomePage: React.FC = () => {
               transition={{ type: "spring", stiffness: 400, damping: 10 }}
             >
               <div className="w-10 h-10 bg-gradient-to-r from-red-500 to-red-600 rounded-xl flex items-center justify-center">
-                <Sparkles className="w-6 h-6 text-white" />
+                <span className="text-white font-bold text-xl">D</span>
               </div>
               <span className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                 DigitalHub
               </span>
             </motion.div>
 
-            <Link to="/admin">
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-300 hover:text-white hover:bg-white/10 border border-white/20"
+            <div className="flex items-center space-x-3">
+              {currentUser && (
+                <div className="flex items-center space-x-2 px-3 py-1 bg-white/10 rounded-full border border-white/20">
+                  <User className="w-4 h-4 text-white" />
+                  <span className="text-white text-sm font-medium">
+                    {currentUser.username}
+                  </span>
+                </div>
+              )}
+              <Link to="/admin">
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Settings className="w-4 h-4" />
-                </Button>
-              </motion.div>
-            </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-300 hover:text-white hover:bg-white/10 border border-white/20"
+                  >
+                    <Settings className="w-4 h-4" />
+                  </Button>
+                </motion.div>
+              </Link>
+            </div>
           </div>
         </div>
       </motion.nav>
@@ -276,11 +318,13 @@ const ModernHomePage: React.FC = () => {
               transition={{ duration: 0.6 }}
               className="text-center py-20"
             >
-              <div className="text-8xl mb-8">🚀</div>
-              <h3 className="text-3xl font-bold text-white mb-4">
+              <div className="w-24 h-24 mx-auto mb-8 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-4xl">D</span>
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">
                 Coming Soon
               </h3>
-              <p className="text-xl text-gray-400 max-w-md mx-auto">
+              <p className="text-lg text-gray-400 max-w-md mx-auto">
                 Amazing products are being curated for you. Stay tuned for
                 something incredible!
               </p>
@@ -318,7 +362,7 @@ const ModernHomePage: React.FC = () => {
           <div className="text-center">
             <div className="flex items-center justify-center space-x-4 mb-6">
               <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
+                <span className="text-white font-bold text-lg">D</span>
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                 DigitalHub
@@ -333,6 +377,29 @@ const ModernHomePage: React.FC = () => {
           </div>
         </div>
       </motion.footer>
+
+      {/* Username Modal */}
+      <UsernameModal
+        isOpen={showUsernameModal}
+        onClose={() => setShowUsernameModal(false)}
+      />
+
+      {/* Ban Modal */}
+      {currentUser?.isBanned && (
+        <BanModal
+          isOpen={true}
+          reason={currentUser.banReason || "Aucune raison spécifiée"}
+        />
+      )}
+
+      {/* Warning Modal */}
+      {currentUser && (
+        <WarningModal
+          isOpen={showWarningModal}
+          warnings={currentUser.warnings || []}
+          onClose={handleWarningClose}
+        />
+      )}
     </div>
   );
 };
