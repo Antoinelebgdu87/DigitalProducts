@@ -54,6 +54,9 @@ export const useProducts = () => {
       },
       (error) => {
         console.error("Error fetching products:", error);
+        if (error.message && error.message.includes('permissions')) {
+          console.log("⚠️ Permissions Firebase manquantes pour les produits - mode dégradé");
+        }
         setProducts([]);
         setLoading(false);
       },
