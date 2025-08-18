@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useProducts } from "@/hooks/useProducts";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,13 @@ import {
   Zap,
   Globe,
   ArrowRight,
+  User,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import StarfieldBackground from "./StarfieldBackground";
 import ModernProductCard from "./ModernProductCard";
+import UsernameModal from "./UsernameModal";
+import { useUser } from "@/context/UserContext";
 
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
