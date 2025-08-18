@@ -17,8 +17,12 @@ interface WarningModalProps {
   onClose: () => void;
 }
 
-const WarningModal: React.FC<WarningModalProps> = ({ isOpen, warnings, onClose }) => {
-  const unreadWarnings = warnings.filter(w => !w.isRead);
+const WarningModal: React.FC<WarningModalProps> = ({
+  isOpen,
+  warnings,
+  onClose,
+}) => {
+  const unreadWarnings = warnings.filter((w) => !w.isRead);
 
   if (unreadWarnings.length === 0) {
     return null;
@@ -35,10 +39,13 @@ const WarningModal: React.FC<WarningModalProps> = ({ isOpen, warnings, onClose }
             <AlertTriangle className="w-8 h-8 text-white" />
           </div>
           <DialogTitle className="text-xl font-bold text-white">
-            {unreadWarnings.length === 1 ? "Nouvel avertissement" : "Nouveaux avertissements"}
+            {unreadWarnings.length === 1
+              ? "Nouvel avertissement"
+              : "Nouveaux avertissements"}
           </DialogTitle>
           <DialogDescription className="text-orange-200 mt-4">
-            Vous avez reçu {unreadWarnings.length} avertissement{unreadWarnings.length > 1 ? 's' : ''}.
+            Vous avez reçu {unreadWarnings.length} avertissement
+            {unreadWarnings.length > 1 ? "s" : ""}.
           </DialogDescription>
         </DialogHeader>
 
@@ -48,7 +55,9 @@ const WarningModal: React.FC<WarningModalProps> = ({ isOpen, warnings, onClose }
               key={warning.id}
               className="bg-orange-800/50 rounded-lg p-4 border border-orange-600"
             >
-              <div className="font-semibold text-white mb-2">Avertissement :</div>
+              <div className="font-semibold text-white mb-2">
+                Avertissement :
+              </div>
               <div className="text-orange-100">{warning.reason}</div>
               <div className="text-orange-300 text-xs mt-2">
                 {warning.createdAt.toLocaleString("fr-FR")}
@@ -59,7 +68,8 @@ const WarningModal: React.FC<WarningModalProps> = ({ isOpen, warnings, onClose }
 
         <div className="text-center mt-4">
           <div className="text-orange-200 text-sm">
-            Veuillez respecter les règles de la plateforme pour éviter de futurs avertissements.
+            Veuillez respecter les règles de la plateforme pour éviter de futurs
+            avertissements.
           </div>
           <div className="text-orange-300 text-xs mt-2">
             Les avertissements répétés peuvent conduire à un bannissement.

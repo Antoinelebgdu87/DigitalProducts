@@ -39,8 +39,13 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
       onClose();
     } catch (error) {
       console.error("Error creating username:", error);
-      if (error instanceof Error && error.message === "Username already exists") {
-        toast.error("This username is already taken. Please choose another one.");
+      if (
+        error instanceof Error &&
+        error.message === "Username already exists"
+      ) {
+        toast.error(
+          "This username is already taken. Please choose another one.",
+        );
       } else {
         toast.error("Failed to create username. Please try again.");
       }

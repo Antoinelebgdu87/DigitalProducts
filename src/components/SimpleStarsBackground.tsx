@@ -30,7 +30,7 @@ const SimpleStarsBackground: React.FC = () => {
     const initStars = () => {
       const numStars = 200;
       starsRef.current = [];
-      
+
       for (let i = 0; i < numStars; i++) {
         starsRef.current.push({
           x: Math.random() * window.innerWidth,
@@ -54,7 +54,9 @@ const SimpleStarsBackground: React.FC = () => {
 
       starsRef.current.forEach((star) => {
         // Simple twinkle effect
-        star.currentOpacity = star.opacity + Math.sin(timeRef.current * star.twinkleSpeed * 100) * 0.3;
+        star.currentOpacity =
+          star.opacity +
+          Math.sin(timeRef.current * star.twinkleSpeed * 100) * 0.3;
         star.currentOpacity = Math.max(0.1, Math.min(1, star.currentOpacity));
 
         // Draw star
@@ -101,7 +103,8 @@ const SimpleStarsBackground: React.FC = () => {
       ref={canvasRef}
       className="fixed inset-0 w-full h-full z-0"
       style={{
-        background: "linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%)",
+        background:
+          "linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%)",
       }}
     />
   );

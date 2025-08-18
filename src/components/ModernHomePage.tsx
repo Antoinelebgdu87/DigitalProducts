@@ -39,7 +39,8 @@ const ModernHomePage: React.FC = () => {
       checkUserStatus();
 
       // Check for unread warnings
-      const unreadWarnings = currentUser.warnings?.filter(w => !w.isRead) || [];
+      const unreadWarnings =
+        currentUser.warnings?.filter((w) => !w.isRead) || [];
       if (unreadWarnings.length > 0) {
         setShowWarningModal(true);
       }

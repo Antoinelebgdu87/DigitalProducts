@@ -27,7 +27,7 @@ const StarfieldBackground: React.FC = () => {
     const initStars = () => {
       const numStars = 800;
       starsRef.current = [];
-      
+
       for (let i = 0; i < numStars; i++) {
         starsRef.current.push({
           x: (Math.random() - 0.5) * 1600,
@@ -113,7 +113,8 @@ const StarfieldBackground: React.FC = () => {
       ref={canvasRef}
       className="fixed inset-0 w-full h-full z-0"
       style={{
-        background: "linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%)",
+        background:
+          "linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 50%, #0c0c0c 100%)",
       }}
     />
   );

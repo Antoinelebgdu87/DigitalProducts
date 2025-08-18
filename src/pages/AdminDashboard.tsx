@@ -304,7 +304,9 @@ const AdminDashboard: React.FC = () => {
               <div className="flex items-center space-x-4">
                 <Shield className="w-8 h-8 text-red-500" />
                 <div>
-                  <h1 className="text-xl font-semibold text-white">Admin Panel</h1>
+                  <h1 className="text-xl font-semibold text-white">
+                    Admin Panel
+                  </h1>
                   <p className="text-gray-400 text-xs">
                     Products and licenses management
                   </p>
@@ -974,7 +976,8 @@ const AdminDashboard: React.FC = () => {
                   Users Management
                 </h2>
                 <p className="text-gray-400 text-sm">
-                  {users?.length || 0} user(s) total • {users?.filter(u => u.isOnline).length || 0} online
+                  {users?.length || 0} user(s) total •{" "}
+                  {users?.filter((u) => u.isOnline).length || 0} online
                 </p>
               </div>
 
@@ -996,7 +999,9 @@ const AdminDashboard: React.FC = () => {
                                 {user.username}
                               </h3>
                               <Badge
-                                variant={user.isOnline ? "default" : "secondary"}
+                                variant={
+                                  user.isOnline ? "default" : "secondary"
+                                }
                                 className={
                                   user.isOnline
                                     ? "bg-green-600 text-white"
@@ -1024,7 +1029,9 @@ const AdminDashboard: React.FC = () => {
                             </div>
                             <div className="flex items-center space-x-4 mt-1 text-xs text-gray-400">
                               <span>Créé: {formatDate(user.createdAt)}</span>
-                              <span>Dernière connexion: {formatDate(user.lastSeen)}</span>
+                              <span>
+                                Dernière connexion: {formatDate(user.lastSeen)}
+                              </span>
                             </div>
                             {user.isBanned && user.banReason && (
                               <div className="mt-2 p-2 bg-red-900/50 rounded border border-red-700">

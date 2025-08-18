@@ -33,7 +33,9 @@ const BanModal: React.FC<BanModalProps> = ({ isOpen, reason }) => {
         </DialogHeader>
 
         <div className="bg-red-800/50 rounded-lg p-4 border border-red-600 mt-4">
-          <div className="font-semibold text-white mb-2">Raison du bannissement :</div>
+          <div className="font-semibold text-white mb-2">
+            Raison du bannissement :
+          </div>
           <div className="text-red-100">{reason}</div>
         </div>
 

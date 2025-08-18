@@ -63,7 +63,7 @@ export const useProducts = () => {
 
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
-      const updatedProducts = products.filter(p => p.id !== productId);
+      const updatedProducts = products.filter((p) => p.id !== productId);
       saveProducts(updatedProducts);
     } catch (error) {
       console.error("Error deleting product:", error);
@@ -76,8 +76,8 @@ export const useProducts = () => {
     productData: Partial<Omit<Product, "id" | "createdAt">>,
   ): Promise<void> => {
     try {
-      const updatedProducts = products.map(p =>
-        p.id === productId ? { ...p, ...productData } : p
+      const updatedProducts = products.map((p) =>
+        p.id === productId ? { ...p, ...productData } : p,
       );
       saveProducts(updatedProducts);
     } catch (error) {

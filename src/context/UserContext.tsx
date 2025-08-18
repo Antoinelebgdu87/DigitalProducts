@@ -54,18 +54,45 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 
 const generateRandomUsername = (): string => {
   const adjectives = [
-    "Swift", "Dark", "Cyber", "Ghost", "Stealth", "Shadow", "Elite", "Pro", 
-    "Master", "Alpha", "Neo", "Quantum", "Digital", "Binary", "Neon", "Matrix"
+    "Swift",
+    "Dark",
+    "Cyber",
+    "Ghost",
+    "Stealth",
+    "Shadow",
+    "Elite",
+    "Pro",
+    "Master",
+    "Alpha",
+    "Neo",
+    "Quantum",
+    "Digital",
+    "Binary",
+    "Neon",
+    "Matrix",
   ];
   const nouns = [
-    "Hunter", "Warrior", "Phantom", "Knight", "Agent", "Hacker", "Player", 
-    "Gamer", "Coder", "Ninja", "Wolf", "Tiger", "Dragon", "Phoenix", "Viper"
+    "Hunter",
+    "Warrior",
+    "Phantom",
+    "Knight",
+    "Agent",
+    "Hacker",
+    "Player",
+    "Gamer",
+    "Coder",
+    "Ninja",
+    "Wolf",
+    "Tiger",
+    "Dragon",
+    "Phoenix",
+    "Viper",
   ];
-  
+
   const randomNumber = Math.floor(Math.random() * 9999) + 1;
   const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
   const noun = nouns[Math.floor(Math.random() * nouns.length)];
-  
+
   return `${adjective}${noun}${randomNumber}`;
 };
 
@@ -167,7 +194,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       let allUsers: User[] = stored ? JSON.parse(stored) : [];
 
       // Check if user already exists
-      const existingIndex = allUsers.findIndex(u => u.id === user.id);
+      const existingIndex = allUsers.findIndex((u) => u.id === user.id);
       if (existingIndex >= 0) {
         // Update existing user
         allUsers[existingIndex] = user;
@@ -220,7 +247,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       const stored = localStorage.getItem("allUsers");
       if (stored) {
         let allUsers: User[] = JSON.parse(stored);
-        const userIndex = allUsers.findIndex(u => u.id === userId);
+        const userIndex = allUsers.findIndex((u) => u.id === userId);
 
         if (userIndex >= 0) {
           allUsers[userIndex] = {
@@ -252,7 +279,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       const stored = localStorage.getItem("allUsers");
       if (stored) {
         let allUsers: User[] = JSON.parse(stored);
-        const userIndex = allUsers.findIndex(u => u.id === userId);
+        const userIndex = allUsers.findIndex((u) => u.id === userId);
 
         if (userIndex >= 0) {
           const newWarning: Warning = {
@@ -289,12 +316,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       const stored = localStorage.getItem("allUsers");
       if (stored) {
         let allUsers: User[] = JSON.parse(stored);
-        const userIndex = allUsers.findIndex(u => u.id === userId);
+        const userIndex = allUsers.findIndex((u) => u.id === userId);
 
         if (userIndex >= 0) {
           allUsers[userIndex] = {
             ...allUsers[userIndex],
-            warnings: (allUsers[userIndex].warnings || []).map(w => ({
+            warnings: (allUsers[userIndex].warnings || []).map((w) => ({
               ...w,
               isRead: true,
             })),
@@ -308,7 +335,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
             setCurrentUser(allUsers[userIndex]);
           }
 
-          console.log("✅ Avertissements marqués comme lus:", allUsers[userIndex].username);
+          console.log(
+            "✅ Avertissements marqués comme lus:",
+            allUsers[userIndex].username,
+          );
         }
       }
     } catch (error) {

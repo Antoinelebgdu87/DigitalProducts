@@ -21,13 +21,13 @@ class MockDatabase {
   addDoc(collectionName: string, data: any) {
     const collection = this.getCollection(collectionName);
     const id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
-    
+
     collection[id] = {
       ...data,
       createdAt: new Date(),
-      lastSeen: new Date()
+      lastSeen: new Date(),
     };
-    
+
     this.notifyListeners(collectionName);
     return { id };
   }
@@ -36,11 +36,11 @@ class MockDatabase {
   getDoc(collectionName: string, id: string) {
     const collection = this.getCollection(collectionName);
     const doc = collection[id];
-    
+
     return {
       id,
       exists: () => !!doc,
-      data: () => doc || null
+      data: () => doc || null,
     };
   }
 
@@ -67,40 +67,52 @@ class MockDatabase {
     const docs = Object.entries(collection).map(([id, data]) => ({
       id,
       data: () => data,
-      exists: () => true
+      exists: () => true,
     }));
-    
+
     return {
       docs,
-      empty: docs.length === 0
+      empty: docs.length === 0,
     };
   }
 
   // Query with where clause
-  queryWhere(collectionName: string, field: string, operator: string, value: any) {
+  queryWhere(
+    collectionName: string,
+    field: string,
+    operator: string,
+    value: any,
+  ) {
     const collection = this.getCollection(collectionName);
     const docs = Object.entries(collection)
       .filter(([id, data]) => {
         const fieldValue = data[field];
         switch (operator) {
-          case '==': return fieldValue === value;
-          case '!=': return fieldValue !== value;
-          case '>': return fieldValue > value;
-          case '<': return fieldValue < value;
-          case '>=': return fieldValue >= value;
-          case '<=': return fieldValue <= value;
-          default: return false;
+          case "==":
+            return fieldValue === value;
+          case "!=":
+            return fieldValue !== value;
+          case ">":
+            return fieldValue > value;
+          case "<":
+            return fieldValue < value;
+          case ">=":
+            return fieldValue >= value;
+          case "<=":
+            return fieldValue <= value;
+          default:
+            return false;
         }
       })
       .map(([id, data]) => ({
         id,
         data: () => data,
-        exists: () => true
+        exists: () => true,
       }));
-    
+
     return {
       docs,
-      empty: docs.length === 0
+      empty: docs.length === 0,
     };
   }
 
@@ -112,9 +124,9 @@ class MockDatabase {
     this.listeners[path].push(callback);
 
     // Immediately call with current data
-    if (path.includes('/')) {
+    if (path.includes("/")) {
       // Document listener
-      const [collectionName, docId] = path.split('/');
+      const [collectionName, docId] = path.split("/");
       const doc = this.getDoc(collectionName, docId);
       callback(doc);
     } else {
@@ -137,10 +149,10 @@ class MockDatabase {
   // Notify listeners
   private notifyListeners(path: string) {
     if (this.listeners[path]) {
-      this.listeners[path].forEach(callback => {
-        if (path.includes('/')) {
+      this.listeners[path].forEach((callback) => {
+        if (path.includes("/")) {
           // Document listener
-          const [collectionName, docId] = path.split('/');
+          const [collectionName, docId] = path.split("/");
           const doc = this.getDoc(collectionName, docId);
           callback(doc);
         } else {
@@ -163,7 +175,7 @@ const firebaseConfig = {
   projectId: "keysystem-d0b86",
   storageBucket: "keysystem-d0b86.firebasestorage.app",
   messagingSenderId: "103545005750398754258",
-  appId: "1:103545005750398754258:web:abc123def456ghi789"
+  appId: "1:103545005750398754258:web:abc123def456ghi789",
 };
 
 let db: any;
@@ -184,7 +196,7 @@ export const collection = (database: any, collectionName: string) => {
   if (USE_MOCK) {
     return {
       _collection: collectionName,
-      _isMockCollection: true
+      _isMockCollection: true,
     };
   } else {
     const { collection: realCollection } = require("firebase/firestore");
@@ -197,7 +209,7 @@ export const doc = (database: any, collectionName: string, docId: string) => {
     return {
       _collection: collectionName,
       _docId: docId,
-      _isMockDoc: true
+      _isMockDoc: true,
     };
   } else {
     const { doc: realDoc } = require("firebase/firestore");
@@ -259,7 +271,7 @@ export const query = (collectionRef: any, ...constraints: any[]) => {
     return {
       ...collectionRef,
       _constraints: constraints,
-      _isMockQuery: true
+      _isMockQuery: true,
     };
   } else {
     const { query: realQuery } = require("firebase/firestore");
@@ -274,13 +286,15 @@ export const where = (field: string, operator: string, value: any) => {
 export const getDocs = async (queryRef: any) => {
   if (USE_MOCK && queryRef._isMockQuery) {
     // Handle where constraints
-    const whereConstraint = queryRef._constraints?.find((c: any) => c._isMockWhere);
+    const whereConstraint = queryRef._constraints?.find(
+      (c: any) => c._isMockWhere,
+    );
     if (whereConstraint) {
       return mockDB.queryWhere(
-        queryRef._collection, 
-        whereConstraint.field, 
-        whereConstraint.operator, 
-        whereConstraint.value
+        queryRef._collection,
+        whereConstraint.field,
+        whereConstraint.operator,
+        whereConstraint.value,
       );
     }
     return mockDB.getDocs(queryRef._collection);
@@ -292,5 +306,5 @@ export const getDocs = async (queryRef: any) => {
 
 export const Timestamp = {
   now: () => new Date(),
-  fromDate: (date: Date) => date
+  fromDate: (date: Date) => date,
 };
