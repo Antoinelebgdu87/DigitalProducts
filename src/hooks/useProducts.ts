@@ -1,102 +1,125 @@
 import { useState, useEffect } from "react";
-// Temporarily comment out Firebase imports to debug
-// import {
-//   collection,
-//   addDoc,
-//   getDocs,
-//   deleteDoc,
-//   doc,
-//   orderBy,
-//   query,
-//   updateDoc,
-// } from "firebase/firestore";
-// import { db } from "@/lib/firebase";
+import {
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  updateDoc,
+  query,
+  orderBy,
+  Timestamp
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import { Product } from "@/types";
 
-export const useProducts = () => {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+interface UseProductsReturn {
+  products: Product[];
+  isLoading: boolean;
+  error: string | null;
+  addProduct: (product: Omit<Product, "id" | "createdAt">) => Promise<void>;
+  updateProduct: (productId: string, updates: Partial<Product>) => Promise<void>;
+  deleteProduct: (productId: string) => Promise<void>;
+}
 
-  const fetchProducts = async () => {
-    try {
-      // Load from localStorage instead of Firebase
-      const stored = localStorage.getItem("products");
-      if (stored) {
-        const productsData = JSON.parse(stored) as Product[];
-        // Convert date strings back to Date objects
-        const parsedProducts = productsData.map((product) => ({
-          ...product,
-          createdAt: new Date(product.createdAt),
-        }));
-        setProducts(parsedProducts);
-      } else {
-        setProducts([]);
-      }
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setProducts([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+export const useProducts = (): UseProductsReturn => {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchProducts();
-  }, []);
+    try {
+      // Listen to real-time changes in Firebase
+      const productsRef = collection(db, "products");
+      const q = query(productsRef, orderBy("createdAt", "desc"));
+      
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const productsData = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            ...data,
+            createdAt: data.createdAt?.toDate() || new Date(),
+          } as Product;
+        });
+        
+        setProducts(productsData);
+        setIsLoading(false);
+        setError(null);
+        console.log("🛍️ Produits chargés depuis Firebase:", productsData.length);
+      }, (error) => {
+        console.error("Erreur lors du chargement des produits:", error);
+        setError("Erreur lors du chargement des produits");
+        setIsLoading(false);
+      });
 
-  const saveProducts = (newProducts: Product[]) => {
-    localStorage.setItem("products", JSON.stringify(newProducts));
-    setProducts(newProducts);
-  };
+      return unsubscribe;
+    } catch (error) {
+      console.error("Erreur lors de l'initialisation des produits:", error);
+      setError("Erreur lors de l'initialisation");
+      setIsLoading(false);
+    }
+  }, []);
 
   const addProduct = async (
     productData: Omit<Product, "id" | "createdAt">,
   ): Promise<void> => {
     try {
-      const newProduct: Product = {
+      const newProduct = {
         ...productData,
-        id: Date.now().toString(),
-        createdAt: new Date(),
+        createdAt: Timestamp.now(),
       };
-      const updatedProducts = [newProduct, ...products];
-      saveProducts(updatedProducts);
-    } catch (error) {
-      console.error("Error adding product:", error);
-      throw error;
-    }
-  };
 
-  const deleteProduct = async (productId: string): Promise<void> => {
-    try {
-      const updatedProducts = products.filter((p) => p.id !== productId);
-      saveProducts(updatedProducts);
+      await addDoc(collection(db, "products"), newProduct);
+      console.log("🛍️ Produit ajouté dans Firebase:", productData.name);
     } catch (error) {
-      console.error("Error deleting product:", error);
-      throw error;
+      console.error("Erreur lors de l'ajout du produit:", error);
+      throw new Error("Erreur lors de l'ajout du produit");
     }
   };
 
   const updateProduct = async (
     productId: string,
-    productData: Partial<Omit<Product, "id" | "createdAt">>,
+    updates: Partial<Product>,
   ): Promise<void> => {
     try {
-      const updatedProducts = products.map((p) =>
-        p.id === productId ? { ...p, ...productData } : p,
-      );
-      saveProducts(updatedProducts);
+      const productRef = doc(db, "products", productId);
+      const updateData = {
+        ...updates,
+        updatedAt: Timestamp.now(),
+      };
+      
+      // Remove undefined values
+      Object.keys(updateData).forEach(key => {
+        if (updateData[key] === undefined) {
+          delete updateData[key];
+        }
+      });
+
+      await updateDoc(productRef, updateData);
+      console.log("🛍️ Produit mis à jour dans Firebase:", productId);
     } catch (error) {
-      console.error("Error updating product:", error);
-      throw error;
+      console.error("Erreur lors de la mise à jour du produit:", error);
+      throw new Error("Erreur lors de la mise à jour du produit");
+    }
+  };
+
+  const deleteProduct = async (productId: string): Promise<void> => {
+    try {
+      await deleteDoc(doc(db, "products", productId));
+      console.log("🛍️ Produit supprimé de Firebase:", productId);
+    } catch (error) {
+      console.error("Erreur lors de la suppression du produit:", error);
+      throw new Error("Erreur lors de la suppression du produit");
     }
   };
 
   return {
     products,
-    loading,
+    isLoading,
+    error,
     addProduct,
-    deleteProduct,
     updateProduct,
-    refetch: fetchProducts,
+    deleteProduct,
   };
 };
