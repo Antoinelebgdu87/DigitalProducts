@@ -37,7 +37,7 @@ const SimpleStarsBackground: React.FC = () => {
           y: Math.random() * window.innerHeight,
           size: Math.random() * 2 + 0.5,
           opacity: Math.random() * 0.8 + 0.2,
-          twinkleSpeed: Math.random() * 0.02 + 0.01,
+          twinkleSpeed: Math.random() * 0.08 + 0.04,
           currentOpacity: Math.random() * 0.8 + 0.2,
         });
       }
