@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { doc, onSnapshot, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+// Temporarily comment out Firebase imports to debug
+// import { doc, onSnapshot, setDoc } from "firebase/firestore";
+// import { db } from "@/lib/firebase";
 import { MaintenanceSettings } from "@/types";
 
 interface MaintenanceContextType {
