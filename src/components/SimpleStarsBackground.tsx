@@ -56,7 +56,7 @@ const SimpleStarsBackground: React.FC = () => {
         // Simple twinkle effect
         star.currentOpacity =
           star.opacity +
-          Math.sin(timeRef.current * star.twinkleSpeed * 100) * 0.3;
+          Math.sin(timeRef.current * star.twinkleSpeed * 100) * 0.6;
         star.currentOpacity = Math.max(0.1, Math.min(1, star.currentOpacity));
 
         // Draw star
