@@ -78,11 +78,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   // Check user status on load
   useEffect(() => {
     const checkExistingUser = async () => {
-      // Simplified for debug - just check localStorage
+      // Check localStorage for existing user
       const storedUserId = localStorage.getItem("userId");
       const storedUsername = localStorage.getItem("username");
 
       if (storedUserId && storedUsername) {
+        // Load existing user
         const user: User = {
           id: storedUserId,
           username: storedUsername,
@@ -93,6 +94,32 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           lastSeen: new Date(),
         };
         setCurrentUser(user);
+        console.log("🔵 Utilisateur existant chargé:", storedUsername);
+      } else {
+        // Check if user was supposed to have been created
+        const hasEverCreatedUser = localStorage.getItem("hasCreatedUser");
+        if (hasEverCreatedUser === "true") {
+          // User was created before but data is missing, recreate
+          const username = generateRandomUsername();
+          const userId = Date.now().toString();
+
+          localStorage.setItem("userId", userId);
+          localStorage.setItem("username", username);
+
+          const user: User = {
+            id: userId,
+            username: username,
+            isOnline: true,
+            isBanned: false,
+            warnings: [],
+            createdAt: new Date(),
+            lastSeen: new Date(),
+          };
+          setCurrentUser(user);
+          console.log("🟢 Utilisateur recrée:", username);
+        } else {
+          console.log("🟡 Aucun utilisateur trouvé - modal va s'afficher");
+        }
       }
     };
 
