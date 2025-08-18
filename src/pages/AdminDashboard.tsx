@@ -211,14 +211,55 @@ const AdminDashboard: React.FC = () => {
     toast.success("Code copied to clipboard");
   };
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("fr-FR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
+  const formatDate = (date: any) => {
+    try {
+      let validDate: Date;
+
+      // Handle various date formats
+      if (!date) {
+        return "Date inconnue";
+      }
+
+      // If it's already a Date object
+      if (date instanceof Date) {
+        validDate = date;
+      }
+      // If it's a Firestore Timestamp (has toDate method)
+      else if (date && typeof date.toDate === 'function') {
+        validDate = date.toDate();
+      }
+      // If it's a timestamp number
+      else if (typeof date === 'number') {
+        validDate = new Date(date);
+      }
+      // If it's a string
+      else if (typeof date === 'string') {
+        validDate = new Date(date);
+      }
+      // If it's an object with seconds and nanoseconds (Firestore timestamp object)
+      else if (date && typeof date === 'object' && 'seconds' in date) {
+        validDate = new Date(date.seconds * 1000 + (date.nanoseconds || 0) / 1000000);
+      }
+      else {
+        return "Date invalide";
+      }
+
+      // Check if the resulting date is valid
+      if (isNaN(validDate.getTime())) {
+        return "Date invalide";
+      }
+
+      return new Intl.DateTimeFormat("fr-FR", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }).format(validDate);
+    } catch (error) {
+      console.error("Error formatting date:", error, date);
+      return "Date invalide";
+    }
   };
 
   const handleBanUser = async (e: React.FormEvent) => {
