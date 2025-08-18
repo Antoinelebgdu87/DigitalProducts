@@ -15,7 +15,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import ModernBackground from "./ModernBackground";
+import StarfieldBackground from "./StarfieldBackground";
 import ModernProductCard from "./ModernProductCard";
 
 const ModernHomePage: React.FC = () => {
