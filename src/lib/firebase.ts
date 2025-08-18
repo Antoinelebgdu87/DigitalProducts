@@ -1,7 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { mockDb, mockFirebaseFunctions } from "./mockFirebase";
 
-// Web app Firebase configuration (not service account)
+// Check if we're in development and should use mock
+const USE_MOCK = true; // Set to false when you have proper Firebase web config
+
+// Web app Firebase configuration (placeholder - needs real web app config)
 const firebaseConfig = {
   apiKey: "AIzaSyBGX8nLq7yPYDqpvSHxXzBUfH9UNjWy1Zc",
   authDomain: "keysystem-d0b86.firebaseapp.com",
@@ -11,8 +15,45 @@ const firebaseConfig = {
   appId: "1:103545005750398754258:web:abc123def456ghi789"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+let db: any;
+let firestoreFunctions: any;
 
-// Initialize Cloud Firestore and get a reference to the service
-export const db = getFirestore(app);
+if (USE_MOCK) {
+  // Use mock Firebase for development
+  db = mockDb;
+  firestoreFunctions = mockFirebaseFunctions;
+  console.log("🔧 Using Mock Firebase for development");
+} else {
+  // Use real Firebase
+  const app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  firestoreFunctions = {
+    collection: require("firebase/firestore").collection,
+    doc: require("firebase/firestore").doc,
+    addDoc: require("firebase/firestore").addDoc,
+    getDoc: require("firebase/firestore").getDoc,
+    updateDoc: require("firebase/firestore").updateDoc,
+    deleteDoc: require("firebase/firestore").deleteDoc,
+    onSnapshot: require("firebase/firestore").onSnapshot,
+    query: require("firebase/firestore").query,
+    where: require("firebase/firestore").where,
+    getDocs: require("firebase/firestore").getDocs,
+    Timestamp: require("firebase/firestore").Timestamp
+  };
+}
+
+// Export db and all Firestore functions
+export { db };
+export const {
+  collection,
+  doc,
+  addDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  query,
+  where,
+  getDocs,
+  Timestamp
+} = firestoreFunctions;
