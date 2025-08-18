@@ -146,10 +146,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       const finalUsername = username || generateRandomUsername();
 
-      // Simplified - just use localStorage for now
+      // Save to localStorage
       const userId = Date.now().toString();
       localStorage.setItem("userId", userId);
       localStorage.setItem("username", finalUsername);
+      localStorage.setItem("hasCreatedUser", "true");
 
       const newUser: User = {
         id: userId,
@@ -162,6 +163,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       };
 
       setCurrentUser(newUser);
+      console.log("🎉 Nouvel utilisateur créé:", finalUsername);
       return newUser;
     } catch (error) {
       console.error("Error creating username:", error);
