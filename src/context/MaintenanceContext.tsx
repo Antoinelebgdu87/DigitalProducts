@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-// Temporarily comment out Firebase imports to debug
-// import { doc, onSnapshot, setDoc } from "firebase/firestore";
-// import { db } from "@/lib/firebase";
+import { doc, onSnapshot, setDoc, getDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 import { MaintenanceSettings } from "@/types";
 
 interface MaintenanceContextType {
@@ -23,28 +22,58 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
   const [maintenanceMessage, setMaintenanceMessage] = useState(DEFAULT_MESSAGE);
 
   useEffect(() => {
-    // Simplified for debug - load from localStorage
-    const stored = localStorage.getItem("maintenanceMode");
-    if (stored) {
+    // Load maintenance settings from Firebase
+    const loadMaintenanceSettings = async () => {
       try {
-        const data = JSON.parse(stored);
-        setIsMaintenanceMode(data.isActive || false);
-        setMaintenanceMessage(data.message || DEFAULT_MESSAGE);
-      } catch {
-        // Ignore parse errors
+        const maintenanceDocRef = doc(db, "settings", "maintenance");
+        
+        // Listen to real-time changes
+        const unsubscribe = onSnapshot(maintenanceDocRef, (doc) => {
+          if (doc.exists()) {
+            const data = doc.data();
+            setIsMaintenanceMode(data.isActive || false);
+            setMaintenanceMessage(data.message || DEFAULT_MESSAGE);
+            console.log("🛠️ Paramètres de maintenance chargés depuis Firebase");
+          } else {
+            // Create default settings if document doesn't exist
+            setDoc(maintenanceDocRef, {
+              isActive: false,
+              message: DEFAULT_MESSAGE
+            }).catch(console.error);
+          }
+        });
+
+        return unsubscribe;
+      } catch (error) {
+        console.error("Erreur lors du chargement des paramètres de maintenance:", error);
       }
-    }
+    };
+
+    const unsubscribe = loadMaintenanceSettings();
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
   }, []);
 
   const setMaintenanceMode = async (
     isActive: boolean,
     message: string = DEFAULT_MESSAGE,
   ) => {
-    // Save to localStorage instead of Firebase
-    const data = { isActive, message };
-    localStorage.setItem("maintenanceMode", JSON.stringify(data));
-    setIsMaintenanceMode(isActive);
-    setMaintenanceMessage(message);
+    try {
+      const maintenanceDocRef = doc(db, "settings", "maintenance");
+      await setDoc(maintenanceDocRef, {
+        isActive,
+        message,
+        updatedAt: new Date()
+      });
+
+      setIsMaintenanceMode(isActive);
+      setMaintenanceMessage(message);
+      console.log("🛠️ Mode maintenance mis à jour dans Firebase:", isActive);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du mode maintenance:", error);
+      throw error;
+    }
   };
 
   return (
