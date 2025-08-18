@@ -359,6 +359,12 @@ const ModernHomePage: React.FC = () => {
           </div>
         </div>
       </motion.footer>
+
+      {/* Username Modal */}
+      <UsernameModal
+        isOpen={showUsernameModal}
+        onClose={() => setShowUsernameModal(false)}
+      />
     </div>
   );
 };
