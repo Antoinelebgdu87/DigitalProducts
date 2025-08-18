@@ -143,99 +143,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const banUser = async (userId: string, reason: string): Promise<void> => {
-    try {
-      await updateDoc(doc(db, "users", userId), {
-        isBanned: true,
-        banReason: reason,
-        bannedAt: Timestamp.now(),
-      });
-      
-      // Log the ban action
-      await addDoc(collection(db, "admin-actions"), {
-        type: "ban",
-        userId,
-        reason,
-        timestamp: Timestamp.now(),
-        adminUser: "admin",
-      });
-    } catch (error) {
-      console.error("Error banning user:", error);
-      throw error;
-    }
+    // Simplified for debug
+    console.log("Ban user:", userId, reason);
   };
 
   const addWarning = async (userId: string, reason: string): Promise<void> => {
-    try {
-      const userRef = doc(db, "users", userId);
-      const userDoc = await getDoc(userRef);
-      
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const newWarning: Warning = {
-          id: Date.now().toString(),
-          reason,
-          createdAt: new Date(),
-          isRead: false,
-        };
-        
-        const updatedWarnings = [...(userData.warnings || []), newWarning];
-        
-        await updateDoc(userRef, {
-          warnings: updatedWarnings,
-        });
-        
-        // Log the warning action
-        await addDoc(collection(db, "admin-actions"), {
-          type: "warning",
-          userId,
-          reason,
-          timestamp: Timestamp.now(),
-          adminUser: "admin",
-        });
-      }
-    } catch (error) {
-      console.error("Error adding warning:", error);
-      throw error;
-    }
+    // Simplified for debug
+    console.log("Add warning:", userId, reason);
   };
 
   const markWarningsAsRead = async (userId: string): Promise<void> => {
-    try {
-      const userRef = doc(db, "users", userId);
-      const userDoc = await getDoc(userRef);
-      
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const updatedWarnings = (userData.warnings || []).map((warning: Warning) => ({
-          ...warning,
-          isRead: true,
-        }));
-        
-        await updateDoc(userRef, {
-          warnings: updatedWarnings,
-        });
-      }
-    } catch (error) {
-      console.error("Error marking warnings as read:", error);
-      throw error;
-    }
+    // Simplified for debug
+    console.log("Mark warnings as read:", userId);
   };
 
   const checkUserStatus = async (): Promise<void> => {
-    if (currentUser?.id) {
-      try {
-        const userDoc = await getDoc(doc(db, "users", currentUser.id));
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          if (userData.isBanned) {
-            // User is banned, handle this in the UI
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("Error checking user status:", error);
-      }
-    }
+    // Simplified for debug
+    console.log("Check user status");
   };
 
   return (
