@@ -53,7 +53,7 @@ import {
   FileText,
   Link as LinkIcon,
 } from "lucide-react";
-import BackgroundAnimation from "@/components/BackgroundAnimation";
+import StarfieldBackground from "@/components/StarfieldBackground";
 import { toast } from "sonner";
 import { Product } from "@/types";
 
