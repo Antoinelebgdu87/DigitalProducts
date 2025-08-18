@@ -194,6 +194,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       },
       (error) => {
         console.error("Erreur listener utilisateurs:", error);
+        if (error.message && error.message.includes('permissions')) {
+          console.log("⚠️ Permissions Firebase manquantes pour les utilisateurs - mode dégradé");
+        }
         setUsers([]);
       },
     );
