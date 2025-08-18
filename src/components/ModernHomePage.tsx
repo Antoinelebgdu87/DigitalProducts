@@ -107,20 +107,30 @@ const ModernHomePage: React.FC = () => {
               </span>
             </motion.div>
 
-            <Link to="/admin">
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-gray-300 hover:text-white hover:bg-white/10 border border-white/20"
+            <div className="flex items-center space-x-3">
+              {currentUser && (
+                <div className="flex items-center space-x-2 px-3 py-1 bg-white/10 rounded-full border border-white/20">
+                  <User className="w-4 h-4 text-white" />
+                  <span className="text-white text-sm font-medium">
+                    {currentUser.username}
+                  </span>
+                </div>
+              )}
+              <Link to="/admin">
+                <motion.div
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
                 >
-                  <Settings className="w-4 h-4" />
-                </Button>
-              </motion.div>
-            </Link>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-gray-300 hover:text-white hover:bg-white/10 border border-white/20"
+                  >
+                    <Settings className="w-4 h-4" />
+                  </Button>
+                </motion.div>
+              </Link>
+            </div>
           </div>
         </div>
       </motion.nav>
