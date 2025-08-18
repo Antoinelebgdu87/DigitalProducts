@@ -28,6 +28,7 @@ const WarningModal: React.FC<WarningModalProps> = ({ isOpen, warnings, onClose }
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent
         className="bg-orange-900/95 border-orange-700 backdrop-blur-xl max-w-md"
+        hideClose
       >
         <DialogHeader className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-orange-600 rounded-full flex items-center justify-center animate-pulse">
