@@ -321,10 +321,10 @@ const AdminDashboard: React.FC = () => {
             <TabsContent value="products" className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold text-white">
+                  <h2 className="text-lg font-semibold text-white">
                     Products Management
                   </h2>
-                  <p className="text-gray-400">
+                  <p className="text-gray-400 text-sm">
                     {products.length} product(s) total
                   </p>
                 </div>
