@@ -108,6 +108,13 @@ const AdminDashboard: React.FC = () => {
     message: maintenanceMessage,
   });
 
+  // User management states
+  const [showBanDialog, setShowBanDialog] = useState(false);
+  const [showWarnDialog, setShowWarnDialog] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [banReason, setBanReason] = useState("");
+  const [warnReason, setWarnReason] = useState("");
+
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
