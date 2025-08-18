@@ -33,6 +33,8 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
     setIsLoading(true);
     try {
       await createUsername(username.trim());
+      // Mark that user has created a username to never show popup again
+      localStorage.setItem("hasCreatedUser", "true");
       toast.success(`Welcome, ${username}!`);
       onClose();
     } catch (error) {
