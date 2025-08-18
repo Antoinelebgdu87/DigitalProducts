@@ -26,9 +26,8 @@ const WarningModal: React.FC<WarningModalProps> = ({ isOpen, warnings, onClose }
 
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
-      <DialogContent 
+      <DialogContent
         className="bg-orange-900/95 border-orange-700 backdrop-blur-xl max-w-md"
-        hideClose
       >
         <DialogHeader className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-orange-600 rounded-full flex items-center justify-center animate-pulse">
@@ -38,30 +37,32 @@ const WarningModal: React.FC<WarningModalProps> = ({ isOpen, warnings, onClose }
             {unreadWarnings.length === 1 ? "Nouvel avertissement" : "Nouveaux avertissements"}
           </DialogTitle>
           <DialogDescription className="text-orange-200 mt-4">
-            <div className="space-y-3">
-              {unreadWarnings.map((warning) => (
-                <div 
-                  key={warning.id}
-                  className="bg-orange-800/50 rounded-lg p-4 border border-orange-600"
-                >
-                  <p className="font-semibold text-white mb-2">Avertissement :</p>
-                  <p className="text-orange-100">{warning.reason}</p>
-                  <p className="text-orange-300 text-xs mt-2">
-                    {warning.createdAt.toLocaleString("fr-FR")}
-                  </p>
-                </div>
-              ))}
-            </div>
+            Vous avez reçu {unreadWarnings.length} avertissement{unreadWarnings.length > 1 ? 's' : ''}.
           </DialogDescription>
         </DialogHeader>
 
+        <div className="space-y-3 mt-4">
+          {unreadWarnings.map((warning) => (
+            <div
+              key={warning.id}
+              className="bg-orange-800/50 rounded-lg p-4 border border-orange-600"
+            >
+              <div className="font-semibold text-white mb-2">Avertissement :</div>
+              <div className="text-orange-100">{warning.reason}</div>
+              <div className="text-orange-300 text-xs mt-2">
+                {warning.createdAt.toLocaleString("fr-FR")}
+              </div>
+            </div>
+          ))}
+        </div>
+
         <div className="text-center mt-4">
-          <p className="text-orange-200 text-sm">
+          <div className="text-orange-200 text-sm">
             Veuillez respecter les règles de la plateforme pour éviter de futurs avertissements.
-          </p>
-          <p className="text-orange-300 text-xs mt-2">
+          </div>
+          <div className="text-orange-300 text-xs mt-2">
             Les avertissements répétés peuvent conduire à un bannissement.
-          </p>
+          </div>
         </div>
 
         <DialogFooter>
