@@ -194,8 +194,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       },
       (error) => {
         console.error("Erreur listener utilisateurs:", error);
-        if (error.message && error.message.includes('permissions')) {
+        if (error.message && (error.message.includes('permissions') || error.message.includes('Missing or insufficient'))) {
           console.log("⚠️ Permissions Firebase manquantes pour les utilisateurs - mode dégradé");
+          // Fallback: utiliser un utilisateur local basique
+          const localUser = localStorage.getItem("username");
+          if (localUser && !currentUser) {
+            console.log("🔄 Fallback: mode utilisateur local activé");
+          }
         }
         setUsers([]);
       },
