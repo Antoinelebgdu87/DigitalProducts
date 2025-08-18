@@ -50,7 +50,7 @@ const SimpleStarsBackground: React.FC = () => {
       ctx.fillStyle = "rgba(12, 12, 12, 1)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      timeRef.current += 0.016; // ~60fps
+      timeRef.current += 0.064; // ~60fps mais plus rapide
 
       starsRef.current.forEach((star) => {
         // Simple twinkle effect
