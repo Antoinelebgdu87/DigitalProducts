@@ -1,18 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import {
-  collection,
-  doc,
-  setDoc,
-  getDoc,
-  onSnapshot,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  addDoc,
-  Timestamp
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
+// Temporarily comment out Firebase imports to debug
+// import {
+//   collection,
+//   doc,
+//   setDoc,
+//   getDoc,
+//   onSnapshot,
+//   query,
+//   where,
+//   getDocs,
+//   updateDoc,
+//   addDoc,
+//   Timestamp
+// } from "firebase/firestore";
+// import { db } from "@/lib/firebase";
 
 export interface User {
   id: string;
@@ -95,172 +96,149 @@ const generateRandomUsername = (): string => {
   return `${adjective}${noun}${randomNumber}`;
 };
 
-// Generate a unique device ID for this browser session
-const getDeviceId = (): string => {
-  // Use a combination of browser fingerprinting techniques
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  ctx!.textBaseline = 'top';
-  ctx!.font = '14px Arial';
-  ctx!.fillText('Device fingerprint', 2, 2);
-  
-  const fingerprint = [
-    navigator.userAgent,
-    navigator.language,
-    screen.width + 'x' + screen.height,
-    new Date().getTimezoneOffset(),
-    canvas.toDataURL()
-  ].join('|');
-  
-  // Create a simple hash
-  let hash = 0;
-  for (let i = 0; i < fingerprint.length; i++) {
-    const char = fingerprint.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32bit integer
-  }
-  
-  return Math.abs(hash).toString(36);
-};
-
 export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [users, setUsers] = useState<User[] | null>(null);
-  const [deviceId] = useState<string>(getDeviceId());
 
-  // Helper function to convert Firebase timestamps to dates
-  const parseUserFromFirebase = (userData: any): User => {
-    return {
-      ...userData,
-      createdAt: userData.createdAt?.toDate() || new Date(),
-      lastSeen: userData.lastSeen?.toDate() || new Date(),
-      bannedAt: userData.bannedAt?.toDate() || undefined,
-      warnings: (userData.warnings || []).map((warning: any) => ({
+  // Helper function to parse users with proper date conversion
+  const parseUsers = (usersData: User[]): User[] => {
+    return usersData.map((user) => ({
+      ...user,
+      createdAt: new Date(user.createdAt),
+      lastSeen: new Date(user.lastSeen),
+      bannedAt: user.bannedAt ? new Date(user.bannedAt) : undefined,
+      warnings: (user.warnings || []).map((warning) => ({
         ...warning,
-        createdAt: warning.createdAt?.toDate() || new Date(),
+        createdAt: new Date(warning.createdAt),
       })),
-    };
+    }));
   };
 
   // Check user status on load
   useEffect(() => {
     const checkExistingUser = async () => {
-      try {
-        // Check if there's a user for this device in Firebase
-        const usersRef = collection(db, "users");
-        const q = query(usersRef, where("deviceId", "==", deviceId));
-        const querySnapshot = await getDocs(q);
+      // Check localStorage for existing user
+      const storedUserId = localStorage.getItem("userId");
+      const storedUsername = localStorage.getItem("username");
 
-        if (!querySnapshot.empty) {
-          // User exists for this device
-          const userDoc = querySnapshot.docs[0];
-          const userData = parseUserFromFirebase(userDoc.data());
-          userData.id = userDoc.id;
-          
-          // Update last seen and online status
-          await updateDoc(doc(db, "users", userData.id), {
-            lastSeen: Timestamp.now(),
-            isOnline: true
-          });
-          
-          setCurrentUser(userData);
-          console.log("🔵 Utilisateur existant chargé depuis Firebase:", userData.username);
+      if (storedUserId && storedUsername) {
+        // Load existing user
+        const user: User = {
+          id: storedUserId,
+          username: storedUsername,
+          isOnline: true,
+          isBanned: false,
+          warnings: [],
+          createdAt: new Date(),
+          lastSeen: new Date(),
+        };
+        setCurrentUser(user);
+        saveUserToDatabase(user); // Make sure user is in the database
+        console.log("🔵 Utilisateur existant chargé:", storedUsername);
+      } else {
+        // Check if user was supposed to have been created
+        const hasEverCreatedUser = localStorage.getItem("hasCreatedUser");
+        if (hasEverCreatedUser === "true") {
+          // User was created before but data is missing, recreate
+          const username = generateRandomUsername();
+          const userId = Date.now().toString();
+
+          localStorage.setItem("userId", userId);
+          localStorage.setItem("username", username);
+
+          const user: User = {
+            id: userId,
+            username: username,
+            isOnline: true,
+            isBanned: false,
+            warnings: [],
+            createdAt: new Date(),
+            lastSeen: new Date(),
+          };
+          setCurrentUser(user);
+          saveUserToDatabase(user); // Add to database
+          console.log("🟢 Utilisateur recrée:", username);
         } else {
-          console.log("🟡 Aucun utilisateur trouvé pour cet appareil - modal va s'afficher");
+          console.log("🟡 Aucun utilisateur trouvé - modal va s'afficher");
         }
-      } catch (error) {
-        console.error("Erreur lors de la vérification de l'utilisateur:", error);
       }
     };
 
     checkExistingUser();
-  }, [deviceId]);
+  }, []);
 
-  // Load all users from Firebase
+  // Load all users from localStorage
   useEffect(() => {
     const loadAllUsers = () => {
       try {
-        const usersRef = collection(db, "users");
-        const unsubscribe = onSnapshot(usersRef, (snapshot) => {
-          const usersData = snapshot.docs.map(doc => {
-            const userData = parseUserFromFirebase(doc.data());
-            userData.id = doc.id;
-            return userData;
-          });
-          
-          setUsers(usersData);
-          console.log("📋 Utilisateurs chargés depuis Firebase:", usersData.length);
-        });
-
-        return unsubscribe;
+        const stored = localStorage.getItem("allUsers");
+        if (stored) {
+          const usersData = JSON.parse(stored) as User[];
+          const parsedUsers = parseUsers(usersData);
+          setUsers(parsedUsers);
+          console.log("📋 Utilisateurs chargés:", parsedUsers.length);
+        } else {
+          setUsers([]);
+          console.log("📋 Aucun utilisateur dans la base");
+        }
       } catch (error) {
         console.error("Erreur lors du chargement des utilisateurs:", error);
         setUsers([]);
       }
     };
 
-    const unsubscribe = loadAllUsers();
-    return () => {
-      if (unsubscribe) unsubscribe();
-    };
+    loadAllUsers();
   }, []);
 
-  // Listen to current user changes
+  // Simplified user changes listener
   useEffect(() => {
-    if (!currentUser?.id) return;
-
-    const userDocRef = doc(db, "users", currentUser.id);
-    const unsubscribe = onSnapshot(userDocRef, (doc) => {
-      if (doc.exists()) {
-        const userData = parseUserFromFirebase(doc.data());
-        userData.id = doc.id;
-        setCurrentUser(userData);
-      }
-    });
-
-    return () => unsubscribe();
+    // No Firebase listener for now
   }, [currentUser?.id]);
 
-  // Handle page unload - set user offline
+  // Simplified beforeunload
   useEffect(() => {
-    const handleBeforeUnload = async () => {
-      if (currentUser?.id) {
-        try {
-          await updateDoc(doc(db, "users", currentUser.id), {
-            isOnline: false,
-            lastSeen: Timestamp.now()
-          });
-        } catch (error) {
-          console.error("Erreur lors de la mise hors ligne:", error);
-        }
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+    // No Firebase operations for now
   }, [currentUser?.id]);
+
+  const saveUserToDatabase = (user: User) => {
+    try {
+      // Get all users from localStorage
+      const stored = localStorage.getItem("allUsers");
+      let allUsers: User[] = stored ? JSON.parse(stored) : [];
+
+      // Check if user already exists
+      const existingIndex = allUsers.findIndex((u) => u.id === user.id);
+      if (existingIndex >= 0) {
+        // Update existing user
+        allUsers[existingIndex] = user;
+      } else {
+        // Add new user
+        allUsers.push(user);
+      }
+
+      // Save back to localStorage
+      localStorage.setItem("allUsers", JSON.stringify(allUsers));
+      setUsers(allUsers);
+      console.log("💾 Utilisateur sauvegardé dans la base:", user.username);
+    } catch (error) {
+      console.error("Erreur lors de la sauvegarde:", error);
+    }
+  };
 
   const createUsername = async (username?: string): Promise<User> => {
     try {
       const finalUsername = username || generateRandomUsername();
 
-      const newUser = {
-        username: finalUsername,
-        deviceId: deviceId,
-        isOnline: true,
-        isBanned: false,
-        warnings: [],
-        createdAt: Timestamp.now(),
-        lastSeen: Timestamp.now(),
-      };
+      // Save to localStorage
+      const userId = Date.now().toString();
+      localStorage.setItem("userId", userId);
+      localStorage.setItem("username", finalUsername);
+      localStorage.setItem("hasCreatedUser", "true");
 
-      // Add user to Firebase
-      const docRef = await addDoc(collection(db, "users"), newUser);
-      
-      const createdUser: User = {
-        id: docRef.id,
+      const newUser: User = {
+        id: userId,
         username: finalUsername,
         isOnline: true,
         isBanned: false,
@@ -269,25 +247,43 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         lastSeen: new Date(),
       };
 
-      setCurrentUser(createdUser);
-      console.log("🎉 Nouvel utilisateur créé dans Firebase:", finalUsername);
-      return createdUser;
+      setCurrentUser(newUser);
+      saveUserToDatabase(newUser);
+      console.log("🎉 Nouvel utilisateur créé:", finalUsername);
+      return newUser;
     } catch (error) {
-      console.error("Erreur lors de la création de l'utilisateur:", error);
+      console.error("Error creating username:", error);
       throw error;
     }
   };
 
   const banUser = async (userId: string, reason: string): Promise<void> => {
     try {
-      const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, {
-        isBanned: true,
-        banReason: reason,
-        bannedAt: Timestamp.now(),
-      });
+      const stored = localStorage.getItem("allUsers");
+      if (stored) {
+        let allUsers: User[] = JSON.parse(stored);
+        const userIndex = allUsers.findIndex((u) => u.id === userId);
 
-      console.log("🚫 Utilisateur banni dans Firebase:", userId);
+        if (userIndex >= 0) {
+          allUsers[userIndex] = {
+            ...allUsers[userIndex],
+            isBanned: true,
+            banReason: reason,
+            bannedAt: new Date(),
+          };
+
+          localStorage.setItem("allUsers", JSON.stringify(allUsers));
+          const parsedUsers = parseUsers(allUsers);
+          setUsers(parsedUsers);
+
+          // If it's the current user, update them too
+          if (currentUser?.id === userId) {
+            setCurrentUser(parsedUsers[userIndex]);
+          }
+
+          console.log("🚫 Utilisateur banni:", parsedUsers[userIndex].username);
+        }
+      }
     } catch (error) {
       console.error("Erreur lors du bannissement:", error);
       throw error;
@@ -296,25 +292,38 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addWarning = async (userId: string, reason: string): Promise<void> => {
     try {
-      const userRef = doc(db, "users", userId);
-      const userDoc = await getDoc(userRef);
-      
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const existingWarnings = userData.warnings || [];
-        
-        const newWarning = {
-          id: Date.now().toString(),
-          reason,
-          createdAt: Timestamp.now(),
-          isRead: false,
-        };
+      const stored = localStorage.getItem("allUsers");
+      if (stored) {
+        let allUsers: User[] = JSON.parse(stored);
+        const userIndex = allUsers.findIndex((u) => u.id === userId);
 
-        await updateDoc(userRef, {
-          warnings: [...existingWarnings, newWarning]
-        });
+        if (userIndex >= 0) {
+          const newWarning: Warning = {
+            id: Date.now().toString(),
+            reason,
+            createdAt: new Date(),
+            isRead: false,
+          };
 
-        console.log("⚠️ Avertissement ajouté dans Firebase:", userId);
+          allUsers[userIndex] = {
+            ...allUsers[userIndex],
+            warnings: [...(allUsers[userIndex].warnings || []), newWarning],
+          };
+
+          localStorage.setItem("allUsers", JSON.stringify(allUsers));
+          const parsedUsers = parseUsers(allUsers);
+          setUsers(parsedUsers);
+
+          // If it's the current user, update them too
+          if (currentUser?.id === userId) {
+            setCurrentUser(parsedUsers[userIndex]);
+          }
+
+          console.log(
+            "⚠️ Avertissement ajouté:",
+            parsedUsers[userIndex].username,
+          );
+        }
       }
     } catch (error) {
       console.error("Erreur lors de l'ajout d'avertissement:", error);
@@ -324,21 +333,34 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const markWarningsAsRead = async (userId: string): Promise<void> => {
     try {
-      const userRef = doc(db, "users", userId);
-      const userDoc = await getDoc(userRef);
-      
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
-        const updatedWarnings = (userData.warnings || []).map((warning: any) => ({
-          ...warning,
-          isRead: true,
-        }));
+      const stored = localStorage.getItem("allUsers");
+      if (stored) {
+        let allUsers: User[] = JSON.parse(stored);
+        const userIndex = allUsers.findIndex((u) => u.id === userId);
 
-        await updateDoc(userRef, {
-          warnings: updatedWarnings
-        });
+        if (userIndex >= 0) {
+          allUsers[userIndex] = {
+            ...allUsers[userIndex],
+            warnings: (allUsers[userIndex].warnings || []).map((w) => ({
+              ...w,
+              isRead: true,
+            })),
+          };
 
-        console.log("✅ Avertissements marqués comme lus dans Firebase:", userId);
+          localStorage.setItem("allUsers", JSON.stringify(allUsers));
+          const parsedUsers = parseUsers(allUsers);
+          setUsers(parsedUsers);
+
+          // If it's the current user, update them too
+          if (currentUser?.id === userId) {
+            setCurrentUser(parsedUsers[userIndex]);
+          }
+
+          console.log(
+            "✅ Avertissements marqués comme lus:",
+            parsedUsers[userIndex].username,
+          );
+        }
       }
     } catch (error) {
       console.error("Erreur lors du marquage des avertissements:", error);
@@ -347,16 +369,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const checkUserStatus = async (): Promise<void> => {
-    if (!currentUser?.id) return;
-    
-    try {
-      const userRef = doc(db, "users", currentUser.id);
-      await updateDoc(userRef, {
-        lastSeen: Timestamp.now()
-      });
-    } catch (error) {
-      console.error("Erreur lors de la vérification du statut:", error);
-    }
+    // Simplified for debug
+    console.log("Check user status");
   };
 
   return (

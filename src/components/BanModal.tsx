@@ -13,7 +13,7 @@ interface BanModalProps {
   reason: string;
 }
 
-export const BanModal: React.FC<BanModalProps> = ({ isOpen, reason }) => {
+const BanModal: React.FC<BanModalProps> = ({ isOpen, reason }) => {
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent
@@ -51,3 +51,5 @@ export const BanModal: React.FC<BanModalProps> = ({ isOpen, reason }) => {
     </Dialog>
   );
 };
+
+export default BanModal;

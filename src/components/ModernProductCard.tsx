@@ -10,10 +10,9 @@ import NotepadViewer from "./NotepadViewer";
 
 interface ModernProductCardProps {
   product: Product;
-  user?: any;
 }
 
-export const ModernProductCard: React.FC<ModernProductCardProps> = ({ product, user }) => {
+const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   const [showLicenseInput, setShowLicenseInput] = useState(false);
   const [showNotepad, setShowNotepad] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -192,3 +191,5 @@ export const ModernProductCard: React.FC<ModernProductCardProps> = ({ product, u
     </>
   );
 };
+
+export default ModernProductCard;

@@ -1,108 +1,139 @@
 import React, { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RefreshCw, User } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
 
 interface UsernameModalProps {
+  isOpen: boolean;
   onClose: () => void;
 }
 
-export const UsernameModal: React.FC<UsernameModalProps> = ({ onClose }) => {
-  const [username, setUsername] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
   const { createUsername, generateRandomUsername } = useUser();
+  const [username, setUsername] = useState(generateRandomUsername());
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (customUsername?: string) => {
+  const handleCreateUser = async () => {
+    if (!username.trim()) {
+      toast.error("Please enter a username");
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const finalUsername = customUsername || username.trim();
-      await createUsername(finalUsername || undefined);
-      toast.success(`Welcome, ${finalUsername || "to Key System"}!`);
+      await createUsername(username.trim());
+      // Mark that user has created a username to never show popup again
+      localStorage.setItem("hasCreatedUser", "true");
+      toast.success(`Welcome, ${username}!`);
       onClose();
     } catch (error) {
       console.error("Error creating username:", error);
-      toast.error("Failed to create username. Please try again.");
+      if (
+        error instanceof Error &&
+        error.message === "Username already exists"
+      ) {
+        toast.error(
+          "This username is already taken. Please choose another one.",
+        );
+      } else {
+        toast.error("Failed to create username. Please try again.");
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleRandomUsername = async () => {
-    const randomUsername = generateRandomUsername();
-    await handleSubmit(randomUsername);
-  };
-
-  const handleCustomSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (username.trim()) {
-      await handleSubmit();
-    } else {
-      toast.error("Please enter a username or choose random");
-    }
+  const generateNewUsername = () => {
+    setUsername(generateRandomUsername());
   };
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 rounded-2xl p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="text-4xl mb-4">🎮</div>
-          <h2 className="text-2xl font-bold text-white mb-2">
-            Choose Your Username
-          </h2>
-          <p className="text-gray-400">
-            Set your identity for this session
-          </p>
-        </div>
-
-        <form onSubmit={handleCustomSubmit} className="space-y-6">
-          <div>
-            <Input
-              type="text"
-              placeholder="Enter custom username..."
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="bg-gray-800/50 border-gray-600 text-white placeholder-gray-400 text-lg py-3"
-              maxLength={20}
-              disabled={isLoading}
-            />
+    <Dialog open={isOpen} onOpenChange={() => {}}>
+      <DialogContent
+        className="bg-gray-900/95 border-gray-800 backdrop-blur-xl max-w-md"
+        hideClose
+      >
+        <DialogHeader className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-red-500 to-red-600 rounded-full flex items-center justify-center">
+            <User className="w-8 h-8 text-white" />
           </div>
+          <DialogTitle className="text-xl font-semibold text-white">
+            Bienvenue !
+          </DialogTitle>
+          <DialogDescription className="text-gray-400">
+            Créez votre nom d'utilisateur pour accéder à la plateforme
+          </DialogDescription>
+        </DialogHeader>
 
-          <div className="space-y-3">
-            <Button
-              type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-semibold py-3 text-lg"
-              disabled={isLoading || !username.trim()}
-            >
-              {isLoading ? "Creating..." : "Use Custom Username"}
-            </Button>
-
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-600"></div>
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-3 bg-gray-900 text-gray-400">or</span>
-              </div>
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="username" className="text-white text-sm">
+              Nom d'utilisateur
+            </Label>
+            <div className="flex space-x-2">
+              <Input
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="bg-gray-800 border-gray-700 text-white flex-1"
+                placeholder="Entrez votre pseudo"
+                maxLength={20}
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    handleCreateUser();
+                  }
+                }}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={generateNewUsername}
+                className="border-gray-700 hover:bg-gray-800"
+                title="Générer un nouveau pseudo"
+              >
+                <RefreshCw className="w-4 h-4" />
+              </Button>
             </div>
-
-            <Button
-              type="button"
-              onClick={handleRandomUsername}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-3 text-lg"
-              disabled={isLoading}
-            >
-              {isLoading ? "Generating..." : "Generate Random Username"}
-            </Button>
+            <div className="text-xs text-gray-500">
+              Ou utilisez le pseudo généré automatiquement
+            </div>
           </div>
-        </form>
-
-        <div className="mt-6 text-center">
-          <p className="text-xs text-gray-500">
-            Your username will be saved for this browser session
-          </p>
         </div>
-      </div>
-    </div>
+
+        <DialogFooter className="flex-col space-y-2">
+          <Button
+            onClick={handleCreateUser}
+            disabled={isLoading || !username.trim()}
+            className="w-full bg-red-600 hover:bg-red-700 text-white"
+          >
+            {isLoading ? (
+              <>
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                Création...
+              </>
+            ) : (
+              "Créer mon compte"
+            )}
+          </Button>
+          <div className="text-xs text-gray-500 text-center">
+            Votre pseudo sera visible par les autres utilisateurs
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 };
+
+export default UsernameModal;

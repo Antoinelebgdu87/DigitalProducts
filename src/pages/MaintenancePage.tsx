@@ -9,7 +9,7 @@ interface MaintenancePageProps {
   message: string;
 }
 
-export const MaintenancePage: React.FC<MaintenancePageProps> = ({ message }) => {
+const MaintenancePage: React.FC<MaintenancePageProps> = ({ message }) => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative">
       <BackgroundAnimation />
@@ -90,3 +90,5 @@ export const MaintenancePage: React.FC<MaintenancePageProps> = ({ message }) => 
     </div>
   );
 };
+
+export default MaintenancePage;

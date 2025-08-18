@@ -1,151 +1,144 @@
 import { useState, useEffect } from "react";
-import {
-  collection,
-  addDoc,
-  deleteDoc,
-  doc,
-  onSnapshot,
-  updateDoc,
-  query,
-  orderBy,
-  Timestamp
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
+// Temporarily comment out Firebase imports to debug
+// import {
+//   collection,
+//   addDoc,
+//   getDocs,
+//   deleteDoc,
+//   doc,
+//   query,
+//   where,
+//   orderBy,
+//   updateDoc,
+// } from "firebase/firestore";
+// import { db } from "@/lib/firebase";
 import { License } from "@/types";
 
-interface UseLicensesReturn {
-  licenses: License[];
-  isLoading: boolean;
-  error: string | null;
-  addLicense: (license: Omit<License, "id" | "createdAt">) => Promise<void>;
-  deleteLicense: (licenseId: string) => Promise<void>;
-  validateLicense: (
-    key: string,
-    productName: string,
-  ) => Promise<{ isValid: boolean; user?: any; message?: string }>;
-}
-
-export const useLicenses = (): UseLicensesReturn => {
+export const useLicenses = () => {
   const [licenses, setLicenses] = useState<License[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchLicenses = async () => {
+    try {
+      // Load from localStorage instead of Firebase
+      const stored = localStorage.getItem("licenses");
+      if (stored) {
+        const licensesData = JSON.parse(stored) as License[];
+        // Convert date strings back to Date objects
+        const parsedLicenses = licensesData.map((license) => ({
+          ...license,
+          createdAt: new Date(license.createdAt),
+        }));
+        setLicenses(parsedLicenses);
+      } else {
+        setLicenses([]);
+      }
+    } catch (error) {
+      console.error("Error fetching licenses:", error);
+      setLicenses([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    try {
-      // Listen to real-time changes in Firebase
-      const licensesRef = collection(db, "licenses");
-      const q = query(licensesRef, orderBy("createdAt", "desc"));
-      
-      const unsubscribe = onSnapshot(q, (snapshot) => {
-        const licensesData = snapshot.docs.map(doc => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            ...data,
-            createdAt: data.createdAt?.toDate() || new Date(),
-            usedAt: data.usedAt?.toDate() || undefined,
-          } as License;
-        });
-        
-        setLicenses(licensesData);
-        setIsLoading(false);
-        setError(null);
-        console.log("📄 Licenses chargées depuis Firebase:", licensesData.length);
-      }, (error) => {
-        console.error("Erreur lors du chargement des licenses:", error);
-        setError("Erreur lors du chargement des licenses");
-        setIsLoading(false);
-      });
-
-      return unsubscribe;
-    } catch (error) {
-      console.error("Erreur lors de l'initialisation des licenses:", error);
-      setError("Erreur lors de l'initialisation");
-      setIsLoading(false);
-    }
+    fetchLicenses();
   }, []);
 
-  const addLicense = async (
-    licenseData: Omit<License, "id" | "createdAt">,
-  ): Promise<void> => {
+  const generateLicenseCode = (): string => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let result = "";
+    for (let i = 0; i < 16; i++) {
+      if (i > 0 && i % 4 === 0) result += "-";
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+  };
+
+  const createLicense = async (
+    productId: string,
+    category: "compte" | "carte-cadeau" | "cheat",
+    maxUsages: number,
+  ): Promise<string> => {
     try {
-      const newLicense = {
-        ...licenseData,
-        createdAt: Timestamp.now(),
+      const code = generateLicenseCode();
+      const newLicense: License = {
+        id: Date.now().toString(),
+        productId,
+        code,
+        category,
+        maxUsages,
+        currentUsages: 0,
+        createdAt: new Date(),
+        isActive: true,
       };
 
-      await addDoc(collection(db, "licenses"), newLicense);
-      console.log("📄 License ajoutée dans Firebase:", licenseData.key);
+      const updatedLicenses = [newLicense, ...licenses];
+      localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
+      setLicenses(updatedLicenses);
+      return code;
     } catch (error) {
-      console.error("Erreur lors de l'ajout de la license:", error);
-      throw new Error("Erreur lors de l'ajout de la license");
+      console.error("Error creating license:", error);
+      throw error;
     }
   };
 
   const deleteLicense = async (licenseId: string): Promise<void> => {
     try {
-      await deleteDoc(doc(db, "licenses", licenseId));
-      console.log("📄 License supprimée de Firebase:", licenseId);
+      const updatedLicenses = licenses.filter((l) => l.id !== licenseId);
+      localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
+      setLicenses(updatedLicenses);
     } catch (error) {
-      console.error("Erreur lors de la suppression de la license:", error);
-      throw new Error("Erreur lors de la suppression de la license");
+      console.error("Error deleting license:", error);
+      throw error;
     }
   };
 
   const validateLicense = async (
-    key: string,
-    productName: string,
-  ): Promise<{ isValid: boolean; user?: any; message?: string }> => {
+    licenseCode: string,
+    productId: string,
+  ): Promise<{ isValid: boolean; license?: License }> => {
     try {
-      // Find the license in our current data
       const license = licenses.find(
-        (l) => l.key === key && l.productName === productName,
+        (l) => l.code === licenseCode && l.productId === productId,
       );
 
-      if (!license) {
-        return {
-          isValid: false,
-          message: "License key not found for this product",
-        };
+      if (!license) return { isValid: false };
+
+      const isValid =
+        license.isActive && license.currentUsages < license.maxUsages;
+
+      if (isValid) {
+        // Increment usage count
+        const updatedLicenses = licenses.map((l) =>
+          l.id === license.id
+            ? { ...l, currentUsages: l.currentUsages + 1 }
+            : l,
+        );
+        localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
+        setLicenses(updatedLicenses);
       }
 
-      if (license.isUsed) {
-        return {
-          isValid: false,
-          message: "License key has already been used",
-          user: license.usedBy,
-        };
-      }
-
-      // Mark license as used in Firebase
-      const licenseRef = doc(db, "licenses", license.id);
-      await updateDoc(licenseRef, {
-        isUsed: true,
-        usedAt: Timestamp.now(),
-        usedBy: "User", // You might want to pass actual user info here
-      });
-
-      console.log("📄 License validée et marquée comme utilisée:", key);
-
-      return {
-        isValid: true,
-        message: "License key is valid and has been activated",
-      };
+      return { isValid, license };
     } catch (error) {
-      console.error("Erreur lors de la validation de la license:", error);
-      return {
-        isValid: false,
-        message: "Error validating license key",
-      };
+      console.error("Error validating license:", error);
+      return { isValid: false };
     }
+  };
+
+  const getActiveLicenses = (): License[] => {
+    return licenses.filter((license) => {
+      return license.isActive && license.currentUsages < license.maxUsages;
+    });
   };
 
   return {
     licenses,
-    isLoading,
-    error,
-    addLicense,
+    loading,
+    createLicense,
     deleteLicense,
     validateLicense,
+    getActiveLicenses,
+    refetch: fetchLicenses,
   };
 };

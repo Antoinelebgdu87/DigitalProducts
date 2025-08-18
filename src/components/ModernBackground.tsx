@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 
-export const ModernBackground: React.FC = () => {
+const ModernBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -259,3 +259,5 @@ export const ModernBackground: React.FC = () => {
     </div>
   );
 };
+
+export default ModernBackground;

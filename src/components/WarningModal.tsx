@@ -17,7 +17,7 @@ interface WarningModalProps {
   onClose: () => void;
 }
 
-export const WarningModal: React.FC<WarningModalProps> = ({
+const WarningModal: React.FC<WarningModalProps> = ({
   isOpen,
   warnings,
   onClose,
@@ -88,3 +88,5 @@ export const WarningModal: React.FC<WarningModalProps> = ({
     </Dialog>
   );
 };
+
+export default WarningModal;
