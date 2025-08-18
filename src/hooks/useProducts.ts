@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  deleteDoc,
-  doc,
-  orderBy,
-  query,
-  updateDoc,
-} from "firebase/firestore";
-import { db } from "@/lib/firebase";
+// Temporarily comment out Firebase imports to debug
+// import {
+//   collection,
+//   addDoc,
+//   getDocs,
+//   deleteDoc,
+//   doc,
+//   orderBy,
+//   query,
+//   updateDoc,
+// } from "firebase/firestore";
+// import { db } from "@/lib/firebase";
 import { Product } from "@/types";
 
 export const useProducts = () => {
@@ -18,16 +19,17 @@ export const useProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const q = query(collection(db, "products"), orderBy("createdAt", "desc"));
-      const querySnapshot = await getDocs(q);
-      const productsData = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate() || new Date(),
-      })) as Product[];
-      setProducts(productsData);
+      // Load from localStorage instead of Firebase
+      const stored = localStorage.getItem("products");
+      if (stored) {
+        const productsData = JSON.parse(stored) as Product[];
+        setProducts(productsData);
+      } else {
+        setProducts([]);
+      }
     } catch (error) {
       console.error("Error fetching products:", error);
+      setProducts([]);
     } finally {
       setLoading(false);
     }
@@ -37,15 +39,22 @@ export const useProducts = () => {
     fetchProducts();
   }, []);
 
+  const saveProducts = (newProducts: Product[]) => {
+    localStorage.setItem("products", JSON.stringify(newProducts));
+    setProducts(newProducts);
+  };
+
   const addProduct = async (
     productData: Omit<Product, "id" | "createdAt">,
   ): Promise<void> => {
     try {
-      await addDoc(collection(db, "products"), {
+      const newProduct: Product = {
         ...productData,
+        id: Date.now().toString(),
         createdAt: new Date(),
-      });
-      await fetchProducts(); // Refresh the list
+      };
+      const updatedProducts = [newProduct, ...products];
+      saveProducts(updatedProducts);
     } catch (error) {
       console.error("Error adding product:", error);
       throw error;
@@ -54,8 +63,8 @@ export const useProducts = () => {
 
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
-      await deleteDoc(doc(db, "products", productId));
-      await fetchProducts(); // Refresh the list
+      const updatedProducts = products.filter(p => p.id !== productId);
+      saveProducts(updatedProducts);
     } catch (error) {
       console.error("Error deleting product:", error);
       throw error;
@@ -67,8 +76,10 @@ export const useProducts = () => {
     productData: Partial<Omit<Product, "id" | "createdAt">>,
   ): Promise<void> => {
     try {
-      await updateDoc(doc(db, "products", productId), productData);
-      await fetchProducts(); // Refresh the list
+      const updatedProducts = products.map(p =>
+        p.id === productId ? { ...p, ...productData } : p
+      );
+      saveProducts(updatedProducts);
     } catch (error) {
       console.error("Error updating product:", error);
       throw error;
