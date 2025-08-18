@@ -68,7 +68,7 @@ const ModernHomePage: React.FC = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      <ModernBackground />
+      <StarfieldBackground />
 
       {/* Navigation */}
       <motion.nav
