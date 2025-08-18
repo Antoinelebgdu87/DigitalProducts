@@ -126,10 +126,26 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     checkExistingUser();
   }, []);
 
-  // Temporarily simplified - no Firebase listeners
+  // Load all users from localStorage
   useEffect(() => {
-    // Mock users data
-    setUsers([]);
+    const loadAllUsers = () => {
+      try {
+        const stored = localStorage.getItem("allUsers");
+        if (stored) {
+          const usersData = JSON.parse(stored) as User[];
+          setUsers(usersData);
+          console.log("📋 Utilisateurs chargés:", usersData.length);
+        } else {
+          setUsers([]);
+          console.log("📋 Aucun utilisateur dans la base");
+        }
+      } catch (error) {
+        console.error("Erreur lors du chargement des utilisateurs:", error);
+        setUsers([]);
+      }
+    };
+
+    loadAllUsers();
   }, []);
 
   // Simplified user changes listener
