@@ -66,6 +66,7 @@ export const useComments = (productId?: string) => {
             "💬 Commentaires chargés depuis Firebase:",
             commentsData.length,
           );
+          console.log("💬 Détails des commentaires:", commentsData);
         } catch (error) {
           console.error(
             "❌ Erreur lors du traitement des commentaires:",
