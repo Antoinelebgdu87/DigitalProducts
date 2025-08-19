@@ -64,38 +64,41 @@ const AppContent = () => {
     }
 
     return (
-      <Routes>
-        <Route
-          path="/"
-          element={
-            isMaintenanceMode && !isAuthenticated ? (
-              <MaintenancePage message={maintenanceMessage} />
-            ) : (
-              <ModernHomePage />
-            )
-          }
-        />
-        <Route path="/admin" element={<AdminLogin />} />
-        <Route
-          path="/admin/dashboard"
-          element={
-            <ProtectedRoute>
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/shop" element={<ShopDashboard />} />
-        <Route
-          path="*"
-          element={
-            isMaintenanceMode && !isAuthenticated ? (
-              <MaintenancePage message={maintenanceMessage} />
-            ) : (
-              <NotFound />
-            )
-          }
-        />
-      </Routes>
+      <>
+        <DevToolsProtection />
+        <Routes>
+          <Route
+            path="/"
+            element={
+              isMaintenanceMode && !isAuthenticated ? (
+                <MaintenancePage message={maintenanceMessage} />
+              ) : (
+                <ModernHomePage />
+              )
+            }
+          />
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/shop" element={<ShopDashboard />} />
+          <Route
+            path="*"
+            element={
+              isMaintenanceMode && !isAuthenticated ? (
+                <MaintenancePage message={maintenanceMessage} />
+              ) : (
+                <NotFound />
+              )
+            }
+          />
+        </Routes>
+      </>
     );
   } catch (error) {
     console.error("Error in AppContent:", error);
