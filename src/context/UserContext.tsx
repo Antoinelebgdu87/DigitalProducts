@@ -506,9 +506,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         lastSeen: new Date(),
       };
 
-      if (shouldUseFirebase()) {
-        await setDoc(doc(db, "users", userId), userToFirestore(newUser));
-      }
+      await setDoc(doc(db, "users", userId), userToFirestore(newUser));
       setCurrentUser(newUser);
       console.log("🎉 Nouvel utilisateur Firebase créé:", finalUsername);
       return newUser;
