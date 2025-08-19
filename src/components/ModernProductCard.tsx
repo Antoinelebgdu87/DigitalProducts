@@ -127,45 +127,69 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
 
             {/* Action buttons */}
             <div className="relative z-10 space-y-3">
-              {/* Main download button */}
+              {/* Main action button */}
               <Button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Button clicked!", product.type, product.title);
-                  if (product.type === "free") {
-                    // Si contentType n'est pas défini, utiliser "link" par défaut pour la compatibilité
-                    if (
-                      !product.contentType ||
-                      product.contentType === "link"
-                    ) {
-                      window.open(product.downloadUrl, "_blank");
+                  console.log("Button clicked!", product.type, product.title, product.actionType);
+
+                  if (product.actionType === "discord") {
+                    // Action principale = Discord
+                    if (product.type === "free") {
+                      window.open(product.discordUrl, "_blank");
                     } else {
-                      setShowNotepad(true);
+                      setShowLicenseInput(true);
                     }
                   } else {
-                    setShowLicenseInput(true);
+                    // Action principale = Download (comportement par défaut)
+                    if (product.type === "free") {
+                      if (
+                        !product.contentType ||
+                        product.contentType === "link"
+                      ) {
+                        window.open(product.downloadUrl, "_blank");
+                      } else {
+                        setShowNotepad(true);
+                      }
+                    } else {
+                      setShowLicenseInput(true);
+                    }
                   }
                 }}
                 className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-red-500/50 cursor-pointer pointer-events-auto"
                 size="lg"
                 style={{ pointerEvents: "auto" }}
               >
-                {product.type === "free" ? (
-                  <>
-                    <Download className="w-5 h-5 mr-2" />
-                    Download Now
-                  </>
+                {product.actionType === "discord" ? (
+                  product.type === "free" ? (
+                    <>
+                      <MessageCircle className="w-5 h-5 mr-2" />
+                      Join Discord
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-5 h-5 mr-2" />
+                      Get Discord Access
+                    </>
+                  )
                 ) : (
-                  <>
-                    <ShoppingCart className="w-5 h-5 mr-2" />
-                    Get Access
-                  </>
+                  product.type === "free" ? (
+                    <>
+                      <Download className="w-5 h-5 mr-2" />
+                      Download Now
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-5 h-5 mr-2" />
+                      Get Access
+                    </>
+                  )
                 )}
               </Button>
 
-              {/* Discord button (if URL is provided) */}
-              {product.discordUrl && (
+              {/* Secondary button (only if main action is download and discord URL exists) */}
+              {product.actionType === "download" && product.discordUrl && (
                 <Button
                   onClick={(e) => {
                     e.preventDefault();
