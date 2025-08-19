@@ -431,6 +431,8 @@ const AdminDashboard: React.FC = () => {
         return "Admin";
       case "shop_access":
         return "Boutique";
+      case "partner":
+        return "Partenaire";
       case "user":
       default:
         return "Utilisateur";
