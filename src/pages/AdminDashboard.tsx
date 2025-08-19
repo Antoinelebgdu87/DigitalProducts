@@ -2829,12 +2829,12 @@ const AdminDashboard: React.FC = () => {
                         );
                         const lastProduct = userProducts.sort(
                           (a, b) =>
-                            b.createdAt.getTime() - a.createdAt.getTime(),
+                            getTimestamp(b.createdAt) - getTimestamp(a.createdAt),
                         )[0];
                         const canCreate =
                           !lastProduct ||
                           (new Date().getTime() -
-                            lastProduct.createdAt.getTime()) /
+                            getTimestamp(lastProduct.createdAt)) /
                             (1000 * 60) >=
                             timerSettings.shopProductCooldown;
                         const remaining = lastProduct
@@ -2842,7 +2842,7 @@ const AdminDashboard: React.FC = () => {
                               0,
                               timerSettings.shopProductCooldown -
                                 (new Date().getTime() -
-                                  lastProduct.createdAt.getTime()) /
+                                  getTimestamp(lastProduct.createdAt)) /
                                   (1000 * 60),
                             )
                           : 0;
