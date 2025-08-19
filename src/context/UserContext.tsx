@@ -291,6 +291,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       const newUser: User = {
         id: userId,
         username: finalUsername,
+        role: "user",
         isOnline: true,
         isBanned: false,
         warnings: [],
