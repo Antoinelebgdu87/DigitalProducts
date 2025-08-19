@@ -22,6 +22,7 @@ import {
 export const useComments = (productId?: string) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
   const { currentUser } = useUser();
 
   // Helper function to convert Firestore data to Comment objects
