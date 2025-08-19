@@ -131,6 +131,7 @@ const AdminDashboard: React.FC = () => {
 
   // User management states
   const [showBanDialog, setShowBanDialog] = useState(false);
+  const [showUnbanDialog, setShowUnbanDialog] = useState(false);
   const [showWarnDialog, setShowWarnDialog] = useState(false);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
