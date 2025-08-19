@@ -200,51 +200,56 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                   </p>
                 </div>
               ) : (
-                comments.map((comment) => (
-                  <Card
-                    key={comment.id}
-                    className="border-gray-700 bg-gray-800/50"
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-3 flex-1">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                            {getRoleIcon(comment.userRole)}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <span className="text-white font-medium text-sm">
-                                {comment.username}
-                              </span>
-                              <Badge
-                                variant="outline"
-                                className={`text-xs ${getRoleColor(comment.userRole)}`}
-                              >
-                                {getRoleLabel(comment.userRole)}
-                              </Badge>
-                              <span className="text-gray-500 text-xs">
-                                {formatDate(comment.createdAt)}
-                              </span>
+                comments.map((comment) => {
+                  // Debug: Log de chaque commentaire
+                  console.log("🔍 Rendering comment:", comment);
+
+                  return (
+                    <Card
+                      key={comment.id}
+                      className="border-gray-700 bg-gray-800/50"
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-start justify-between">
+                          <div className="flex items-start space-x-3 flex-1">
+                            <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                              {getRoleIcon(comment.userRole || "user")}
                             </div>
-                            <p className="text-gray-300 text-sm leading-relaxed break-words">
-                              {comment.content}
-                            </p>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center space-x-2 mb-1">
+                                <span className="text-white font-medium text-sm">
+                                  {comment.username || "Utilisateur inconnu"}
+                                </span>
+                                <Badge
+                                  variant="outline"
+                                  className={`text-xs ${getRoleColor(comment.userRole || "user")}`}
+                                >
+                                  {getRoleLabel(comment.userRole || "user")}
+                                </Badge>
+                                <span className="text-gray-500 text-xs">
+                                  {formatDate(comment.createdAt)}
+                                </span>
+                              </div>
+                              <p className="text-gray-300 text-sm leading-relaxed break-words">
+                                {comment.content || "Contenu indisponible"}
+                              </p>
+                            </div>
                           </div>
+                          {canDeleteComment(comment) && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDelete(comment.id)}
+                              className="text-red-400 hover:text-red-300 hover:bg-red-500/10 ml-2 flex-shrink-0"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          )}
                         </div>
-                        {canDeleteComment(comment) && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleDelete(comment.id)}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10 ml-2 flex-shrink-0"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        )}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))
+                      </CardContent>
+                    </Card>
+                  );
+                })
               )}
             </div>
           </ScrollArea>
