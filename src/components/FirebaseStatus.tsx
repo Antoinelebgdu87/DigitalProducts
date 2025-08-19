@@ -1,8 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { shouldUseFirebase } from "@/lib/firebase";
 import { Badge } from "@/components/ui/badge";
-import { Cloud, CloudOff, Wifi, WifiOff } from "lucide-react";
+import { Cloud } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -11,7 +10,7 @@ import {
 } from "@/components/ui/tooltip";
 
 const FirebaseStatus: React.FC = () => {
-  const isOnline = shouldUseFirebase();
+  const isOnline = true; // Firebase toujours utilisé
 
   return (
     <TooltipProvider>
