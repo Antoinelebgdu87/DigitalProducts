@@ -45,6 +45,11 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   const { comments, loading, addComment, deleteComment, canDeleteComment } =
     useComments(productId);
 
+  // Debug logging for modal
+  React.useEffect(() => {
+    console.log(`📖 CommentsModal for ${productId}:`, { loading, commentsCount: comments.length, comments });
+  }, [productId, loading, comments]);
+
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
