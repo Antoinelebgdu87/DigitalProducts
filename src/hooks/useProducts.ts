@@ -60,7 +60,6 @@ export const useProducts = () => {
         ...productData // Inclure autres champs potentiels
       };
     } catch (error) {
-      console.error("❌ Error parsing product:", productData, error);
       // Retourner un produit minimal en cas d'erreur
       return {
         id: productData.id || '',
