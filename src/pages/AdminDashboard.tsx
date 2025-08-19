@@ -2033,6 +2033,46 @@ const AdminDashboard: React.FC = () => {
                   </form>
                 </DialogContent>
               </Dialog>
+
+              {/* Unban Dialog */}
+              <Dialog open={showUnbanDialog} onOpenChange={setShowUnbanDialog}>
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Débannir l'utilisateur
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      L'utilisateur pourra de nouveau accéder au site.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleUnbanUser} className="space-y-4">
+                    <div className="bg-green-900/50 border border-green-700 rounded p-3">
+                      <p className="text-green-200 text-sm">
+                        <strong>Confirmation:</strong> Cette action débannira d��finitivement l'utilisateur.
+                      </p>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowUnbanDialog(false);
+                          setSelectedUserId("");
+                        }}
+                        className="border-gray-700"
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        Débannir l'utilisateur
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
 
             {/* Timers Tab */}
