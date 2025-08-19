@@ -32,19 +32,10 @@ const FirebaseStatus: React.FC = () => {
         </TooltipTrigger>
         <TooltipContent>
           <div className="text-center">
-            <p className="font-medium">
-              {isOnline ? "Mode en ligne" : "Mode hors ligne"}
-            </p>
+            <p className="font-medium">Mode en ligne</p>
             <p className="text-xs text-gray-400 mt-1">
-              {isOnline
-                ? "Synchronisation Firebase active"
-                : "Stockage local uniquement"}
+              Synchronisation Firebase active
             </p>
-            {!isOnline && (
-              <p className="text-xs text-orange-400 mt-1">
-                Configurez Firebase pour la synchronisation
-              </p>
-            )}
           </div>
         </TooltipContent>
       </Tooltip>
