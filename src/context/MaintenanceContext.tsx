@@ -32,6 +32,8 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const initializeMaintenanceSettings = async () => {
       try {
+        console.log("🛠️ Initialisation des paramètres de maintenance...");
+
         // First load from localStorage for immediate availability
         const stored = localStorage.getItem("maintenanceMode");
         if (stored && isMounted) {
@@ -40,14 +42,34 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
             setIsMaintenanceMode(data.isActive || false);
             setMaintenanceMessage(data.message || DEFAULT_MESSAGE);
             console.log(
-              "🛠️ Paramètres de maintenance chargés depuis localStorage",
+              "🛠️ Paramètres de maintenance chargés depuis localStorage:",
+              data
             );
           } catch (error) {
             console.warn("Erreur lors du parsing localStorage:", error);
+            // Utiliser les valeurs par défaut
+            setIsMaintenanceMode(false);
+            setMaintenanceMessage(DEFAULT_MESSAGE);
           }
+        } else {
+          // Aucune donnée locale, utiliser les valeurs par défaut
+          setIsMaintenanceMode(false);
+          setMaintenanceMessage(DEFAULT_MESSAGE);
+          console.log("🛠️ Utilisation des valeurs par défaut");
+        }
+
+        // Terminer le chargement immédiatement si Firebase n'est pas disponible
+        if (!shouldUseFirebase() || !db) {
+          console.log("⚠️ Firebase non disponible - mode hors ligne");
+          setIsFirebaseReady(false);
+          if (isMounted) {
+            setIsLoading(false);
+          }
+          return;
         }
 
         // Then try Firebase
+        console.log("🔥 Tentative de connexion à Firebase...");
         const maintenanceDoc = await getDoc(
           doc(db, "settings", MAINTENANCE_DOC_ID),
         );
@@ -71,31 +93,30 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
           const data = maintenanceDoc.data();
           setIsMaintenanceMode(data.isActive || false);
           setMaintenanceMessage(data.message || DEFAULT_MESSAGE);
-          console.log("🛠️ Paramètres de maintenance Firebase chargés");
+          console.log("🛠️ Paramètres de maintenance Firebase chargés:", data);
         }
 
         setIsFirebaseReady(true);
+        console.log("✅ Firebase connecté avec succès");
       } catch (error) {
         console.error(
-          "Erreur lors de l'initialisation des paramètres de maintenance:",
+          "❌ Erreur lors de l'initialisation des paramètres de maintenance:",
           error,
         );
+
         // Keep localStorage values or defaults
-        // If permissions error, use default values
-        if (
-          error instanceof Error &&
-          (error.message.includes("permissions") ||
-            error.message.includes("Missing or insufficient"))
-        ) {
-          console.log(
-            "⚠️ Permissions Firebase manquantes - utilisation des valeurs par défaut",
-          );
+        console.log("🔄 Fallback vers les valeurs locales/par défaut");
+
+        // Si aucune valeur locale, utiliser les valeurs par défaut
+        if (!localStorage.getItem("maintenanceMode")) {
           setIsMaintenanceMode(false);
           setMaintenanceMessage(DEFAULT_MESSAGE);
-          setIsFirebaseReady(false); // Désactiver les listeners Firebase
         }
+
+        setIsFirebaseReady(false); // Désactiver les listeners Firebase
       } finally {
         if (isMounted) {
+          console.log("🏁 Chargement terminé");
           setIsLoading(false);
         }
       }
