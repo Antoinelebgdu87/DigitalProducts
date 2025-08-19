@@ -285,10 +285,20 @@ export const useProducts = () => {
         throw new Error(`ID de produit invalide: "${productId}"`);
       }
 
+      // Vérifier que le produit existe dans la liste locale
+      const productToDelete = products.find((p) => p.id === productId);
+      if (!productToDelete) {
+        throw new Error(`Produit avec l'ID "${productId}" non trouvé`);
+      }
+
+      console.log(`🗑️ Début de suppression du produit: "${productToDelete.title}" (ID: ${productId})`);
+
       // Optimistic update: supprimer immédiatement de l'état local
       const originalProducts = [...products];
       const updatedProducts = products.filter((p) => p.id !== productId);
       setProducts(updatedProducts);
+
+      let firebaseSuccess = false;
 
       try {
         if (shouldUseFirebase()) {
@@ -297,20 +307,37 @@ export const useProducts = () => {
           }
 
           const docRef = doc(db, "products", productId);
-          await deleteDoc(docRef);
-          console.log("🗑️ Produit supprimé de Firebase:", productId);
+
+          // Vérifier que le document existe dans Firebase avant de le supprimer
+          const docSnap = await getDoc(docRef);
+          if (!docSnap.exists()) {
+            console.warn(`⚠️ Le produit ${productId} n'existe pas dans Firebase, suppression locale uniquement`);
+          } else {
+            await deleteDoc(docRef);
+            firebaseSuccess = true;
+            console.log("🗑️ Produit supprimé de Firebase avec succès:", productId);
+          }
         }
 
         // Mettre à jour localStorage dans tous les cas
         localStorage.setItem("products", JSON.stringify(updatedProducts));
-        console.log("🗑️ Produit supprimé avec succès:", productId);
+        console.log("💾 Données mises à jour dans localStorage");
+
+        // Succès final
+        const status = firebaseSuccess ? "Firebase + Local" : "Local uniquement";
+        console.log(`✅ Produit "${productToDelete.title}" supprimé avec succès (${status})`);
+
       } catch (error) {
         // En cas d'erreur, restaurer l'état original
-        console.error("Erreur lors de la suppression:", error);
+        console.error("❌ Erreur lors de la suppression:", error);
         setProducts(originalProducts);
-        throw error;
+
+        // Message d'erreur plus détaillé
+        const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
+        throw new Error(`Impossible de supprimer le produit "${productToDelete.title}": ${errorMessage}`);
       }
     } catch (error) {
+      console.error("❌ Erreur de suppression:", error);
       throw error;
     }
   };
