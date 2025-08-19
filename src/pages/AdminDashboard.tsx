@@ -374,6 +374,26 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Helper function to get timestamp from Firebase date
+  const getTimestamp = (date: any): number => {
+    try {
+      if (!date) return 0;
+      if (date instanceof Date) {
+        return date.getTime();
+      } else if (date && typeof date.toDate === "function") {
+        return date.toDate().getTime();
+      } else if (typeof date === "number") {
+        return date;
+      } else if (date && typeof date === "object" && "seconds" in date) {
+        return date.seconds * 1000 + (date.nanoseconds || 0) / 1000000;
+      }
+      return 0;
+    } catch (error) {
+      console.error("Error getting timestamp:", error, date);
+      return 0;
+    }
+  };
+
   const handleBanUser = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedUserId || !banReason.trim()) return;
