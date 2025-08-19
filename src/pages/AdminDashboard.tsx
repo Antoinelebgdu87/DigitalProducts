@@ -1577,8 +1577,8 @@ const AdminDashboard: React.FC = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-3">
-                    {moderationActions.slice(0, 10).map((action) => (
+                  <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+                    {moderationActions.slice(0, 20).map((action) => (
                       <div
                         key={action.id}
                         className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg"
