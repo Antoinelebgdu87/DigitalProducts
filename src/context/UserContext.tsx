@@ -510,6 +510,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         checkUserStatus,
         generateRandomUsername,
         updateUserRole,
+        deleteUser,
       }}
     >
       {children}
