@@ -17,7 +17,7 @@ import {
   orderBy as fsOrderBy,
 } from "firebase/firestore";
 
-// Firebase configuration - utilisation de la nouvelle configuration fournie
+// Firebase configuration - Configuration exacte fournie par l'utilisateur
 const firebaseConfig = {
   apiKey: "AIzaSyDMsFeXMVm61NlmN8QBk7UmH1ngPFW8TWo",
   authDomain: "keysystem-d0b86.firebaseapp.com",
@@ -28,12 +28,8 @@ const firebaseConfig = {
   measurementId: "G-LWKWR0VQKM"
 };
 
-// Vérification de la disponibilité de la configuration Firebase
-const hasFirebaseConfig = !!(
-  firebaseConfig.apiKey &&
-  firebaseConfig.projectId &&
-  firebaseConfig.apiKey !== "demo-api-key"
-);
+// Firebase sera toujours utilisé avec cette configuration
+const hasFirebaseConfig = true;
 
 let app: any = null;
 let db: any = null;
