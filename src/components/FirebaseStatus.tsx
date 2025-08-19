@@ -23,26 +23,10 @@ const FirebaseStatus: React.FC = () => {
           >
             <Badge
               variant="outline"
-              className={`
-                ${
-                  isOnline
-                    ? "border-green-500 text-green-400 bg-green-500/10"
-                    : "border-orange-500 text-orange-400 bg-orange-500/10"
-                }
-                transition-all duration-300
-              `}
+              className="border-green-500 text-green-400 bg-green-500/10 transition-all duration-300"
             >
-              {isOnline ? (
-                <>
-                  <Cloud className="w-3 h-3 mr-1" />
-                  Online
-                </>
-              ) : (
-                <>
-                  <CloudOff className="w-3 h-3 mr-1" />
-                  Offline
-                </>
-              )}
+              <Cloud className="w-3 h-3 mr-1" />
+              Online
             </Badge>
           </motion.div>
         </TooltipTrigger>
