@@ -107,13 +107,15 @@ const App = () => (
       <Sonner position="bottom-right" />
       <BrowserRouter>
         <AuthProvider>
-          <MaintenanceProvider>
-            <UserProvider>
-              <div className="dark min-h-screen bg-background text-foreground">
-                <AppContent />
-              </div>
-            </UserProvider>
-          </MaintenanceProvider>
+          <AdminModeProvider>
+            <MaintenanceProvider>
+              <UserProvider>
+                <div className="dark min-h-screen bg-background text-foreground">
+                  <AppContent />
+                </div>
+              </UserProvider>
+            </MaintenanceProvider>
+          </AdminModeProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
