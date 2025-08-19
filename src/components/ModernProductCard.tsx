@@ -18,10 +18,10 @@ import {
   Shield,
 } from "lucide-react";
 import { useLicenses } from "@/hooks/useLicenses";
-import { useComments } from "@/hooks/useComments";
+import { useSimpleComments } from "@/hooks/useSimpleComments";
 import KeyValidator from "./KeyValidator";
 import NotepadViewer from "./NotepadViewer";
-import CommentsModal from "./CommentsModal";
+import SimpleCommentsModal from "./SimpleCommentsModal";
 
 interface ModernProductCardProps {
   product: Product;
@@ -33,7 +33,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   const [showComments, setShowComments] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { validateLicense } = useLicenses();
-  const { comments, loading: commentsLoading } = useComments(product.id);
+  const { comments, loading: commentsLoading } = useSimpleComments(product.id);
 
   // Debug logging for comments
   React.useEffect(() => {
@@ -313,7 +313,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
       )}
 
       {showComments && (
-        <CommentsModal
+        <SimpleCommentsModal
           isOpen={showComments}
           onClose={() => setShowComments(false)}
           productId={product.id}
