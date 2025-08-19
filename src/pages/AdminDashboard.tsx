@@ -448,7 +448,6 @@ const AdminDashboard: React.FC = () => {
 
     try {
       // Utiliser la fonction deleteUser du contexte
-      const { deleteUser } = useUser();
       await deleteUser(userToDelete.id);
 
       toast.success(`Compte utilisateur "${userToDelete.username}" supprimé avec succès`);
