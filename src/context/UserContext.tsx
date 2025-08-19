@@ -47,6 +47,7 @@ interface UserContextType {
   users: User[] | null;
   createUsername: (username?: string) => Promise<User>;
   banUser: (userId: string, reason: string) => Promise<void>;
+  unbanUser: (userId: string) => Promise<void>;
   addWarning: (userId: string, reason: string) => Promise<void>;
   markWarningsAsRead: (userId: string) => Promise<void>;
   checkUserStatus: () => Promise<void>;
@@ -340,6 +341,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const unbanUser = async (userId: string): Promise<void> => {
+    try {
+      await updateDoc(doc(db, "users", userId), {
+        isBanned: false,
+        banReason: null,
+        bannedAt: null,
+      });
+      console.log("✅ Utilisateur Firebase débanni:", userId);
+    } catch (error) {
+      console.error("Erreur lors du débannissement:", error);
+      throw error;
+    }
+  };
+
   const addWarning = async (userId: string, reason: string): Promise<void> => {
     try {
       const userDoc = await getDoc(doc(db, "users", userId));
@@ -447,6 +462,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         users,
         createUsername,
         banUser,
+        unbanUser,
         addWarning,
         markWarningsAsRead,
         checkUserStatus,

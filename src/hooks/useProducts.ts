@@ -216,18 +216,47 @@ export const useProducts = () => {
 
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
+      console.log("🔄 deleteProduct appelé avec ID:", productId);
+      console.log("📋 Produits actuels:", products.length);
+      console.log("🔥 shouldUseFirebase():", shouldUseFirebase());
+
       if (shouldUseFirebase()) {
+        console.log("🔥 Suppression Firebase...");
         await deleteDoc(doc(db, "products", productId));
         console.log("🗑️ Produit Firebase supprimé:", productId);
       } else {
-        // localStorage fallback
-        const updatedProducts = products.filter((p) => p.id !== productId);
-        setProducts(updatedProducts);
-        localStorage.setItem("products", JSON.stringify(updatedProducts));
+        console.log("💾 Mode localStorage - suppression locale...");
+        const currentProducts = products.filter((p) => p.id !== productId);
+        console.log(
+          "📋 Produits après filtrage:",
+          currentProducts.length,
+          "produits restants",
+        );
+
+        // Force immediate update
+        setProducts([...currentProducts]);
+        localStorage.setItem("products", JSON.stringify(currentProducts));
+
         console.log("🗑️ Produit supprimé en mode offline:", productId);
+        console.log(
+          "💾 localStorage mis à jour avec",
+          currentProducts.length,
+          "produits",
+        );
+
+        // Double check localStorage was updated
+        const stored = localStorage.getItem("products");
+        if (stored) {
+          const parsedStored = JSON.parse(stored);
+          console.log(
+            "✅ Vérification localStorage:",
+            parsedStored.length,
+            "produits stockés",
+          );
+        }
       }
     } catch (error) {
-      console.error("Error deleting product:", error);
+      console.error("❌ Error deleting product:", error);
       throw error;
     }
   };
@@ -257,7 +286,30 @@ export const useProducts = () => {
 
   const fetchProducts = async () => {
     // This function is kept for compatibility but real-time updates handle the data
-    console.log("📋 Produits gérés en temps réel via Firebase");
+    if (!shouldUseFirebase()) {
+      // In localStorage mode, force reload from localStorage
+      try {
+        const stored = localStorage.getItem("products");
+        if (stored) {
+          const localProducts = JSON.parse(stored);
+          setProducts(
+            localProducts.map((p: any) => ({
+              ...p,
+              createdAt: new Date(p.createdAt),
+            })),
+          );
+          console.log(
+            "🔄 Force reload depuis localStorage:",
+            localProducts.length,
+            "produits",
+          );
+        }
+      } catch (error) {
+        console.error("Error force reloading products:", error);
+      }
+    } else {
+      console.log("📋 Produits gérés en temps réel via Firebase");
+    }
   };
 
   // Fonctions pour vérifier les permissions

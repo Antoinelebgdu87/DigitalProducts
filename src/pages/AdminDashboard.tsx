@@ -49,6 +49,7 @@ import {
   Download,
   Shield,
   User,
+  UserCheck,
   CreditCard,
   Zap,
   Euro,
@@ -77,6 +78,7 @@ const AdminDashboard: React.FC = () => {
     addProduct,
     deleteProduct,
     updateProduct,
+    refetch: refetchProducts,
     loading: productsLoading,
   } = useProducts();
   const {
@@ -86,7 +88,7 @@ const AdminDashboard: React.FC = () => {
     getActiveLicenses,
     loading: licensesLoading,
   } = useLicenses();
-  const { users, banUser, addWarning, updateUserRole } = useUser();
+  const { users, banUser, unbanUser, addWarning, updateUserRole } = useUser();
   const {
     moderationActions,
     moderateDeleteProduct,
@@ -131,6 +133,7 @@ const AdminDashboard: React.FC = () => {
 
   // User management states
   const [showBanDialog, setShowBanDialog] = useState(false);
+  const [showUnbanDialog, setShowUnbanDialog] = useState(false);
   const [showWarnDialog, setShowWarnDialog] = useState(false);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
@@ -152,6 +155,20 @@ const AdminDashboard: React.FC = () => {
   // Timer settings states
   const [showTimerDialog, setShowTimerDialog] = useState(false);
   const [tempTimerSettings, setTempTimerSettings] = useState(timerSettings);
+
+  // Product deletion states
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
+
+  // License deletion states
+  const [showDeleteLicenseDialog, setShowDeleteLicenseDialog] = useState(false);
+  const [licenseToDelete, setLicenseToDelete] = useState<{
+    id: string;
+    code: string;
+  } | null>(null);
 
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -350,6 +367,26 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleUnbanUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserId) return;
+
+    try {
+      await unbanUser(selectedUserId);
+      await logModerationAction(
+        "unban_user",
+        selectedUserId,
+        "user",
+        "Utilisateur débanni par l'administration",
+      );
+      toast.success("Utilisateur débanni avec succès");
+      setShowUnbanDialog(false);
+      setSelectedUserId("");
+    } catch (error) {
+      toast.error("Erreur lors du débannissement");
+    }
+  };
+
   // Moderation handlers
   const handleModerateDelete = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -381,6 +418,45 @@ const AdminDashboard: React.FC = () => {
       setShowTimerDialog(false);
     } catch (error) {
       toast.error("Erreur lors de la mise à jour des timers");
+    }
+  };
+
+  // Product deletion handler
+  const handleDeleteProduct = async () => {
+    if (!productToDelete) return;
+
+    console.log("🔄 Tentative de suppression du produit:", productToDelete);
+
+    try {
+      console.log("📋 Produits avant suppression:", products.length);
+      await deleteProduct(productToDelete.id);
+      console.log("✅ Produit supprimé avec succès:", productToDelete.id);
+
+      // Force refresh des produits pour s'assurer de la mise à jour UI
+      await refetchProducts();
+      console.log("🔄 Produits rechargés après suppression");
+
+      toast.success(`Produit "${productToDelete.title}" supprimé avec succès`);
+      setShowDeleteDialog(false);
+      setProductToDelete(null);
+    } catch (error) {
+      console.error("❌ Erreur lors de la suppression:", error);
+      toast.error("Erreur lors de la suppression du produit");
+    }
+  };
+
+  // License deletion handler
+  const handleDeleteLicense = async () => {
+    if (!licenseToDelete) return;
+
+    try {
+      await deleteLicense(licenseToDelete.id);
+      toast.success(`License "${licenseToDelete.code}" supprimée avec succès`);
+      setShowDeleteLicenseDialog(false);
+      setLicenseToDelete(null);
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la license:", error);
+      toast.error("Erreur lors de la suppression de la license");
     }
   };
 
@@ -1368,7 +1444,13 @@ const AdminDashboard: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => deleteProduct(product.id)}
+                            onClick={() => {
+                              setProductToDelete({
+                                id: product.id,
+                                title: product.title,
+                              });
+                              setShowDeleteDialog(true);
+                            }}
                             className="border-red-700 text-red-400 hover:bg-red-500/10"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -1379,6 +1461,52 @@ const AdminDashboard: React.FC = () => {
                   </Card>
                 ))}
               </div>
+
+              {/* Product Delete Confirmation Dialog */}
+              <Dialog
+                open={showDeleteDialog}
+                onOpenChange={setShowDeleteDialog}
+              >
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Supprimer le produit
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      Cette action est irréversible. Le produit sera
+                      définitivement supprimé.
+                    </DialogDescription>
+                  </DialogHeader>
+                  {productToDelete && (
+                    <div className="bg-red-900/50 border border-red-700 rounded p-3">
+                      <p className="text-red-200 text-sm">
+                        <strong>Produit à supprimer :</strong>{" "}
+                        {productToDelete.title}
+                      </p>
+                    </div>
+                  )}
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setShowDeleteDialog(false);
+                        setProductToDelete(null);
+                      }}
+                      className="border-gray-700"
+                    >
+                      Annuler
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={handleDeleteProduct}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      Supprimer définitivement
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
 
             {/* Moderation Tab */}
@@ -1389,14 +1517,14 @@ const AdminDashboard: React.FC = () => {
                     Modération & Contrôle
                   </h2>
                   <p className="text-gray-400 text-sm">
-                    {getModerationStats().totalActions} action(s) au total •{" "}
+                    {getModerationStats().totalActions} action(s) au total ��{" "}
                     {getModerationStats().todayActions} aujourd'hui
                   </p>
                 </div>
               </div>
 
               {/* Moderation Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <Card className="border-gray-800 bg-gray-900/50">
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-red-400">
@@ -1424,6 +1552,16 @@ const AdminDashboard: React.FC = () => {
                     </div>
                     <div className="text-sm text-gray-400">
                       Utilisateurs bannis
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-green-400">
+                      {getModerationStats().unbannedUsers}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      Utilisateurs débannis
                     </div>
                   </CardContent>
                 </Card>
@@ -1461,7 +1599,9 @@ const AdminDashboard: React.FC = () => {
                                   ? "bg-orange-600"
                                   : action.type === "ban_user"
                                     ? "bg-purple-600"
-                                    : "bg-yellow-600"
+                                    : action.type === "unban_user"
+                                      ? "bg-green-600"
+                                      : "bg-yellow-600"
                             }`}
                           >
                             {action.type === "delete_product" && (
@@ -1472,6 +1612,9 @@ const AdminDashboard: React.FC = () => {
                             )}
                             {action.type === "ban_user" && (
                               <User className="w-4 h-4 text-white" />
+                            )}
+                            {action.type === "unban_user" && (
+                              <UserCheck className="w-4 h-4 text-white" />
                             )}
                             {action.type === "warn_user" && (
                               <AlertTriangle className="w-4 h-4 text-white" />
@@ -1485,6 +1628,8 @@ const AdminDashboard: React.FC = () => {
                                 "Commentaire supprimé"}
                               {action.type === "ban_user" &&
                                 "Utilisateur banni"}
+                              {action.type === "unban_user" &&
+                                "Utilisateur débanni"}
                               {action.type === "warn_user" &&
                                 "Avertissement envoyé"}
                             </p>
@@ -1794,6 +1939,19 @@ const AdminDashboard: React.FC = () => {
                               </Button>
                             </>
                           )}
+                          {user.isBanned && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedUserId(user.id);
+                                setShowUnbanDialog(true);
+                              }}
+                              className="border-green-700 text-green-400 hover:bg-green-500/10"
+                            >
+                              Unban
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </CardContent>
@@ -2000,6 +2158,47 @@ const AdminDashboard: React.FC = () => {
                         disabled={!warnReason.trim()}
                       >
                         Envoyer l'avertissement
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+
+              {/* Unban Dialog */}
+              <Dialog open={showUnbanDialog} onOpenChange={setShowUnbanDialog}>
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Débannir l'utilisateur
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      L'utilisateur pourra de nouveau accéder au site.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleUnbanUser} className="space-y-4">
+                    <div className="bg-green-900/50 border border-green-700 rounded p-3">
+                      <p className="text-green-200 text-sm">
+                        <strong>Confirmation:</strong> Cette action débannira
+                        définitivement l'utilisateur.
+                      </p>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowUnbanDialog(false);
+                          setSelectedUserId("");
+                        }}
+                        className="border-gray-700"
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        Débannir l'utilisateur
                       </Button>
                     </DialogFooter>
                   </form>
@@ -2512,7 +2711,13 @@ const AdminDashboard: React.FC = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => deleteLicense(license.id)}
+                              onClick={() => {
+                                setLicenseToDelete({
+                                  id: license.id,
+                                  code: license.code,
+                                });
+                                setShowDeleteLicenseDialog(true);
+                              }}
                               className="border-red-700 text-red-400 hover:bg-red-500/10"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -2524,6 +2729,52 @@ const AdminDashboard: React.FC = () => {
                   );
                 })}
               </div>
+
+              {/* License Delete Confirmation Dialog */}
+              <Dialog
+                open={showDeleteLicenseDialog}
+                onOpenChange={setShowDeleteLicenseDialog}
+              >
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Supprimer la license
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      Cette action est irréversible. La license sera
+                      définitivement supprimée.
+                    </DialogDescription>
+                  </DialogHeader>
+                  {licenseToDelete && (
+                    <div className="bg-red-900/50 border border-red-700 rounded p-3">
+                      <p className="text-red-200 text-sm">
+                        <strong>License à supprimer :</strong>{" "}
+                        {licenseToDelete.code}
+                      </p>
+                    </div>
+                  )}
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setShowDeleteLicenseDialog(false);
+                        setLicenseToDelete(null);
+                      }}
+                      className="border-gray-700"
+                    >
+                      Annuler
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={handleDeleteLicense}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      Supprimer définitivement
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
 
             {/* Maintenance Tab */}
@@ -2577,7 +2828,7 @@ const AdminDashboard: React.FC = () => {
                       }
                       className="bg-gray-800 border-gray-700 text-white"
                       rows={3}
-                      placeholder="Update in progress, come back later 🛠️"
+                      placeholder="Update in progress, come back later ���️"
                     />
                   </div>
 

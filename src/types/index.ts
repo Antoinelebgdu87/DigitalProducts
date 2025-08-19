@@ -79,7 +79,12 @@ export interface AdminCredentials {
 
 export interface ModerationAction {
   id: string;
-  type: "delete_product" | "delete_comment" | "ban_user" | "warn_user";
+  type:
+    | "delete_product"
+    | "delete_comment"
+    | "ban_user"
+    | "warn_user"
+    | "unban_user";
   targetId: string; // ID du produit, commentaire ou utilisateur ciblé
   targetType: "product" | "comment" | "user";
   moderatorId: string;
