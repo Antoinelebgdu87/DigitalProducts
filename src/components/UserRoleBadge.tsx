@@ -2,13 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/UserContext";
 import { Badge } from "@/components/ui/badge";
-import { 
-  User, 
-  Store, 
-  Crown, 
-  Shield, 
-  Sparkles 
-} from "lucide-react";
+import { User, Store, Crown, Shield, Sparkles } from "lucide-react";
 
 const UserRoleBadge: React.FC = () => {
   const { currentUser } = useUser();
@@ -100,25 +94,26 @@ const UserRoleBadge: React.FC = () => {
             <Sparkles className="w-2.5 h-2.5 ml-1 animate-pulse" />
           )}
         </Badge>
-        
+
         {/* Glow effect pour les rôles spéciaux */}
         {(currentUser.role === "admin" || currentUser.role === "partner") && (
           <motion.div
             className={`
               absolute inset-0 rounded-full blur-sm -z-10
-              ${currentUser.role === "admin" 
-                ? "bg-red-500/30" 
-                : "bg-yellow-500/30"
+              ${
+                currentUser.role === "admin"
+                  ? "bg-red-500/30"
+                  : "bg-yellow-500/30"
               }
             `}
-            animate={{ 
+            animate={{
               opacity: [0.3, 0.6, 0.3],
-              scale: [1, 1.1, 1]
+              scale: [1, 1.1, 1],
             }}
-            transition={{ 
-              duration: 2, 
+            transition={{
+              duration: 2,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
           />
         )}

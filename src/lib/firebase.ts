@@ -17,15 +17,21 @@ import {
 } from "firebase/firestore";
 
 // Check if Firebase environment variables are available
-const hasFirebaseConfig = !!(import.meta.env.VITE_FIREBASE_API_KEY && import.meta.env.VITE_FIREBASE_PROJECT_ID);
+const hasFirebaseConfig = !!(
+  import.meta.env.VITE_FIREBASE_API_KEY &&
+  import.meta.env.VITE_FIREBASE_PROJECT_ID
+);
 
 // Firebase configuration using environment variables
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-api-key",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "demo.firebaseapp.com",
+  authDomain:
+    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "demo.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "demo-project",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "demo.appspot.com",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
+  storageBucket:
+    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "demo.appspot.com",
+  messagingSenderId:
+    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
   appId: import.meta.env.VITE_FIREBASE_APP_ID || "demo-app-id",
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-XXXXXXXXXX",
 };
@@ -38,9 +44,14 @@ try {
     // Initialize Firebase only if config is available
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
-    console.log("🔥 Firebase initialized with project:", firebaseConfig.projectId);
+    console.log(
+      "🔥 Firebase initialized with project:",
+      firebaseConfig.projectId,
+    );
   } else {
-    console.warn("⚠️ Firebase configuration not found. Running in offline mode with localStorage fallback.");
+    console.warn(
+      "⚠️ Firebase configuration not found. Running in offline mode with localStorage fallback.",
+    );
   }
 } catch (error) {
   console.error("❌ Firebase initialization failed:", error);
@@ -72,25 +83,28 @@ export const shouldUseFirebase = () => {
 
 // Mock Firestore functions for fallback mode
 export const createMockFirestoreError = () => {
-  throw new Error('Firebase not configured - using localStorage fallback');
+  throw new Error("Firebase not configured - using localStorage fallback");
 };
 
 // Safe Firebase operations that handle offline mode
-export const safeFirebaseOperation = async (operation: () => Promise<any>, fallback?: () => any) => {
+export const safeFirebaseOperation = async (
+  operation: () => Promise<any>,
+  fallback?: () => any,
+) => {
   if (!shouldUseFirebase()) {
     if (fallback) {
       return fallback();
     }
-    console.warn('🔄 Firebase operation skipped - using fallback');
+    console.warn("🔄 Firebase operation skipped - using fallback");
     return null;
   }
 
   try {
     return await operation();
   } catch (error) {
-    console.error('❌ Firebase operation failed:', error);
+    console.error("❌ Firebase operation failed:", error);
     if (fallback) {
-      console.warn('🔄 Using fallback after Firebase error');
+      console.warn("🔄 Using fallback after Firebase error");
       return fallback();
     }
     throw error;

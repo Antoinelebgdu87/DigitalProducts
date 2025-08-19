@@ -48,9 +48,12 @@ export const useLicenses = () => {
               localLicenses.map((license: any) => ({
                 ...license,
                 createdAt: new Date(license.createdAt),
-              }))
+              })),
             );
-            console.log("🔑 Licences chargées depuis localStorage:", localLicenses.length);
+            console.log(
+              "🔑 Licences chargées depuis localStorage:",
+              localLicenses.length,
+            );
           } else {
             setLicenses([]);
           }
@@ -92,7 +95,7 @@ export const useLicenses = () => {
                 localLicenses.map((license: any) => ({
                   ...license,
                   createdAt: new Date(license.createdAt),
-                }))
+                })),
               );
               console.log("🔑 Fallback: licences chargées depuis localStorage");
             }
@@ -182,7 +185,10 @@ export const useLicenses = () => {
       };
 
       if (shouldUseFirebase()) {
-        await addDoc(collection(db, "licenses"), licenseToFirestore(newLicense));
+        await addDoc(
+          collection(db, "licenses"),
+          licenseToFirestore(newLicense),
+        );
         console.log("🎉 Nouvelle licence Firebase créée:", code);
       } else {
         // localStorage fallback
@@ -191,7 +197,7 @@ export const useLicenses = () => {
         localStorage.setItem("licenses", JSON.stringify(currentLicenses));
         console.log("🎉 Nouvelle licence créée en mode offline:", code);
       }
-      
+
       return code;
     } catch (error) {
       console.error("Error creating license:", error);
@@ -206,7 +212,7 @@ export const useLicenses = () => {
         console.log("🗑️ Licence Firebase supprimée:", licenseId);
       } else {
         // localStorage fallback
-        const updatedLicenses = licenses.filter(l => l.id !== licenseId);
+        const updatedLicenses = licenses.filter((l) => l.id !== licenseId);
         setLicenses(updatedLicenses);
         localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
         console.log("🗑️ Licence supprimée en mode offline:", licenseId);
@@ -236,7 +242,10 @@ export const useLicenses = () => {
         }
 
         const licenseDoc = snapshot.docs[0];
-        const license = parseLicense({ id: licenseDoc.id, ...licenseDoc.data() });
+        const license = parseLicense({
+          id: licenseDoc.id,
+          ...licenseDoc.data(),
+        });
 
         const isValid =
           license.isActive && license.currentUsages < license.maxUsages;
@@ -252,22 +261,23 @@ export const useLicenses = () => {
         return { isValid, license };
       } else {
         // localStorage fallback
-        const license = licenses.find(l => 
-          l.code === licenseCode && l.productId === productId
+        const license = licenses.find(
+          (l) => l.code === licenseCode && l.productId === productId,
         );
 
         if (!license) {
           return { isValid: false };
         }
 
-        const isValid = license.isActive && license.currentUsages < license.maxUsages;
+        const isValid =
+          license.isActive && license.currentUsages < license.maxUsages;
 
         if (isValid) {
           // Increment usage count in localStorage
-          const updatedLicenses = licenses.map(l => 
-            l.id === license.id 
+          const updatedLicenses = licenses.map((l) =>
+            l.id === license.id
               ? { ...l, currentUsages: l.currentUsages + 1 }
-              : l
+              : l,
           );
           setLicenses(updatedLicenses);
           localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
@@ -290,7 +300,10 @@ export const useLicenses = () => {
 
   const fetchLicenses = async () => {
     // This function is kept for compatibility but real-time updates handle the data
-    console.log("📋 Licences gérées en temps réel via", shouldUseFirebase() ? "Firebase" : "localStorage");
+    console.log(
+      "📋 Licences gérées en temps réel via",
+      shouldUseFirebase() ? "Firebase" : "localStorage",
+    );
   };
 
   return {

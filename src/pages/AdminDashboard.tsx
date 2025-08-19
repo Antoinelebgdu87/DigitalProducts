@@ -92,7 +92,7 @@ const AdminDashboard: React.FC = () => {
     moderateDeleteProduct,
     moderateDeleteComment,
     getUserProducts,
-    getModerationStats
+    getModerationStats,
   } = useModeration();
   const { adminMode, timerSettings, updateTimerSettings } = useAdminMode();
   const { comments: allComments } = useComments();
@@ -144,7 +144,7 @@ const AdminDashboard: React.FC = () => {
   const [showModerationDialog, setShowModerationDialog] = useState(false);
   const [moderationTarget, setModerationTarget] = useState<{
     id: string;
-    type: 'product' | 'comment';
+    type: "product" | "comment";
     title: string;
   } | null>(null);
   const [moderationReason, setModerationReason] = useState("");
@@ -467,7 +467,9 @@ const AdminDashboard: React.FC = () => {
                 {/* Moderation stats */}
                 <div className="flex items-center space-x-2 text-sm text-gray-400">
                   <Shield className="w-4 h-4" />
-                  <span>{getModerationStats().todayActions} actions aujourd'hui</span>
+                  <span>
+                    {getModerationStats().todayActions} actions aujourd'hui
+                  </span>
                 </div>
                 <Button
                   onClick={logout}
@@ -1387,7 +1389,8 @@ const AdminDashboard: React.FC = () => {
                     Modération & Contrôle
                   </h2>
                   <p className="text-gray-400 text-sm">
-                    {getModerationStats().totalActions} action(s) au total • {getModerationStats().todayActions} aujourd'hui
+                    {getModerationStats().totalActions} action(s) au total •{" "}
+                    {getModerationStats().todayActions} aujourd'hui
                   </p>
                 </div>
               </div>
@@ -1396,25 +1399,39 @@ const AdminDashboard: React.FC = () => {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <Card className="border-gray-800 bg-gray-900/50">
                   <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-red-400">{getModerationStats().deletedProducts}</div>
-                    <div className="text-sm text-gray-400">Produits supprimés</div>
+                    <div className="text-2xl font-bold text-red-400">
+                      {getModerationStats().deletedProducts}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      Produits supprimés
+                    </div>
                   </CardContent>
                 </Card>
                 <Card className="border-gray-800 bg-gray-900/50">
                   <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-orange-400">{getModerationStats().deletedComments}</div>
-                    <div className="text-sm text-gray-400">Commentaires supprimés</div>
+                    <div className="text-2xl font-bold text-orange-400">
+                      {getModerationStats().deletedComments}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      Commentaires supprimés
+                    </div>
                   </CardContent>
                 </Card>
                 <Card className="border-gray-800 bg-gray-900/50">
                   <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-purple-400">{getModerationStats().bannedUsers}</div>
-                    <div className="text-sm text-gray-400">Utilisateurs bannis</div>
+                    <div className="text-2xl font-bold text-purple-400">
+                      {getModerationStats().bannedUsers}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      Utilisateurs bannis
+                    </div>
                   </CardContent>
                 </Card>
                 <Card className="border-gray-800 bg-gray-900/50">
                   <CardContent className="p-4 text-center">
-                    <div className="text-2xl font-bold text-yellow-400">{getModerationStats().warnedUsers}</div>
+                    <div className="text-2xl font-bold text-yellow-400">
+                      {getModerationStats().warnedUsers}
+                    </div>
                     <div className="text-sm text-gray-400">Avertissements</div>
                   </CardContent>
                 </Card>
@@ -1431,27 +1448,49 @@ const AdminDashboard: React.FC = () => {
                 <CardContent>
                   <div className="space-y-3">
                     {moderationActions.slice(0, 10).map((action) => (
-                      <div key={action.id} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                      <div
+                        key={action.id}
+                        className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg"
+                      >
                         <div className="flex items-center space-x-3">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                            action.type === 'delete_product' ? 'bg-red-600' :
-                            action.type === 'delete_comment' ? 'bg-orange-600' :
-                            action.type === 'ban_user' ? 'bg-purple-600' : 'bg-yellow-600'
-                          }`}>
-                            {action.type === 'delete_product' && <Package className="w-4 h-4 text-white" />}
-                            {action.type === 'delete_comment' && <MessageSquare className="w-4 h-4 text-white" />}
-                            {action.type === 'ban_user' && <User className="w-4 h-4 text-white" />}
-                            {action.type === 'warn_user' && <AlertTriangle className="w-4 h-4 text-white" />}
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              action.type === "delete_product"
+                                ? "bg-red-600"
+                                : action.type === "delete_comment"
+                                  ? "bg-orange-600"
+                                  : action.type === "ban_user"
+                                    ? "bg-purple-600"
+                                    : "bg-yellow-600"
+                            }`}
+                          >
+                            {action.type === "delete_product" && (
+                              <Package className="w-4 h-4 text-white" />
+                            )}
+                            {action.type === "delete_comment" && (
+                              <MessageSquare className="w-4 h-4 text-white" />
+                            )}
+                            {action.type === "ban_user" && (
+                              <User className="w-4 h-4 text-white" />
+                            )}
+                            {action.type === "warn_user" && (
+                              <AlertTriangle className="w-4 h-4 text-white" />
+                            )}
                           </div>
                           <div>
                             <p className="text-white text-sm font-medium">
-                              {action.type === 'delete_product' && 'Produit supprimé'}
-                              {action.type === 'delete_comment' && 'Commentaire supprimé'}
-                              {action.type === 'ban_user' && 'Utilisateur banni'}
-                              {action.type === 'warn_user' && 'Avertissement envoyé'}
+                              {action.type === "delete_product" &&
+                                "Produit supprimé"}
+                              {action.type === "delete_comment" &&
+                                "Commentaire supprimé"}
+                              {action.type === "ban_user" &&
+                                "Utilisateur banni"}
+                              {action.type === "warn_user" &&
+                                "Avertissement envoyé"}
                             </p>
                             <p className="text-gray-400 text-xs">
-                              Par {action.moderatorUsername} • {formatDate(action.createdAt)}
+                              Par {action.moderatorUsername} •{" "}
+                              {formatDate(action.createdAt)}
                             </p>
                             <p className="text-gray-400 text-xs">
                               Raison: {action.reason}
@@ -1463,7 +1502,9 @@ const AdminDashboard: React.FC = () => {
                     {moderationActions.length === 0 && (
                       <div className="text-center py-8">
                         <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-400">Aucune action de modération récente</p>
+                        <p className="text-gray-400">
+                          Aucune action de modération récente
+                        </p>
                       </div>
                     )}
                   </div>
@@ -1482,14 +1523,22 @@ const AdminDashboard: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {/* Recent Products for Quick Moderation */}
                     <div>
-                      <h4 className="text-white font-medium mb-3">Produits récents</h4>
+                      <h4 className="text-white font-medium mb-3">
+                        Produits récents
+                      </h4>
                       <div className="space-y-2 max-h-60 overflow-y-auto">
                         {products.slice(0, 5).map((product) => (
-                          <div key={product.id} className="flex items-center justify-between p-2 bg-gray-800/30 rounded">
+                          <div
+                            key={product.id}
+                            className="flex items-center justify-between p-2 bg-gray-800/30 rounded"
+                          >
                             <div className="flex-1 min-w-0">
-                              <p className="text-white text-sm font-medium truncate">{product.title}</p>
+                              <p className="text-white text-sm font-medium truncate">
+                                {product.title}
+                              </p>
                               <p className="text-gray-400 text-xs">
-                                Par {product.createdByUsername || 'Inconnu'} • {formatDate(product.createdAt)}
+                                Par {product.createdByUsername || "Inconnu"} •{" "}
+                                {formatDate(product.createdAt)}
                               </p>
                             </div>
                             <Button
@@ -1498,8 +1547,8 @@ const AdminDashboard: React.FC = () => {
                               onClick={() => {
                                 setModerationTarget({
                                   id: product.id,
-                                  type: 'product',
-                                  title: product.title
+                                  type: "product",
+                                  title: product.title,
                                 });
                                 setShowModerationDialog(true);
                               }}
@@ -1514,14 +1563,22 @@ const AdminDashboard: React.FC = () => {
 
                     {/* Recent Comments for Quick Moderation */}
                     <div>
-                      <h4 className="text-white font-medium mb-3">Commentaires récents</h4>
+                      <h4 className="text-white font-medium mb-3">
+                        Commentaires récents
+                      </h4>
                       <div className="space-y-2 max-h-60 overflow-y-auto">
                         {allComments?.slice(0, 5).map((comment) => (
-                          <div key={comment.id} className="flex items-center justify-between p-2 bg-gray-800/30 rounded">
+                          <div
+                            key={comment.id}
+                            className="flex items-center justify-between p-2 bg-gray-800/30 rounded"
+                          >
                             <div className="flex-1 min-w-0">
-                              <p className="text-white text-sm truncate">{comment.content}</p>
+                              <p className="text-white text-sm truncate">
+                                {comment.content}
+                              </p>
                               <p className="text-gray-400 text-xs">
-                                Par {comment.username} • {formatDate(comment.createdAt)}
+                                Par {comment.username} •{" "}
+                                {formatDate(comment.createdAt)}
                               </p>
                             </div>
                             <Button
@@ -1530,8 +1587,8 @@ const AdminDashboard: React.FC = () => {
                               onClick={() => {
                                 setModerationTarget({
                                   id: comment.id,
-                                  type: 'comment',
-                                  title: comment.content.slice(0, 50) + '...'
+                                  type: "comment",
+                                  title: comment.content.slice(0, 50) + "...",
                                 });
                                 setShowModerationDialog(true);
                               }}
@@ -1543,7 +1600,9 @@ const AdminDashboard: React.FC = () => {
                         ))}
                         {(!allComments || allComments.length === 0) && (
                           <div className="text-center py-4">
-                            <p className="text-gray-400 text-sm">Aucun commentaire récent</p>
+                            <p className="text-gray-400 text-sm">
+                              Aucun commentaire récent
+                            </p>
                           </div>
                         )}
                       </div>
@@ -1553,11 +1612,17 @@ const AdminDashboard: React.FC = () => {
               </Card>
 
               {/* Moderation Dialog */}
-              <Dialog open={showModerationDialog} onOpenChange={setShowModerationDialog}>
+              <Dialog
+                open={showModerationDialog}
+                onOpenChange={setShowModerationDialog}
+              >
                 <DialogContent className="bg-gray-900 border-gray-800">
                   <DialogHeader>
                     <DialogTitle className="text-white">
-                      Supprimer {moderationTarget?.type === 'product' ? 'le produit' : 'le commentaire'}
+                      Supprimer{" "}
+                      {moderationTarget?.type === "product"
+                        ? "le produit"
+                        : "le commentaire"}
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
                       "{moderationTarget?.title}"
@@ -1580,7 +1645,9 @@ const AdminDashboard: React.FC = () => {
                     </div>
                     <div className="bg-red-900/50 border border-red-700 rounded p-3">
                       <p className="text-red-200 text-sm">
-                        <strong>Attention:</strong> Cette action est irréversible et sera enregistrée dans l'historique de modération.
+                        <strong>Attention:</strong> Cette action est
+                        irréversible et sera enregistrée dans l'historique de
+                        modération.
                       </p>
                     </div>
                     <DialogFooter>
@@ -1972,7 +2039,8 @@ const AdminDashboard: React.FC = () => {
                       Cooldown Produits Boutique
                     </CardTitle>
                     <CardDescription className="text-gray-400">
-                      Temps d'attente entre créations de produits pour les utilisateurs "Boutique"
+                      Temps d'attente entre créations de produits pour les
+                      utilisateurs "Boutique"
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -1984,8 +2052,9 @@ const AdminDashboard: React.FC = () => {
                     </div>
                     <div className="mt-4 p-3 bg-blue-900/20 border border-blue-700/30 rounded">
                       <p className="text-blue-200 text-xs">
-                        Les utilisateurs avec le rôle "Boutique" doivent attendre ce délai entre chaque création de produit.
-                        Les "Partners" et "Admins" ne sont pas affectés.
+                        Les utilisateurs avec le rôle "Boutique" doivent
+                        attendre ce délai entre chaque création de produit. Les
+                        "Partners" et "Admins" ne sont pas affectés.
                       </p>
                     </div>
                   </CardContent>
@@ -1998,7 +2067,8 @@ const AdminDashboard: React.FC = () => {
                       Cooldown Commentaires
                     </CardTitle>
                     <CardDescription className="text-gray-400">
-                      Temps d'attente entre commentaires pour tous les utilisateurs
+                      Temps d'attente entre commentaires pour tous les
+                      utilisateurs
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
@@ -2010,8 +2080,9 @@ const AdminDashboard: React.FC = () => {
                     </div>
                     <div className="mt-4 p-3 bg-orange-900/20 border border-orange-700/30 rounded">
                       <p className="text-orange-200 text-xs">
-                        Tous les utilisateurs doivent attendre ce délai entre chaque commentaire.
-                        Aide à prévenir le spam de commentaires.
+                        Tous les utilisateurs doivent attendre ce délai entre
+                        chaque commentaire. Aide à prévenir le spam de
+                        commentaires.
                       </p>
                     </div>
                   </CardContent>
@@ -2031,45 +2102,76 @@ const AdminDashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">
-                    {users?.filter(user => user.role === 'shop_access').map(user => {
-                      const userProducts = products.filter(p => p.createdBy === user.id);
-                      const lastProduct = userProducts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0];
-                      const canCreate = !lastProduct || (new Date().getTime() - lastProduct.createdAt.getTime()) / (1000 * 60) >= timerSettings.shopProductCooldown;
-                      const remaining = lastProduct ? Math.max(0, timerSettings.shopProductCooldown - (new Date().getTime() - lastProduct.createdAt.getTime()) / (1000 * 60)) : 0;
+                    {users
+                      ?.filter((user) => user.role === "shop_access")
+                      .map((user) => {
+                        const userProducts = products.filter(
+                          (p) => p.createdBy === user.id,
+                        );
+                        const lastProduct = userProducts.sort(
+                          (a, b) =>
+                            b.createdAt.getTime() - a.createdAt.getTime(),
+                        )[0];
+                        const canCreate =
+                          !lastProduct ||
+                          (new Date().getTime() -
+                            lastProduct.createdAt.getTime()) /
+                            (1000 * 60) >=
+                            timerSettings.shopProductCooldown;
+                        const remaining = lastProduct
+                          ? Math.max(
+                              0,
+                              timerSettings.shopProductCooldown -
+                                (new Date().getTime() -
+                                  lastProduct.createdAt.getTime()) /
+                                  (1000 * 60),
+                            )
+                          : 0;
 
-                      return (
-                        <div key={user.id} className="flex items-center justify-between p-3 bg-gray-800/30 rounded">
-                          <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
-                              <User className="w-4 h-4 text-white" />
+                        return (
+                          <div
+                            key={user.id}
+                            className="flex items-center justify-between p-3 bg-gray-800/30 rounded"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
+                                <User className="w-4 h-4 text-white" />
+                              </div>
+                              <div>
+                                <p className="text-white text-sm font-medium">
+                                  {user.username}
+                                </p>
+                                <p className="text-gray-400 text-xs">
+                                  {userProducts.length} produit(s) créé(s)
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-white text-sm font-medium">{user.username}</p>
-                              <p className="text-gray-400 text-xs">
-                                {userProducts.length} produit(s) créé(s)
-                              </p>
+                            <div className="text-right">
+                              {canCreate ? (
+                                <Badge className="bg-green-600 text-white">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  Disponible
+                                </Badge>
+                              ) : (
+                                <Badge
+                                  variant="outline"
+                                  className="border-orange-500 text-orange-400"
+                                >
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  {Math.ceil(remaining)} min
+                                </Badge>
+                              )}
                             </div>
                           </div>
-                          <div className="text-right">
-                            {canCreate ? (
-                              <Badge className="bg-green-600 text-white">
-                                <Clock className="w-3 h-3 mr-1" />
-                                Disponible
-                              </Badge>
-                            ) : (
-                              <Badge variant="outline" className="border-orange-500 text-orange-400">
-                                <Clock className="w-3 h-3 mr-1" />
-                                {Math.ceil(remaining)} min
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })}
-                    {(!users?.filter(user => user.role === 'shop_access').length) && (
+                        );
+                      })}
+                    {!users?.filter((user) => user.role === "shop_access")
+                      .length && (
                       <div className="text-center py-8">
                         <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                        <p className="text-gray-400">Aucun utilisateur "Boutique" trouvé</p>
+                        <p className="text-gray-400">
+                          Aucun utilisateur "Boutique" trouvé
+                        </p>
                       </div>
                     )}
                   </div>
@@ -2084,7 +2186,8 @@ const AdminDashboard: React.FC = () => {
                       Modifier les paramètres de timer
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
-                      Ajustez les cooldowns pour contrôler la fréquence des actions
+                      Ajustez les cooldowns pour contrôler la fréquence des
+                      actions
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleUpdateTimers} className="space-y-4">
@@ -2136,8 +2239,9 @@ const AdminDashboard: React.FC = () => {
 
                     <div className="bg-yellow-900/50 border border-yellow-700 rounded p-3">
                       <p className="text-yellow-200 text-sm">
-                        <strong>Important:</strong> Les modifications prendront effet immédiatement.
-                        Les timers en cours ne seront pas affectés.
+                        <strong>Important:</strong> Les modifications prendront
+                        effet immédiatement. Les timers en cours ne seront pas
+                        affectés.
                       </p>
                     </div>
 

@@ -164,7 +164,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
               <div className="flex items-center space-x-2">
                 {/* Date de création */}
                 <span className="text-xs text-gray-500">
-                  {new Date(product.createdAt).toLocaleDateString('fr-FR')}
+                  {new Date(product.createdAt).toLocaleDateString("fr-FR")}
                 </span>
               </div>
               <div className="text-red-400 font-semibold flex items-center">

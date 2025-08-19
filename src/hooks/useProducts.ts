@@ -163,17 +163,24 @@ export const useProducts = () => {
   }, []);
 
   const addProduct = async (
-    productData: Omit<Product, "id" | "createdAt" | "createdBy" | "createdByUsername">,
+    productData: Omit<
+      Product,
+      "id" | "createdAt" | "createdBy" | "createdByUsername"
+    >,
   ): Promise<void> => {
     try {
       // Vérifier si l'utilisateur peut créer un produit (cooldown)
       if (userRole === "shop_access") {
-        const userProducts = products.filter(p => p.createdBy === userId);
-        const lastProduct = userProducts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0];
+        const userProducts = products.filter((p) => p.createdBy === userId);
+        const lastProduct = userProducts.sort(
+          (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+        )[0];
 
         if (lastProduct && !canCreateProduct(lastProduct.createdAt)) {
           const remaining = getRemainingCooldown(lastProduct.createdAt);
-          throw new Error(`Vous devez attendre encore ${remaining} minute(s) avant de créer un nouveau produit.`);
+          throw new Error(
+            `Vous devez attendre encore ${remaining} minute(s) avant de créer un nouveau produit.`,
+          );
         }
       }
 
@@ -186,14 +193,20 @@ export const useProducts = () => {
       };
 
       if (shouldUseFirebase()) {
-        await addDoc(collection(db, "products"), productToFirestore(newProduct));
+        await addDoc(
+          collection(db, "products"),
+          productToFirestore(newProduct),
+        );
         console.log("🎉 Nouveau produit Firebase créé:", productData.title);
       } else {
         // localStorage fallback
         const currentProducts = [...products, newProduct];
         setProducts(currentProducts);
         localStorage.setItem("products", JSON.stringify(currentProducts));
-        console.log("🎉 Nouveau produit créé en mode offline:", productData.title);
+        console.log(
+          "🎉 Nouveau produit créé en mode offline:",
+          productData.title,
+        );
       }
     } catch (error) {
       console.error("Error adding product:", error);
@@ -208,7 +221,7 @@ export const useProducts = () => {
         console.log("🗑️ Produit Firebase supprimé:", productId);
       } else {
         // localStorage fallback
-        const updatedProducts = products.filter(p => p.id !== productId);
+        const updatedProducts = products.filter((p) => p.id !== productId);
         setProducts(updatedProducts);
         localStorage.setItem("products", JSON.stringify(updatedProducts));
         console.log("🗑️ Produit supprimé en mode offline:", productId);
@@ -229,8 +242,8 @@ export const useProducts = () => {
         console.log("📝 Produit Firebase mis à jour:", productId);
       } else {
         // localStorage fallback
-        const updatedProducts = products.map(p =>
-          p.id === productId ? { ...p, ...productData } : p
+        const updatedProducts = products.map((p) =>
+          p.id === productId ? { ...p, ...productData } : p,
         );
         setProducts(updatedProducts);
         localStorage.setItem("products", JSON.stringify(updatedProducts));
@@ -254,16 +267,24 @@ export const useProducts = () => {
     }
 
     if (!["admin", "shop_access", "partner"].includes(userRole)) {
-      return { canCreate: false, reason: "Vous n'avez pas les permissions n��cessaires" };
+      return {
+        canCreate: false,
+        reason: "Vous n'avez pas les permissions n��cessaires",
+      };
     }
 
     if (userRole === "shop_access") {
-      const userProducts = products.filter(p => p.createdBy === userId);
-      const lastProduct = userProducts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0];
+      const userProducts = products.filter((p) => p.createdBy === userId);
+      const lastProduct = userProducts.sort(
+        (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
+      )[0];
 
       if (lastProduct && !canCreateProduct(lastProduct.createdAt)) {
         const remaining = getRemainingCooldown(lastProduct.createdAt);
-        return { canCreate: false, reason: `Cooldown: ${remaining} minute(s) restante(s)` };
+        return {
+          canCreate: false,
+          reason: `Cooldown: ${remaining} minute(s) restante(s)`,
+        };
       }
     }
 
@@ -271,7 +292,7 @@ export const useProducts = () => {
   };
 
   const getUserProducts = (): Product[] => {
-    return products.filter(p => p.createdBy === userId);
+    return products.filter((p) => p.createdBy === userId);
   };
 
   return {

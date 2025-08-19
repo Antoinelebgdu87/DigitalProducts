@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useUser } from "@/context/UserContext";
 import { Badge } from "@/components/ui/badge";
-import { 
-  User, 
-  Store, 
-  Crown, 
-  Shield, 
+import {
+  User,
+  Store,
+  Crown,
+  Shield,
   Sparkles,
   ChevronUp,
-  ChevronDown
+  ChevronDown,
 } from "lucide-react";
 
 const FloatingRoleBadge: React.FC = () => {
@@ -127,8 +127,12 @@ const FloatingRoleBadge: React.FC = () => {
                     <User className="w-4 h-4 text-white" />
                   </div>
                   <div>
-                    <p className="text-white font-medium text-sm">{currentUser.username}</p>
-                    <p className="text-gray-400 text-xs">#{currentUser.id.slice(-6)}</p>
+                    <p className="text-white font-medium text-sm">
+                      {currentUser.username}
+                    </p>
+                    <p className="text-gray-400 text-xs">
+                      #{currentUser.id.slice(-6)}
+                    </p>
                   </div>
                 </div>
 
@@ -155,23 +159,25 @@ const FloatingRoleBadge: React.FC = () => {
                 </p>
 
                 {/* Glow effect pour les rôles spéciaux */}
-                {(currentUser.role === "admin" || currentUser.role === "partner") && (
+                {(currentUser.role === "admin" ||
+                  currentUser.role === "partner") && (
                   <motion.div
                     className={`
                       absolute inset-0 rounded-2xl blur-xl -z-10 opacity-20
-                      ${currentUser.role === "admin" 
-                        ? "bg-red-500" 
-                        : "bg-yellow-500"
+                      ${
+                        currentUser.role === "admin"
+                          ? "bg-red-500"
+                          : "bg-yellow-500"
                       }
                     `}
-                    animate={{ 
+                    animate={{
                       scale: [1, 1.05, 1],
-                      opacity: [0.1, 0.3, 0.1]
+                      opacity: [0.1, 0.3, 0.1],
                     }}
-                    transition={{ 
-                      duration: 3, 
+                    transition={{
+                      duration: 3,
                       repeat: Infinity,
-                      ease: "easeInOut"
+                      ease: "easeInOut",
                     }}
                   />
                 )}
@@ -185,19 +191,20 @@ const FloatingRoleBadge: React.FC = () => {
           <motion.div
             className={`
               absolute inset-0 rounded-full blur-lg -z-10
-              ${currentUser.role === "admin" 
-                ? "bg-red-500/30" 
-                : "bg-yellow-500/30"
+              ${
+                currentUser.role === "admin"
+                  ? "bg-red-500/30"
+                  : "bg-yellow-500/30"
               }
             `}
-            animate={{ 
+            animate={{
               opacity: [0.2, 0.5, 0.2],
-              scale: [1, 1.2, 1]
+              scale: [1, 1.2, 1],
             }}
-            transition={{ 
-              duration: 2, 
+            transition={{
+              duration: 2,
               repeat: Infinity,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
           />
         )}

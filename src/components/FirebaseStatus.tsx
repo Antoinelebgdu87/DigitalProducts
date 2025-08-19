@@ -25,9 +25,10 @@ const FirebaseStatus: React.FC = () => {
             <Badge
               variant="outline"
               className={`
-                ${isOnline 
-                  ? "border-green-500 text-green-400 bg-green-500/10" 
-                  : "border-orange-500 text-orange-400 bg-orange-500/10"
+                ${
+                  isOnline
+                    ? "border-green-500 text-green-400 bg-green-500/10"
+                    : "border-orange-500 text-orange-400 bg-orange-500/10"
                 }
                 transition-all duration-300
               `}
@@ -52,10 +53,9 @@ const FirebaseStatus: React.FC = () => {
               {isOnline ? "Mode en ligne" : "Mode hors ligne"}
             </p>
             <p className="text-xs text-gray-400 mt-1">
-              {isOnline 
-                ? "Synchronisation Firebase active" 
-                : "Stockage local uniquement"
-              }
+              {isOnline
+                ? "Synchronisation Firebase active"
+                : "Stockage local uniquement"}
             </p>
             {!isOnline && (
               <p className="text-xs text-orange-400 mt-1">

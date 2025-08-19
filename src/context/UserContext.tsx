@@ -166,7 +166,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           const hasEverCreatedUser = localStorage.getItem("hasCreatedUser");
           if (hasEverCreatedUser === "true") {
             // Try to get the last saved username to maintain consistency
-            const lastUsername = localStorage.getItem("lastUsername") || generateRandomUsername();
+            const lastUsername =
+              localStorage.getItem("lastUsername") || generateRandomUsername();
             const userId = Date.now().toString();
 
             // Save the username for consistency
@@ -233,9 +234,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         if (doc.exists()) {
           const userData = parseUser({ id: doc.id, ...doc.data() });
           // Force update even if the reference is the same
-          setCurrentUser(prevUser => {
+          setCurrentUser((prevUser) => {
             const newUser = userData;
-            console.log("🔄 Mise à jour utilisateur:", newUser.username, "|", newUser.role);
+            console.log(
+              "🔄 Mise à jour utilisateur:",
+              newUser.username,
+              "|",
+              newUser.role,
+            );
             return newUser;
           });
         }
@@ -404,12 +410,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       if (!shouldUseFirebase()) {
         // Update locally if Firebase is not available
         if (currentUser?.id === userId) {
-          setCurrentUser(prev => prev ? { ...prev, role } : null);
+          setCurrentUser((prev) => (prev ? { ...prev, role } : null));
         }
-        setUsers(prevUsers =>
-          prevUsers?.map(user =>
-            user.id === userId ? { ...user, role } : user
-          ) || null
+        setUsers(
+          (prevUsers) =>
+            prevUsers?.map((user) =>
+              user.id === userId ? { ...user, role } : user,
+            ) || null,
         );
         console.log("👑 Rôle utilisateur mis à jour localement:", userId, role);
         return;
@@ -421,7 +428,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
       // Force immediate update for better UX
       if (currentUser?.id === userId) {
-        setCurrentUser(prev => prev ? { ...prev, role } : null);
+        setCurrentUser((prev) => (prev ? { ...prev, role } : null));
         // Save role to localStorage for persistence
         localStorage.setItem("userRole", role);
       }

@@ -11,7 +11,9 @@ interface AdminModeContextType {
   getRemainingCooldown: (lastCreation?: Date) => number; // en minutes
 }
 
-const AdminModeContext = createContext<AdminModeContextType | undefined>(undefined);
+const AdminModeContext = createContext<AdminModeContextType | undefined>(
+  undefined,
+);
 
 const DEFAULT_TIMER_SETTINGS: TimerSettings = {
   shopProductCooldown: 30, // 30 minutes par défaut
@@ -26,7 +28,9 @@ export const AdminModeProvider: React.FC<{ children: React.ReactNode }> = ({
     selectedUserId: undefined,
   });
 
-  const [timerSettings, setTimerSettings] = useState<TimerSettings>(DEFAULT_TIMER_SETTINGS);
+  const [timerSettings, setTimerSettings] = useState<TimerSettings>(
+    DEFAULT_TIMER_SETTINGS,
+  );
 
   // Charger les paramètres depuis localStorage
   useEffect(() => {
@@ -47,33 +51,38 @@ export const AdminModeProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [timerSettings]);
 
   const setShopMode = (isShopMode: boolean) => {
-    setAdminMode(prev => ({ ...prev, isShopMode }));
+    setAdminMode((prev) => ({ ...prev, isShopMode }));
   };
 
   const setSelectedUser = (userId?: string) => {
-    setAdminMode(prev => ({ ...prev, selectedUserId: userId }));
+    setAdminMode((prev) => ({ ...prev, selectedUserId: userId }));
   };
 
   const updateTimerSettings = (settings: Partial<TimerSettings>) => {
-    setTimerSettings(prev => ({ ...prev, ...settings }));
+    setTimerSettings((prev) => ({ ...prev, ...settings }));
   };
 
   const canCreateProduct = (lastCreation?: Date): boolean => {
     if (!lastCreation) return true;
-    
+
     const now = new Date();
-    const timeSinceLastCreation = (now.getTime() - lastCreation.getTime()) / (1000 * 60); // en minutes
-    
+    const timeSinceLastCreation =
+      (now.getTime() - lastCreation.getTime()) / (1000 * 60); // en minutes
+
     return timeSinceLastCreation >= timerSettings.shopProductCooldown;
   };
 
   const getRemainingCooldown = (lastCreation?: Date): number => {
     if (!lastCreation) return 0;
-    
+
     const now = new Date();
-    const timeSinceLastCreation = (now.getTime() - lastCreation.getTime()) / (1000 * 60); // en minutes
-    const remaining = Math.max(0, timerSettings.shopProductCooldown - timeSinceLastCreation);
-    
+    const timeSinceLastCreation =
+      (now.getTime() - lastCreation.getTime()) / (1000 * 60); // en minutes
+    const remaining = Math.max(
+      0,
+      timerSettings.shopProductCooldown - timeSinceLastCreation,
+    );
+
     return Math.ceil(remaining);
   };
 

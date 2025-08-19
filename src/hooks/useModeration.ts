@@ -16,7 +16,9 @@ import { ModerationAction, Product } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 
 export const useModeration = () => {
-  const [moderationActions, setModerationActions] = useState<ModerationAction[]>([]);
+  const [moderationActions, setModerationActions] = useState<
+    ModerationAction[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const { userId, username, isAdmin } = useAuth();
 
@@ -29,7 +31,9 @@ export const useModeration = () => {
   };
 
   // Helper function to convert ModerationAction object to Firestore data
-  const moderationActionToFirestore = (action: Omit<ModerationAction, "id">) => {
+  const moderationActionToFirestore = (
+    action: Omit<ModerationAction, "id">,
+  ) => {
     return {
       ...action,
       createdAt: Timestamp.fromDate(action.createdAt),
@@ -54,28 +58,43 @@ export const useModeration = () => {
               localActions.map((action: any) => ({
                 ...action,
                 createdAt: new Date(action.createdAt),
-              }))
+              })),
             );
-            console.log("🛡️ Actions de modération chargées depuis localStorage:", localActions.length);
+            console.log(
+              "🛡️ Actions de modération chargées depuis localStorage:",
+              localActions.length,
+            );
           }
         } catch (error) {
-          console.error("Error loading moderation actions from localStorage:", error);
+          console.error(
+            "Error loading moderation actions from localStorage:",
+            error,
+          );
         }
         setLoading(false);
         return;
       }
 
       const unsubscribe = onSnapshot(
-        query(collection(db, "moderation_actions"), orderBy("createdAt", "desc")),
+        query(
+          collection(db, "moderation_actions"),
+          orderBy("createdAt", "desc"),
+        ),
         (snapshot) => {
           try {
             const actionsData = snapshot.docs.map((doc) =>
               parseModerationAction({ id: doc.id, ...doc.data() }),
             );
             setModerationActions(actionsData);
-            console.log("🛡️ Actions de modération chargées:", actionsData.length);
+            console.log(
+              "🛡️ Actions de modération chargées:",
+              actionsData.length,
+            );
             // Save to localStorage as backup
-            localStorage.setItem("moderation_actions", JSON.stringify(actionsData));
+            localStorage.setItem(
+              "moderation_actions",
+              JSON.stringify(actionsData),
+            );
           } catch (error) {
             console.error("Error parsing moderation actions:", error);
             setModerationActions([]);
@@ -101,7 +120,7 @@ export const useModeration = () => {
     type: ModerationAction["type"],
     targetId: string,
     targetType: ModerationAction["targetType"],
-    reason: string
+    reason: string,
   ): Promise<void> => {
     if (!isAdmin() || !userId || !username) {
       throw new Error("Permissions insuffisantes");
@@ -120,14 +139,24 @@ export const useModeration = () => {
       };
 
       if (shouldUseFirebase()) {
-        await addDoc(collection(db, "moderation_actions"), moderationActionToFirestore(action));
+        await addDoc(
+          collection(db, "moderation_actions"),
+          moderationActionToFirestore(action),
+        );
         console.log("📝 Action de modération enregistrée:", type, targetId);
       } else {
         // localStorage fallback
         const currentActions = [...moderationActions, action];
         setModerationActions(currentActions);
-        localStorage.setItem("moderation_actions", JSON.stringify(currentActions));
-        console.log("📝 Action de modération enregistrée en mode offline:", type, targetId);
+        localStorage.setItem(
+          "moderation_actions",
+          JSON.stringify(currentActions),
+        );
+        console.log(
+          "📝 Action de modération enregistrée en mode offline:",
+          type,
+          targetId,
+        );
       }
     } catch (error) {
       console.error("Error logging moderation action:", error);
@@ -136,7 +165,10 @@ export const useModeration = () => {
   };
 
   // Delete a product with moderation logging
-  const moderateDeleteProduct = async (productId: string, reason: string): Promise<void> => {
+  const moderateDeleteProduct = async (
+    productId: string,
+    reason: string,
+  ): Promise<void> => {
     if (!isAdmin()) {
       throw new Error("Permissions insuffisantes");
     }
@@ -158,7 +190,10 @@ export const useModeration = () => {
   };
 
   // Delete a comment with moderation logging
-  const moderateDeleteComment = async (commentId: string, reason: string): Promise<void> => {
+  const moderateDeleteComment = async (
+    commentId: string,
+    reason: string,
+  ): Promise<void> => {
     if (!isAdmin()) {
       throw new Error("Permissions insuffisantes");
     }
@@ -185,16 +220,16 @@ export const useModeration = () => {
       const q = query(
         collection(db, "products"),
         where("createdBy", "==", userId),
-        orderBy("createdAt", "desc")
+        orderBy("createdAt", "desc"),
       );
-      
+
       const snapshot = await getDocs(q);
-      const products = snapshot.docs.map(doc => ({
+      const products = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
         createdAt: doc.data().createdAt?.toDate() || new Date(),
       })) as Product[];
-      
+
       return products;
     } catch (error) {
       console.error("Error fetching user products:", error);
@@ -208,16 +243,22 @@ export const useModeration = () => {
     today.setHours(0, 0, 0, 0);
 
     const todayActions = moderationActions.filter(
-      action => action.createdAt >= today
+      (action) => action.createdAt >= today,
     );
 
     const stats = {
       totalActions: moderationActions.length,
       todayActions: todayActions.length,
-      deletedProducts: moderationActions.filter(a => a.type === "delete_product").length,
-      deletedComments: moderationActions.filter(a => a.type === "delete_comment").length,
-      bannedUsers: moderationActions.filter(a => a.type === "ban_user").length,
-      warnedUsers: moderationActions.filter(a => a.type === "warn_user").length,
+      deletedProducts: moderationActions.filter(
+        (a) => a.type === "delete_product",
+      ).length,
+      deletedComments: moderationActions.filter(
+        (a) => a.type === "delete_comment",
+      ).length,
+      bannedUsers: moderationActions.filter((a) => a.type === "ban_user")
+        .length,
+      warnedUsers: moderationActions.filter((a) => a.type === "warn_user")
+        .length,
     };
 
     return stats;

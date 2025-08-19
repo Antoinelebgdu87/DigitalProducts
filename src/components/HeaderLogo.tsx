@@ -2,14 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
 import { useAdminMode } from "@/context/AdminModeContext";
-import { 
-  Shield, 
-  Store, 
-  Crown, 
-  Star,
-  Users,
-  Settings
-} from "lucide-react";
+import { Shield, Store, Crown, Star, Users, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -25,7 +18,14 @@ interface HeaderLogoProps {
 }
 
 const HeaderLogo: React.FC<HeaderLogoProps> = ({ className }) => {
-  const { isAuthenticated, userRole, username, isAdmin, canAccessShop, isPartner } = useAuth();
+  const {
+    isAuthenticated,
+    userRole,
+    username,
+    isAdmin,
+    canAccessShop,
+    isPartner,
+  } = useAuth();
   const { adminMode, setShopMode } = useAdminMode();
 
   const getLogoIcon = () => {
@@ -56,37 +56,39 @@ const HeaderLogo: React.FC<HeaderLogoProps> = ({ className }) => {
     if (!isAuthenticated) {
       return {
         main: "Justement Usivant",
-        sub: "Boutique Premium"
+        sub: "Boutique Premium",
       };
     }
 
     if (isAdmin()) {
-      return adminMode.isShopMode ? {
-        main: "Justement Usivant",
-        sub: "Mode Boutique"
-      } : {
-        main: "Admin Panel",
-        sub: "Gestion & Modération"
-      };
+      return adminMode.isShopMode
+        ? {
+            main: "Justement Usivant",
+            sub: "Mode Boutique",
+          }
+        : {
+            main: "Admin Panel",
+            sub: "Gestion & Modération",
+          };
     }
 
     if (isPartner()) {
       return {
         main: "Justement Usivant",
-        sub: "Partenaire Officiel"
+        sub: "Partenaire Officiel",
       };
     }
 
     if (canAccessShop()) {
       return {
         main: "Justement Usivant",
-        sub: "Accès Boutique"
+        sub: "Accès Boutique",
       };
     }
 
     return {
       main: "Justement Usivant",
-      sub: "Communauté"
+      sub: "Communauté",
     };
   };
 
@@ -114,14 +116,14 @@ const HeaderLogo: React.FC<HeaderLogoProps> = ({ className }) => {
           transition={{ type: "spring", stiffness: 400, damping: 10 }}
         >
           {getLogoIcon()}
-          
+
           {/* Mode indicator for admins */}
           {isAdmin() && (
             <motion.div
               className="absolute -top-1 -right-1 w-3 h-3 rounded-full"
               animate={{
                 backgroundColor: adminMode.isShopMode ? "#a855f7" : "#ef4444",
-                scale: [1, 1.2, 1]
+                scale: [1, 1.2, 1],
               }}
               transition={{ duration: 2, repeat: Infinity }}
             />
@@ -129,7 +131,7 @@ const HeaderLogo: React.FC<HeaderLogoProps> = ({ className }) => {
         </motion.div>
 
         <div className="flex flex-col">
-          <motion.h1 
+          <motion.h1
             className="text-xl font-bold text-white"
             key={logoInfo.main} // Force re-render on text change
             initial={{ opacity: 0, y: -10 }}
@@ -138,7 +140,7 @@ const HeaderLogo: React.FC<HeaderLogoProps> = ({ className }) => {
           >
             {logoInfo.main}
           </motion.h1>
-          <motion.p 
+          <motion.p
             className={`text-sm ${getRoleColor()}`}
             key={logoInfo.sub} // Force re-render on text change
             initial={{ opacity: 0, y: 10 }}
@@ -204,9 +206,10 @@ const HeaderLogo: React.FC<HeaderLogoProps> = ({ className }) => {
                 onClick={() => setShopMode(!adminMode.isShopMode)}
                 className={`
                   border-gray-600 hover:border-gray-500 transition-all duration-300
-                  ${adminMode.isShopMode
-                    ? "bg-purple-500/20 border-purple-500 text-purple-400"
-                    : "bg-red-500/20 border-red-500 text-red-400"
+                  ${
+                    adminMode.isShopMode
+                      ? "bg-purple-500/20 border-purple-500 text-purple-400"
+                      : "bg-red-500/20 border-red-500 text-red-400"
                   }
                 `}
               >
@@ -221,8 +224,7 @@ const HeaderLogo: React.FC<HeaderLogoProps> = ({ className }) => {
               <p>
                 {adminMode.isShopMode
                   ? "Passer en mode Admin"
-                  : "Passer en mode Boutique"
-                }
+                  : "Passer en mode Boutique"}
               </p>
             </TooltipContent>
           </Tooltip>

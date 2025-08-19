@@ -81,21 +81,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const isAdmin = (): boolean => userRole === "admin";
-  const canAccessShop = (): boolean => ["admin", "shop_access", "partner"].includes(userRole);
+  const canAccessShop = (): boolean =>
+    ["admin", "shop_access", "partner"].includes(userRole);
   const isPartner = (): boolean => userRole === "partner";
 
   return (
-    <AuthContext.Provider value={{
-      isAuthenticated,
-      userRole,
-      userId,
-      username,
-      login,
-      logout,
-      isAdmin,
-      canAccessShop,
-      isPartner
-    }}>
+    <AuthContext.Provider
+      value={{
+        isAuthenticated,
+        userRole,
+        userId,
+        username,
+        login,
+        logout,
+        isAdmin,
+        canAccessShop,
+        isPartner,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
