@@ -301,6 +301,21 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleUpdateRole = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserId) return;
+
+    try {
+      await updateUserRole(selectedUserId, selectedUserRole);
+      toast.success(`Rôle mis à jour vers ${selectedUserRole}`);
+      setShowRoleDialog(false);
+      setSelectedUserId("");
+      setSelectedUserRole("user");
+    } catch (error) {
+      toast.error("Erreur lors de la mise à jour du rôle");
+    }
+  };
+
   const activeLicenses = getActiveLicenses();
 
   const getCategoryIcon = (category: string) => {
