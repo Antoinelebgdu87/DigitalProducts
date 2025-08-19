@@ -26,6 +26,7 @@ export interface User {
   isBanned: boolean;
   banReason?: string;
   bannedAt?: Date;
+  banExpiresAt?: Date | null;
   warnings: Warning[];
   createdAt: Date;
   lastSeen: Date;
