@@ -218,12 +218,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
             }
 
             // Update online status
-            if (shouldUseFirebase()) {
-              await updateDoc(doc(db, "users", existingUser.id), {
-                isOnline: true,
-                lastSeen: Timestamp.now(),
-              });
-            }
+            await updateDoc(doc(db, "users", existingUser.id), {
+              isOnline: true,
+              lastSeen: Timestamp.now(),
+            });
 
             console.log(
               "🔵 Utilisateur existant trouvé par nom:",
