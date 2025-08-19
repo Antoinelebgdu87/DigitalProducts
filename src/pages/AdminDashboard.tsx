@@ -220,6 +220,28 @@ const AdminDashboard: React.FC = () => {
   const [isDeletingProduct, setIsDeletingProduct] = useState(false);
   const [isDeletingLicense, setIsDeletingLicense] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const [isTestingFirebase, setIsTestingFirebase] = useState(false);
+
+  // Test de connexion Firebase
+  const testFirebaseConnection = async () => {
+    setIsTestingFirebase(true);
+    try {
+      if (!isFirebaseAvailable) {
+        toast.error("❌ Firebase non configuré ou non disponible");
+        return;
+      }
+
+      // Test simple en essayant de lister les produits
+      await refetchProducts();
+      toast.success("✅ Connexion Firebase testée avec succès !");
+      setLastSavedAt(new Date());
+    } catch (error: any) {
+      console.error("❌ Test Firebase échoué:", error);
+      toast.error(`❌ Test Firebase échoué: ${error.message}`);
+    } finally {
+      setIsTestingFirebase(false);
+    }
+  };
 
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -2605,7 +2627,7 @@ const AdminDashboard: React.FC = () => {
                   <form onSubmit={handleUnbanUser} className="space-y-4">
                     <div className="bg-green-900/50 border border-green-700 rounded p-3">
                       <p className="text-green-200 text-sm">
-                        <strong>Confirmation:</strong> Cette action d��bannira
+                        <strong>Confirmation:</strong> Cette action débannira
                         définitivement l'utilisateur.
                       </p>
                     </div>
@@ -3321,7 +3343,7 @@ const AdminDashboard: React.FC = () => {
                       }
                       className="bg-gray-800 border-gray-700 text-white"
                       rows={3}
-                      placeholder="Update in progress, come back later ����️"
+                      placeholder="Update in progress, come back later ���️"
                     />
                   </div>
 
