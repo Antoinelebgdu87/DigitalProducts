@@ -1389,7 +1389,10 @@ const AdminDashboard: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => deleteProduct(product.id)}
+                            onClick={() => {
+                              setProductToDelete({id: product.id, title: product.title});
+                              setShowDeleteDialog(true);
+                            }}
                             className="border-red-700 text-red-400 hover:bg-red-500/10"
                           >
                             <Trash2 className="w-4 h-4" />
