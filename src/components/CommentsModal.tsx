@@ -49,6 +49,13 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     deleteComment,
     canDeleteComment,
   } = useComments(productId);
+
+  // Debug: log des commentaires
+  React.useEffect(() => {
+    console.log("🔍 CommentsModal - productId:", productId);
+    console.log("🔍 CommentsModal - comments:", comments);
+    console.log("🔍 CommentsModal - loading:", loading);
+  }, [productId, comments, loading]);
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
