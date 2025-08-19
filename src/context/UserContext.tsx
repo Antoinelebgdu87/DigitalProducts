@@ -118,6 +118,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       createdAt: userData.createdAt?.toDate() || new Date(),
       lastSeen: userData.lastSeen?.toDate() || new Date(),
       bannedAt: userData.bannedAt?.toDate() || undefined,
+      banExpiresAt: userData.banExpiresAt?.toDate() || null,
       warnings: (userData.warnings || []).map((warning: any) => ({
         ...warning,
         createdAt: warning.createdAt?.toDate() || new Date(),
