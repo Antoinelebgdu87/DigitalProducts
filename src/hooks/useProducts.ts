@@ -34,7 +34,7 @@ export const useProducts = () => {
       try {
         const productsQuery = query(
           collection(db, "products"),
-          orderBy("createdAt", "desc")
+          orderBy("createdAt", "desc"),
         );
 
         unsubscribe = onSnapshot(
@@ -63,9 +63,15 @@ export const useProducts = () => {
               });
 
               setProducts(productsData);
-              console.log("📦 Produits chargés depuis Firebase:", productsData.length);
+              console.log(
+                "📦 Produits chargés depuis Firebase:",
+                productsData.length,
+              );
             } catch (error) {
-              console.error("❌ Erreur lors du traitement des produits:", error);
+              console.error(
+                "❌ Erreur lors du traitement des produits:",
+                error,
+              );
               setProducts([]);
             } finally {
               setLoading(false);
@@ -76,7 +82,7 @@ export const useProducts = () => {
             console.warn("🔄 Firebase non accessible - mode dégradé");
             setProducts([]);
             setLoading(false);
-          }
+          },
         );
       } catch (error) {
         console.error("❌ Erreur d'initialisation Firebase:", error);
@@ -97,7 +103,7 @@ export const useProducts = () => {
   }, []);
 
   const addProduct = async (
-    productData: Omit<Product, "id" | "createdAt">
+    productData: Omit<Product, "id" | "createdAt">,
   ): Promise<void> => {
     try {
       console.log("➕ Ajout d'un nouveau produit:", productData.title);
@@ -112,12 +118,18 @@ export const useProducts = () => {
       console.error("❌ Erreur lors de l'ajout du produit:", error);
 
       // Message d'erreur plus convivial selon le type d'erreur
-      if (error.code === 'permission-denied') {
-        throw new Error("Permissions insuffisantes. Vérifiez les règles Firestore.");
-      } else if (error.code === 'unavailable') {
-        throw new Error("Service Firebase temporairement indisponible. Réessayez plus tard.");
+      if (error.code === "permission-denied") {
+        throw new Error(
+          "Permissions insuffisantes. Vérifiez les règles Firestore.",
+        );
+      } else if (error.code === "unavailable") {
+        throw new Error(
+          "Service Firebase temporairement indisponible. Réessayez plus tard.",
+        );
       } else {
-        throw new Error(`Erreur lors de l'ajout: ${error.message || 'Erreur inconnue'}`);
+        throw new Error(
+          `Erreur lors de l'ajout: ${error.message || "Erreur inconnue"}`,
+        );
       }
     }
   };
@@ -125,7 +137,11 @@ export const useProducts = () => {
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
       // Validation de l'ID
-      if (!productId || typeof productId !== "string" || productId.trim() === "") {
+      if (
+        !productId ||
+        typeof productId !== "string" ||
+        productId.trim() === ""
+      ) {
         throw new Error(`ID de produit invalide: "${productId}"`);
       }
 
@@ -135,19 +151,23 @@ export const useProducts = () => {
         throw new Error(`Produit avec l'ID "${productId}" non trouvé`);
       }
 
-      console.log(`🗑️ Suppression du produit: "${productToDelete.title}" (ID: ${productId})`);
+      console.log(
+        `🗑️ Suppression du produit: "${productToDelete.title}" (ID: ${productId})`,
+      );
 
       // Vérifier que le document existe dans Firebase
       const docRef = doc(db, "products", productId);
       const docSnap = await getDoc(docRef);
-      
+
       if (!docSnap.exists()) {
         throw new Error(`Le produit ${productId} n'existe pas dans Firebase`);
       }
 
       // Supprimer de Firebase
       await deleteDoc(docRef);
-      console.log(`✅ Produit "${productToDelete.title}" supprimé avec succès de Firebase`);
+      console.log(
+        `✅ Produit "${productToDelete.title}" supprimé avec succès de Firebase`,
+      );
     } catch (error) {
       console.error("❌ Erreur lors de la suppression:", error);
       throw error;
@@ -156,14 +176,14 @@ export const useProducts = () => {
 
   const updateProduct = async (
     productId: string,
-    productData: Partial<Omit<Product, "id" | "createdAt">>
+    productData: Partial<Omit<Product, "id" | "createdAt">>,
   ): Promise<void> => {
     try {
       console.log("📝 Mise à jour du produit:", productId);
 
       const docRef = doc(db, "products", productId);
       await updateDoc(docRef, productData);
-      
+
       console.log("✅ Produit mis à jour avec succès:", productId);
     } catch (error) {
       console.error("❌ Erreur lors de la mise à jour du produit:", error);
@@ -174,12 +194,12 @@ export const useProducts = () => {
   const refetch = async (): Promise<void> => {
     try {
       console.log("🔄 Rechargement des produits depuis Firebase...");
-      
+
       const productsQuery = query(
         collection(db, "products"),
-        orderBy("createdAt", "desc")
+        orderBy("createdAt", "desc"),
       );
-      
+
       const snapshot = await getDocs(productsQuery);
       const productsData = snapshot.docs.map((doc) => {
         const data = doc.data();
@@ -201,14 +221,17 @@ export const useProducts = () => {
   // Filter products based on admin mode
   const filteredProducts = adminMode?.isActive
     ? products
-    : products.filter((product) =>
-        adminMode?.timerSettings?.allowedProductTypes?.includes(product.type) ?? true
+    : products.filter(
+        (product) =>
+          adminMode?.timerSettings?.allowedProductTypes?.includes(
+            product.type,
+          ) ?? true,
       );
 
   console.log(
     "📋 Produits gérés en temps réel via Firebase:",
     products.length,
-    "produits"
+    "produits",
   );
 
   return {

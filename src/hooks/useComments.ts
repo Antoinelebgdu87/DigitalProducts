@@ -51,7 +51,7 @@ export const useComments = (productId?: string) => {
     const commentsQuery = query(
       collection(db, "comments"),
       where("productId", "==", productId),
-      orderBy("createdAt", "desc")
+      orderBy("createdAt", "desc"),
     );
 
     const unsubscribe = onSnapshot(
@@ -69,9 +69,15 @@ export const useComments = (productId?: string) => {
           });
 
           setComments(commentsData);
-          console.log("💬 Commentaires chargés depuis Firebase:", commentsData.length);
+          console.log(
+            "💬 Commentaires chargés depuis Firebase:",
+            commentsData.length,
+          );
         } catch (error) {
-          console.error("❌ Erreur lors du traitement des commentaires:", error);
+          console.error(
+            "❌ Erreur lors du traitement des commentaires:",
+            error,
+          );
           setComments([]);
         } finally {
           setLoading(false);
@@ -81,7 +87,7 @@ export const useComments = (productId?: string) => {
         console.error("❌ Erreur lors de l'écoute des commentaires:", error);
         setComments([]);
         setLoading(false);
-      }
+      },
     );
 
     return () => {
@@ -101,7 +107,7 @@ export const useComments = (productId?: string) => {
 
     const commentsQuery = query(
       collection(db, "comments"),
-      orderBy("createdAt", "desc")
+      orderBy("createdAt", "desc"),
     );
 
     const unsubscribe = onSnapshot(
@@ -119,9 +125,15 @@ export const useComments = (productId?: string) => {
           });
 
           setComments(commentsData);
-          console.log("💬 Tous les commentaires chargés depuis Firebase:", commentsData.length);
+          console.log(
+            "💬 Tous les commentaires chargés depuis Firebase:",
+            commentsData.length,
+          );
         } catch (error) {
-          console.error("❌ Erreur lors du traitement des commentaires:", error);
+          console.error(
+            "❌ Erreur lors du traitement des commentaires:",
+            error,
+          );
           setComments([]);
         } finally {
           setLoading(false);
@@ -131,7 +143,7 @@ export const useComments = (productId?: string) => {
         console.error("❌ Erreur lors de l'écoute des commentaires:", error);
         setComments([]);
         setLoading(false);
-      }
+      },
     );
 
     return () => {
@@ -144,7 +156,7 @@ export const useComments = (productId?: string) => {
     productId: string,
     content: string,
     rating?: number,
-    parentId?: string
+    parentId?: string,
   ): Promise<void> => {
     if (!currentUser) {
       throw new Error("Vous devez être connecté pour commenter");
@@ -197,30 +209,30 @@ export const useComments = (productId?: string) => {
 
   const getAverageRating = (): number => {
     if (comments.length === 0) return 0;
-    
+
     const ratingsOnly = comments.filter((c) => c.rating > 0);
     if (ratingsOnly.length === 0) return 0;
-    
+
     const sum = ratingsOnly.reduce((acc, comment) => acc + comment.rating, 0);
     return Math.round((sum / ratingsOnly.length) * 10) / 10;
   };
 
   const getRatingsDistribution = () => {
     const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
-    
+
     comments.forEach((comment) => {
       if (comment.rating >= 1 && comment.rating <= 5) {
         distribution[comment.rating as keyof typeof distribution]++;
       }
     });
-    
+
     return distribution;
   };
 
   console.log(
     "💬 Commentaires gérés en temps réel via Firebase:",
     comments.length,
-    "commentaires"
+    "commentaires",
   );
 
   return {

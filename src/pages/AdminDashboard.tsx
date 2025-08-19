@@ -524,7 +524,9 @@ const AdminDashboard: React.FC = () => {
     setIsDeletingProduct(true);
 
     try {
-      console.log(`🚀 Début de suppression du produit: "${productToDelete.title}"`);
+      console.log(
+        `🚀 Début de suppression du produit: "${productToDelete.title}"`,
+      );
 
       // Toast informatif de début
       toast.info(`Suppression en cours de "${productToDelete.title}"...`);
@@ -535,14 +537,16 @@ const AdminDashboard: React.FC = () => {
       setLastSavedAt(new Date());
 
       // Toast de succès avec plus de détails
-      toast.success(`✅ Produit "${productToDelete.title}" supprimé définitivement de Firebase et du système local`);
+      toast.success(
+        `✅ Produit "${productToDelete.title}" supprimé définitivement de Firebase et du système local`,
+      );
 
       // Log de l'action de modération pour traçabilité
       await logModerationAction(
         "delete_product",
         productToDelete.id,
         "product",
-        `Produit "${productToDelete.title}" supprimé définitivement via panel admin`
+        `Produit "${productToDelete.title}" supprimé définitivement via panel admin`,
       );
 
       setTimeout(() => {
@@ -551,7 +555,8 @@ const AdminDashboard: React.FC = () => {
       }, 500);
     } catch (error: any) {
       console.error("❌ Erreur de suppression:", error);
-      const errorMessage = error?.message || "Erreur inconnue lors de la suppression";
+      const errorMessage =
+        error?.message || "Erreur inconnue lors de la suppression";
       toast.error(`❌ Erreur: ${errorMessage}`);
     } finally {
       setIsDeletingProduct(false);
@@ -565,28 +570,33 @@ const AdminDashboard: React.FC = () => {
     setIsDeletingLicense(true);
 
     try {
-      toast.info(`Suppression en cours de la license "${licenseToDelete.code}"...`);
+      toast.info(
+        `Suppression en cours de la license "${licenseToDelete.code}"...`,
+      );
 
       await deleteLicense(licenseToDelete.id);
 
       // Mettre à jour l'heure de sauvegarde
       setLastSavedAt(new Date());
 
-      toast.success(`✅ License "${licenseToDelete.code}" supprimée avec succès de Firebase et du système local`);
+      toast.success(
+        `✅ License "${licenseToDelete.code}" supprimée avec succès de Firebase et du système local`,
+      );
 
       // Log de l'action de modération
       await logModerationAction(
         "delete_license",
         licenseToDelete.id,
         "license",
-        `License "${licenseToDelete.code}" supprimée via panel admin`
+        `License "${licenseToDelete.code}" supprimée via panel admin`,
       );
 
       setShowDeleteLicenseDialog(false);
       setLicenseToDelete(null);
     } catch (error: any) {
       console.error("❌ Erreur lors de la suppression de la license:", error);
-      const errorMessage = error?.message || "Erreur inconnue lors de la suppression";
+      const errorMessage =
+        error?.message || "Erreur inconnue lors de la suppression";
       toast.error(`❌ Erreur: ${errorMessage}`);
     } finally {
       setIsDeletingLicense(false);
@@ -679,7 +689,9 @@ const AdminDashboard: React.FC = () => {
                 {lastSavedAt && (
                   <div className="flex items-center space-x-2 text-xs text-gray-500">
                     <Clock className="w-3 h-3" />
-                    <span>Sauvé à {lastSavedAt.toLocaleTimeString('fr-FR')}</span>
+                    <span>
+                      Sauvé à {lastSavedAt.toLocaleTimeString("fr-FR")}
+                    </span>
                   </div>
                 )}
 
@@ -1618,7 +1630,8 @@ const AdminDashboard: React.FC = () => {
                       Supprimer le produit
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
-                      ⚠️ Cette action est irréversible. Le produit sera supprimé de Firebase ET du système local.
+                      ⚠️ Cette action est irréversible. Le produit sera supprimé
+                      de Firebase ET du système local.
                     </DialogDescription>
                   </DialogHeader>
 
@@ -1633,24 +1646,28 @@ const AdminDashboard: React.FC = () => {
                       </div>
 
                       {/* Firebase Status Info */}
-                      <div className={`border rounded p-3 ${
-                        isFirebaseAvailable
-                          ? "bg-green-900/30 border-green-700"
-                          : "bg-yellow-900/30 border-yellow-700"
-                      }`}>
+                      <div
+                        className={`border rounded p-3 ${
+                          isFirebaseAvailable
+                            ? "bg-green-900/30 border-green-700"
+                            : "bg-yellow-900/30 border-yellow-700"
+                        }`}
+                      >
                         <div className="flex items-center space-x-2 text-sm">
                           {isFirebaseAvailable ? (
                             <>
                               <div className="w-2 h-2 bg-green-400 rounded-full"></div>
                               <span className="text-green-200">
-                                ✅ Le produit sera supprimé de Firebase et localement
+                                ✅ Le produit sera supprimé de Firebase et
+                                localement
                               </span>
                             </>
                           ) : (
                             <>
                               <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
                               <span className="text-yellow-200">
-                                ⚠️ Suppression locale uniquement (Firebase non connecté)
+                                ⚠️ Suppression locale uniquement (Firebase non
+                                connecté)
                               </span>
                             </>
                           )}
@@ -1660,8 +1677,10 @@ const AdminDashboard: React.FC = () => {
                       {/* Warning */}
                       <div className="bg-gray-800 border border-gray-700 rounded p-3">
                         <p className="text-gray-300 text-xs">
-                          💡 <strong>Note :</strong> Cette suppression sera définitive et ne pourra pas être annulée.
-                          {isFirebaseAvailable && " Les données seront effacées de votre base Firebase."}
+                          💡 <strong>Note :</strong> Cette suppression sera
+                          définitive et ne pourra pas être annulée.
+                          {isFirebaseAvailable &&
+                            " Les données seront effacées de votre base Firebase."}
                         </p>
                       </div>
                     </div>

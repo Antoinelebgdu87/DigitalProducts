@@ -25,7 +25,7 @@ const firebaseConfig = {
   storageBucket: "test-a4251.firebasestorage.app",
   messagingSenderId: "75154939894",
   appId: "1:75154939894:web:0d93f0eaa0e31bdbe5f1d7",
-  measurementId: "G-THRZRBSW9S"
+  measurementId: "G-THRZRBSW9S",
 };
 
 // Firebase sera toujours utilisé avec cette configuration

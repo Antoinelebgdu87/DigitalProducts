@@ -21,12 +21,12 @@ export const useLicenses = () => {
   // Load licenses from Firebase with real-time updates
   useEffect(() => {
     console.log("🚀 Initialisation du hook useLicenses...");
-    
+
     let isMounted = true;
-    
+
     const licensesQuery = query(
       collection(db, "licenses"),
-      orderBy("createdAt", "desc")
+      orderBy("createdAt", "desc"),
     );
 
     const unsubscribe = onSnapshot(
@@ -52,7 +52,10 @@ export const useLicenses = () => {
           });
 
           setLicenses(licensesData);
-          console.log("🔑 Licences chargées depuis Firebase:", licensesData.length);
+          console.log(
+            "🔑 Licences chargées depuis Firebase:",
+            licensesData.length,
+          );
         } catch (error) {
           console.error("❌ Erreur lors du traitement des licences:", error);
           setLicenses([]);
@@ -64,7 +67,7 @@ export const useLicenses = () => {
         console.error("❌ Erreur lors de l'écoute des licences:", error);
         setLicenses([]);
         setLoading(false);
-      }
+      },
     );
 
     return () => {
@@ -76,10 +79,13 @@ export const useLicenses = () => {
   const createLicense = async (
     productId: string,
     category: "compte" | "carte-cadeau" | "cheat",
-    maxUsages: number = 1
+    maxUsages: number = 1,
   ): Promise<string> => {
     try {
-      console.log("🎫 Création d'une nouvelle licence pour le produit:", productId);
+      console.log(
+        "🎫 Création d'une nouvelle licence pour le produit:",
+        productId,
+      );
 
       // Generate license code
       const code = `${category.toUpperCase()}-${Date.now()}-${Math.random()
@@ -123,7 +129,7 @@ export const useLicenses = () => {
 
   const validateLicense = async (
     licenseCode: string,
-    userId: string
+    userId: string,
   ): Promise<{
     isValid: boolean;
     productId?: string;
@@ -134,7 +140,7 @@ export const useLicenses = () => {
       console.log("🔍 Validation de la licence:", licenseCode);
 
       const license = licenses.find((l) => l.code === licenseCode);
-      
+
       if (!license) {
         console.log("❌ Licence non trouvée:", licenseCode);
         return {
@@ -193,13 +199,15 @@ export const useLicenses = () => {
   };
 
   const getUsedLicenses = () => {
-    return licenses.filter((license) => license.usageCount >= license.maxUsages);
+    return licenses.filter(
+      (license) => license.usageCount >= license.maxUsages,
+    );
   };
 
   console.log(
     "🔑 Licences gérées en temps réel via Firebase:",
     licenses.length,
-    "licences"
+    "licences",
   );
 
   return {

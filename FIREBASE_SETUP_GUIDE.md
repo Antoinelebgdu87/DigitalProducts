@@ -1,6 +1,7 @@
 # 🔥 Guide de Configuration Firebase
 
 ## ❌ Problème actuel
+
 L'application affiche des erreurs "Failed to fetch" car le projet Firebase `test-a4251` n'est pas encore configuré.
 
 ## ✅ Étapes pour corriger
@@ -42,7 +43,7 @@ Pour tester, vous pouvez créer quelques collections vides :
 2. Cliquez **"Démarrer une collection"**
 3. Créez ces collections :
    - `products`
-   - `users` 
+   - `users`
    - `licenses`
    - `comments`
    - `settings`
@@ -51,6 +52,7 @@ Pour tester, vous pouvez créer quelques collections vides :
 ### 4. Vérifier la configuration
 
 Une fois terminé, votre application devrait :
+
 - ✅ Se connecter à Firebase sans erreur
 - ✅ Afficher le panneau admin
 - ✅ Permettre d'ajouter/supprimer des produits
@@ -64,7 +66,8 @@ Une fois terminé, votre application devrait :
 ## 📱 Test rapide
 
 Pour tester si Firebase fonctionne :
-1. Allez sur `/admin` 
+
+1. Allez sur `/admin`
 2. Connectez-vous avec : `Admin` / `Antoine80@`
 3. Essayez d'ajouter un produit
 4. Si ça marche, Firebase est bien configuré ! 🎉

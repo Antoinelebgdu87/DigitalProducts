@@ -32,7 +32,9 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const initializeMaintenanceSettings = async () => {
       try {
-        console.log("🛠️ Chargement des paramètres de maintenance depuis Firebase...");
+        console.log(
+          "🛠️ Chargement des paramètres de maintenance depuis Firebase...",
+        );
 
         // Valeurs par défaut temporaires
         setIsMaintenanceMode(false);
