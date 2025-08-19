@@ -83,9 +83,16 @@ export const FirebaseDebug: React.FC = () => {
       <CardHeader>
         <CardTitle className="text-sm text-white flex items-center justify-between">
           Firebase Debug Status
-          <Button size="sm" onClick={testFirebaseConnection} className="text-xs">
-            Test Connection
-          </Button>
+          <div className="space-x-2">
+            <Button size="sm" onClick={testFirebaseConnection} className="text-xs">
+              Refresh
+            </Button>
+            {firebaseProducts.length > 0 && (
+              <Button size="sm" onClick={testDeleteFirstProduct} className="text-xs bg-red-600 hover:bg-red-700">
+                Test Delete First
+              </Button>
+            )}
+          </div>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
