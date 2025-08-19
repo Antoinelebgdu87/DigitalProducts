@@ -147,6 +147,30 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   };
 
+  // Helper function to find existing user by username
+  const findUserByUsername = async (username: string): Promise<User | null> => {
+    try {
+      if (!shouldUseFirebase()) {
+        return null;
+      }
+
+      const q = query(
+        collection(db, "users"),
+        where("username", "==", username)
+      );
+      const querySnapshot = await getDocs(q);
+
+      if (!querySnapshot.empty) {
+        const userDoc = querySnapshot.docs[0];
+        return parseUser({ id: userDoc.id, ...userDoc.data() });
+      }
+      return null;
+    } catch (error) {
+      console.error("Erreur lors de la recherche de l'utilisateur:", error);
+      return null;
+    }
+  };
+
   // Load current user on mount
   useEffect(() => {
     const checkExistingUser = async () => {
@@ -155,24 +179,48 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         const storedUsername = localStorage.getItem("username");
 
         if (storedUserId && storedUsername) {
-          // Load user from Firebase
-          const userDoc = await getDoc(doc(db, "users", storedUserId));
+          // First, try to find existing user by username to avoid duplicates
+          const existingUser = await findUserByUsername(storedUsername);
 
-          if (userDoc.exists()) {
-            const userData = parseUser({ id: userDoc.id, ...userDoc.data() });
-            setCurrentUser(userData);
+          if (existingUser) {
+            // User found by username, update localStorage and use this user
+            localStorage.setItem("userId", existingUser.id);
+            localStorage.setItem("username", existingUser.username);
+            setCurrentUser(existingUser);
 
             // Update online status
-            await updateDoc(doc(db, "users", storedUserId), {
-              isOnline: true,
-              lastSeen: Timestamp.now(),
-            });
+            if (shouldUseFirebase()) {
+              await updateDoc(doc(db, "users", existingUser.id), {
+                isOnline: true,
+                lastSeen: Timestamp.now(),
+              });
+            }
 
-            console.log("🔵 Utilisateur Firebase chargé:", storedUsername);
-          } else {
-            // User not in Firebase, recreate
-            await recreateUser(storedUserId, storedUsername);
+            console.log("🔵 Utilisateur existant trouvé par nom:", existingUser.username);
+            return;
           }
+
+          // If not found by username, try by stored ID
+          if (shouldUseFirebase()) {
+            const userDoc = await getDoc(doc(db, "users", storedUserId));
+
+            if (userDoc.exists()) {
+              const userData = parseUser({ id: userDoc.id, ...userDoc.data() });
+              setCurrentUser(userData);
+
+              // Update online status
+              await updateDoc(doc(db, "users", storedUserId), {
+                isOnline: true,
+                lastSeen: Timestamp.now(),
+              });
+
+              console.log("🔵 Utilisateur Firebase chargé par ID:", storedUsername);
+              return;
+            }
+          }
+
+          // User not found anywhere, recreate
+          await recreateUser(storedUserId, storedUsername);
         } else {
           // Check if user was supposed to have been created
           const hasEverCreatedUser = localStorage.getItem("hasCreatedUser");
@@ -180,11 +228,28 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
             // Try to get the last saved username to maintain consistency
             const lastUsername =
               localStorage.getItem("lastUsername") || generateRandomUsername();
-            const userId = Date.now().toString();
 
-            // Save the username for consistency
-            localStorage.setItem("lastUsername", lastUsername);
-            await recreateUser(userId, lastUsername);
+            // Check if this username already exists
+            const existingUser = await findUserByUsername(lastUsername);
+            if (existingUser) {
+              // Use existing user
+              localStorage.setItem("userId", existingUser.id);
+              localStorage.setItem("username", existingUser.username);
+              setCurrentUser(existingUser);
+
+              if (shouldUseFirebase()) {
+                await updateDoc(doc(db, "users", existingUser.id), {
+                  isOnline: true,
+                  lastSeen: Timestamp.now(),
+                });
+              }
+
+              console.log("🔵 Utilisateur existant retrouvé:", existingUser.username);
+            } else {
+              const userId = Date.now().toString();
+              localStorage.setItem("lastUsername", lastUsername);
+              await recreateUser(userId, lastUsername);
+            }
           } else {
             console.log("🟡 Aucun utilisateur trouvé - modal va s'afficher");
           }
@@ -310,6 +375,30 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const createUsername = async (username?: string): Promise<User> => {
     try {
       const finalUsername = username || generateRandomUsername();
+
+      // Check if username already exists
+      const existingUser = await findUserByUsername(finalUsername);
+      if (existingUser) {
+        // Username already exists, use that user instead of creating a new one
+        localStorage.setItem("userId", existingUser.id);
+        localStorage.setItem("username", existingUser.username);
+        localStorage.setItem("lastUsername", existingUser.username);
+        localStorage.setItem("hasCreatedUser", "true");
+
+        // Update online status
+        if (shouldUseFirebase()) {
+          await updateDoc(doc(db, "users", existingUser.id), {
+            isOnline: true,
+            lastSeen: Timestamp.now(),
+          });
+        }
+
+        setCurrentUser(existingUser);
+        console.log("🔄 Utilisateur existant réutilisé:", existingUser.username);
+        return existingUser;
+      }
+
+      // Username doesn't exist, create new user
       const userId = Date.now().toString();
 
       localStorage.setItem("userId", userId);
@@ -328,7 +417,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         lastSeen: new Date(),
       };
 
-      await setDoc(doc(db, "users", userId), userToFirestore(newUser));
+      if (shouldUseFirebase()) {
+        await setDoc(doc(db, "users", userId), userToFirestore(newUser));
+      }
       setCurrentUser(newUser);
       console.log("🎉 Nouvel utilisateur Firebase créé:", finalUsername);
       return newUser;
