@@ -1041,6 +1041,16 @@ const AdminDashboard: React.FC = () => {
                           >
                             <Download className="w-4 h-4" />
                           </Button>
+                          {product.discordUrl && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => window.open(product.discordUrl, "_blank")}
+                              className="border-purple-700 text-purple-400 hover:bg-purple-500/10"
+                            >
+                              <LinkIcon className="w-4 h-4" />
+                            </Button>
+                          )}
                           <Button
                             variant="outline"
                             size="sm"
