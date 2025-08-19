@@ -405,6 +405,21 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Product deletion handler
+  const handleDeleteProduct = async () => {
+    if (!productToDelete) return;
+
+    try {
+      await deleteProduct(productToDelete.id);
+      toast.success(`Produit "${productToDelete.title}" supprimé avec succès`);
+      setShowDeleteDialog(false);
+      setProductToDelete(null);
+    } catch (error) {
+      console.error("Erreur lors de la suppression:", error);
+      toast.error("Erreur lors de la suppression du produit");
+    }
+  };
+
   const activeLicenses = getActiveLicenses();
 
   const getCategoryIcon = (category: string) => {
