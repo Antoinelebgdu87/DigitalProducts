@@ -183,7 +183,7 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
                   id="license"
                   value={licenseCode}
                   onChange={handleLicenseChange}
-                  placeholder="XXXX-XXXX-XXXX-XXXX"
+                  placeholder="Entrez votre clé de licence"
                   className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500 text-lg py-6 pl-12"
                   disabled={isLoading}
                 />
