@@ -557,18 +557,38 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // License deletion handler
+  // License deletion handler amélioré
   const handleDeleteLicense = async () => {
-    if (!licenseToDelete) return;
+    if (!licenseToDelete || isDeletingLicense) return;
+
+    setIsDeletingLicense(true);
 
     try {
+      toast.info(`Suppression en cours de la license "${licenseToDelete.code}"...`);
+
       await deleteLicense(licenseToDelete.id);
-      toast.success(`License "${licenseToDelete.code}" supprimée avec succès`);
+
+      // Mettre à jour l'heure de sauvegarde
+      setLastSavedAt(new Date());
+
+      toast.success(`✅ License "${licenseToDelete.code}" supprimée avec succès de Firebase et du système local`);
+
+      // Log de l'action de modération
+      await logModerationAction(
+        "delete_license",
+        licenseToDelete.id,
+        "license",
+        `License "${licenseToDelete.code}" supprimée via panel admin`
+      );
+
       setShowDeleteLicenseDialog(false);
       setLicenseToDelete(null);
-    } catch (error) {
-      console.error("Erreur lors de la suppression de la license:", error);
-      toast.error("Erreur lors de la suppression de la license");
+    } catch (error: any) {
+      console.error("❌ Erreur lors de la suppression de la license:", error);
+      const errorMessage = error?.message || "Erreur inconnue lors de la suppression";
+      toast.error(`❌ Erreur: ${errorMessage}`);
+    } finally {
+      setIsDeletingLicense(false);
     }
   };
 
