@@ -70,11 +70,8 @@ const ShopDashboard: React.FC = () => {
     return <Navigate to="/" replace />;
   }
 
-  // Filter products by current user for shop_access users
-  const userProducts =
-    currentUser.role === "admin"
-      ? products
-      : products.filter((product) => product.createdBy === currentUser.id);
+  // Filter products by current user - chaque rôle voit seulement ses propres produits
+  const userProducts = products.filter((product) => product.createdBy === currentUser.id);
 
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
