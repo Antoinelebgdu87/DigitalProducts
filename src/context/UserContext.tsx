@@ -15,9 +15,12 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
+export type UserRole = "user" | "shop_access" | "admin";
+
 export interface User {
   id: string;
   username: string;
+  role: UserRole;
   isOnline: boolean;
   isBanned: boolean;
   banReason?: string;
