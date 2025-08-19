@@ -138,6 +138,7 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
 
     return () => {
       isMounted = false;
+      clearTimeout(safetyTimeout);
     };
   }, []);
 
