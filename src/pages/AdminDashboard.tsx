@@ -3186,7 +3186,7 @@ const AdminDashboard: React.FC = () => {
 
                             <div className="space-y-2">
                               <div className="flex items-center space-x-4 text-sm">
-                                <span className="font-mono bg-gray-800 px-3 py-1 rounded text-white whitespace-nowrap overflow-hidden text-ellipsis max-w-none break-all">
+                                <span className="font-mono bg-gray-800 px-3 py-1 rounded text-white break-all">
                                   {license.code}
                                 </span>
                                 <span className="text-gray-400">
