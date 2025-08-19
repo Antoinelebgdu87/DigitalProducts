@@ -179,7 +179,7 @@ export const useProducts = () => {
         if (lastProduct && !canCreateProduct(lastProduct.createdAt)) {
           const remaining = getRemainingCooldown(lastProduct.createdAt);
           throw new Error(
-            `Vous devez attendre encore ${remaining} minute(s) avant de créer un nouveau produit.`,
+            `Vous devez attendre encore ${remaining} minute(s) avant de cr��er un nouveau produit.`,
           );
         }
       }
@@ -222,8 +222,21 @@ export const useProducts = () => {
 
       if (shouldUseFirebase()) {
         console.log("🔥 Suppression Firebase...");
-        await deleteDoc(doc(db, "products", productId));
-        console.log("🗑️ Produit Firebase supprimé:", productId);
+        console.log("🔥 Firebase DB object:", !!db);
+        console.log("🔥 Product ID à supprimer:", productId);
+
+        try {
+          const docRef = doc(db, "products", productId);
+          console.log("🔥 Document reference créé:", docRef);
+
+          await deleteDoc(docRef);
+          console.log("🗑️ Produit Firebase supprimé avec succès:", productId);
+        } catch (firebaseError) {
+          console.error("❌ Erreur Firebase spécifique:", firebaseError);
+          console.error("❌ Firebase error message:", firebaseError.message);
+          console.error("❌ Firebase error code:", firebaseError.code);
+          throw firebaseError;
+        }
       } else {
         console.log("💾 Mode localStorage - suppression locale...");
         const currentProducts = products.filter((p) => p.id !== productId);
