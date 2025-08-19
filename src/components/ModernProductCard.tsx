@@ -37,8 +37,11 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
 
   // Debug logging for comments
   React.useEffect(() => {
-    console.log(`💬 Comments for product ${product.id}:`, comments.length, comments);
-  }, [comments, product.id]);
+    console.log(`💬 Product ${product.title} (${product.id}):`, { commentsCount: comments.length, loading: commentsLoading });
+    if (comments.length > 0) {
+      console.log('📝 Comments data:', comments);
+    }
+  }, [comments, product.id, product.title, commentsLoading]);
 
   const handleLicenseValidate = async (licenseCode: string) => {
     return await validateLicense(licenseCode, product.id);
