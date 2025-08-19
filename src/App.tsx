@@ -10,6 +10,7 @@ import {
 } from "@/context/MaintenanceContext";
 import { UserProvider } from "@/context/UserContext";
 import { AdminModeProvider } from "@/context/AdminModeContext";
+import { shouldUseFirebase } from "@/lib/firebase";
 import ModernHomePage from "./components/ModernHomePage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
