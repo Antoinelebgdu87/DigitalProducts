@@ -42,8 +42,7 @@ export const useSimpleComments = (productId: string) => {
 
     const q = query(
       collection(db, "simple_comments"),
-      where("productId", "==", productId),
-      orderBy("createdAt", "desc")
+      where("productId", "==", productId)
     );
 
     const unsubscribe = onSnapshot(
