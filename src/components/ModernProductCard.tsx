@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Lock, Star, Eye, ShoppingCart, Euro } from "lucide-react";
+import { Download, Lock, Star, Eye, ShoppingCart, Euro, MessageCircle, ExternalLink } from "lucide-react";
 import { useLicenses } from "@/hooks/useLicenses";
 import KeyValidator from "./KeyValidator";
 import NotepadViewer from "./NotepadViewer";
