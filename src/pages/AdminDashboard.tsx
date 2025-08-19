@@ -215,6 +215,11 @@ const AdminDashboard: React.FC = () => {
     code: string;
   } | null>(null);
 
+  // États pour le suivi des suppressions
+  const [isDeletingProduct, setIsDeletingProduct] = useState(false);
+  const [isDeletingLicense, setIsDeletingLicense] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -2489,7 +2494,7 @@ const AdminDashboard: React.FC = () => {
                 <DialogContent className="bg-gray-900 border-gray-800">
                   <DialogHeader>
                     <DialogTitle className="text-white">
-                      Débannir l'utilisateur
+                      D��bannir l'utilisateur
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
                       L'utilisateur pourra de nouveau accéder au site.
