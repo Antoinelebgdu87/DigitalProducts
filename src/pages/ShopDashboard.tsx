@@ -215,7 +215,27 @@ const ShopDashboard: React.FC = () => {
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                <Badge className="bg-purple-600 text-white">
+                {/* Badge de rôle */}
+                {currentUser.role === "shop_access" && (
+                  <Badge className="bg-purple-600 text-white">
+                    <Store className="w-3 h-3 mr-1" />
+                    Boutique
+                  </Badge>
+                )}
+                {currentUser.role === "partner" && (
+                  <Badge className="bg-yellow-600 text-white">
+                    <Crown className="w-3 h-3 mr-1" />
+                    Partenaire
+                  </Badge>
+                )}
+                {currentUser.role === "admin" && (
+                  <Badge className="bg-red-600 text-white">
+                    <Shield className="w-3 h-3 mr-1" />
+                    Admin
+                  </Badge>
+                )}
+
+                <Badge variant="outline" className="border-purple-500 text-purple-400">
                   {userProducts.length} produit(s)
                 </Badge>
                 <Link to="/">
