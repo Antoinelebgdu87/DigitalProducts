@@ -110,6 +110,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const parseUser = (userData: any): User => {
     return {
       ...userData,
+      role: userData.role || "user", // Migration: rôle par défaut pour les anciens utilisateurs
       createdAt: userData.createdAt?.toDate() || new Date(),
       lastSeen: userData.lastSeen?.toDate() || new Date(),
       bannedAt: userData.bannedAt?.toDate() || undefined,
