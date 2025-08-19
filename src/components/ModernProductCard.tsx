@@ -17,8 +17,10 @@ interface ModernProductCardProps {
 const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   const [showLicenseInput, setShowLicenseInput] = useState(false);
   const [showNotepad, setShowNotepad] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { validateLicense } = useLicenses();
+  const { comments } = useComments(product.id);
 
   const handleLicenseValidate = async (licenseCode: string) => {
     return await validateLicense(licenseCode, product.id);
