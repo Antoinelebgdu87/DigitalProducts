@@ -445,6 +445,8 @@ const AdminDashboard: React.FC = () => {
         return "bg-red-600 text-white";
       case "shop_access":
         return "bg-purple-600 text-white";
+      case "partner":
+        return "bg-yellow-600 text-white";
       case "user":
       default:
         return "bg-gray-600 text-gray-200";
