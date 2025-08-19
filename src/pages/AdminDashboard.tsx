@@ -68,8 +68,6 @@ import SimpleStarsBackground from "@/components/SimpleStarsBackground";
 import { toast } from "sonner";
 import { Product } from "@/types";
 import { useUser } from "@/context/UserContext";
-import { shouldUseFirebase } from "@/lib/firebase";
-import { FirebaseDebug } from "@/components/FirebaseDebug";
 
 const AdminDashboard: React.FC = () => {
   console.log("🔥 Mode Firebase actuel:", shouldUseFirebase());
