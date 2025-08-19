@@ -31,6 +31,16 @@ export interface MaintenanceSettings {
   message: string;
 }
 
+export interface Comment {
+  id: string;
+  productId: string;
+  userId: string;
+  username: string;
+  userRole: UserRole;
+  content: string;
+  createdAt: Date;
+}
+
 export interface AdminCredentials {
   username: string;
   password: string;
