@@ -2041,6 +2041,17 @@ const AdminDashboard: React.FC = () => {
                               Unban
                             </Button>
                           )}
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setUserToDelete({ id: user.id, username: user.username });
+                              setShowDeleteUserDialog(true);
+                            }}
+                            className="border-red-700 text-red-400 hover:bg-red-500/10"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
                         </div>
                       </div>
                     </CardContent>
