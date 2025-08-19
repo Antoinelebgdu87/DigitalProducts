@@ -69,28 +69,55 @@ export const useProducts = () => {
         return;
       }
 
-      // Use Firebase if available
+      // Use Firebase if available - Try without orderBy first
+      console.log("🔥 Initialisation du listener Firebase...");
+
       const unsubscribe = onSnapshot(
-        query(collection(db, "products"), orderBy("createdAt", "desc")),
+        collection(db, "products"), // Sans orderBy pour tester
         (snapshot) => {
           try {
-            const productsData = snapshot.docs.map((doc) =>
-              parseProduct({ id: doc.id, ...doc.data() }),
-            );
+            console.log("🔥 Snapshot reçu avec", snapshot.docs.length, "documents");
+
+            const productsData = [];
+
+            for (const docSnap of snapshot.docs) {
+              try {
+                const data = docSnap.data();
+                console.log("🔥 Document data:", docSnap.id, data);
+
+                const product = parseProduct({ id: docSnap.id, ...data });
+                productsData.push(product);
+              } catch (parseError) {
+                console.error("❌ Erreur parsing document", docSnap.id, parseError);
+                // Continue avec les autres documents
+              }
+            }
+
+            // Trier manuellement par date décroissante
+            productsData.sort((a, b) => {
+              const dateA = a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
+              const dateB = b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
+              return dateB - dateA;
+            });
+
+            console.log("📦 Produits Firebase traités:", productsData.length);
+            console.log("📦 Détails produits:", productsData.map(p => ({ id: p.id, title: p.title })));
+
             setProducts(productsData);
-            console.log("📦 Produits Firebase chargés:", productsData.length);
 
             // Also save to localStorage as backup
             localStorage.setItem("products", JSON.stringify(productsData));
           } catch (error) {
-            console.error("Error parsing products:", error);
+            console.error("❌ Error parsing products:", error);
             setProducts([]);
           } finally {
             setLoading(false);
           }
         },
         (error) => {
-          console.error("Error fetching products:", error);
+          console.error("❌ Error fetching products:", error);
+          console.error("❌ Firebase error details:", error.code, error.message);
+
           // Fallback to localStorage
           try {
             const stored = localStorage.getItem("products");
