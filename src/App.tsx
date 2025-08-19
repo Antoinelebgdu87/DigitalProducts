@@ -79,6 +79,7 @@ const AppContent = () => {
             }
           />
           <Route path="/shop" element={<ShopDashboard />} />
+          <Route path="/partner" element={<PartnerDashboard />} />
           <Route
             path="*"
             element={
