@@ -88,6 +88,7 @@ const AdminDashboard: React.FC = () => {
     imageUrl: "",
     downloadUrl: "",
     type: "free" as "free" | "paid",
+    actionType: "download" as "download" | "discord",
     contentType: "link" as "link" | "text",
     content: "",
     discordUrl: "",
@@ -135,6 +136,7 @@ const AdminDashboard: React.FC = () => {
       imageUrl: "",
       downloadUrl: "",
       type: "free",
+      actionType: "download",
       contentType: "link", // Par défaut lien pour compatibilité
       content: "",
       discordUrl: "",
@@ -151,6 +153,7 @@ const AdminDashboard: React.FC = () => {
       imageUrl: product.imageUrl,
       downloadUrl: product.downloadUrl,
       type: product.type,
+      actionType: product.actionType || "download",
       contentType: product.contentType || "link", // Par défaut lien pour compatibilité
       content: product.content || "",
       discordUrl: product.discordUrl || "",
