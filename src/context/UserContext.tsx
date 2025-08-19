@@ -238,7 +238,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           setCurrentUser((prevUser) => {
             const newUser = userData;
             console.log(
-              "🔄 Mise à jour utilisateur:",
+              "🔄 Mise �� jour utilisateur:",
               newUser.username,
               "|",
               newUser.role,
@@ -337,6 +337,20 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       console.log("🚫 Utilisateur Firebase banni:", userId);
     } catch (error) {
       console.error("Erreur lors du bannissement:", error);
+      throw error;
+    }
+  };
+
+  const unbanUser = async (userId: string): Promise<void> => {
+    try {
+      await updateDoc(doc(db, "users", userId), {
+        isBanned: false,
+        banReason: null,
+        bannedAt: null,
+      });
+      console.log("✅ Utilisateur Firebase débanni:", userId);
+    } catch (error) {
+      console.error("Erreur lors du débannissement:", error);
       throw error;
     }
   };
