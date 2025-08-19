@@ -1468,6 +1468,85 @@ const AdminDashboard: React.FC = () => {
                 </DialogContent>
               </Dialog>
 
+              {/* Role Dialog */}
+              <Dialog open={showRoleDialog} onOpenChange={setShowRoleDialog}>
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Modifier le rôle utilisateur
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      Choisissez le nouveau rôle pour cet utilisateur.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleUpdateRole} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="userRole" className="text-white">
+                        Rôle
+                      </Label>
+                      <Select
+                        value={selectedUserRole}
+                        onValueChange={(value: "user" | "shop_access" | "admin") =>
+                          setSelectedUserRole(value)
+                        }
+                      >
+                        <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">
+                            <div className="flex items-center space-x-2">
+                              <User className="w-4 h-4" />
+                              <span>Utilisateur</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="shop_access">
+                            <div className="flex items-center space-x-2">
+                              <Package className="w-4 h-4" />
+                              <span>Accès Boutique</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="admin">
+                            <div className="flex items-center space-x-2">
+                              <Shield className="w-4 h-4" />
+                              <span>Administrateur</span>
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="bg-blue-900/50 border border-blue-700 rounded p-3">
+                      <p className="text-blue-200 text-sm">
+                        <strong>Permissions :</strong>
+                        {selectedUserRole === "user" && " Accès utilisateur standard"}
+                        {selectedUserRole === "shop_access" && " Peut uploader et gérer ses propres produits"}
+                        {selectedUserRole === "admin" && " Accès total à l'administration"}
+                      </p>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowRoleDialog(false);
+                          setSelectedUserId("");
+                          setSelectedUserRole("user");
+                        }}
+                        className="border-gray-700"
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-purple-600 hover:bg-purple-700"
+                      >
+                        Mettre à jour le rôle
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+
               {/* Warning Dialog */}
               <Dialog open={showWarnDialog} onOpenChange={setShowWarnDialog}>
                 <DialogContent className="bg-gray-900 border-gray-800">
