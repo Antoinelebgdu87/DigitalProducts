@@ -123,6 +123,17 @@ export const FirebaseDebug: React.FC = () => {
             Last test: {lastTest}
           </div>
         )}
+
+        {firebaseProducts.length > 0 && (
+          <div className="space-y-1">
+            <div className="text-xs text-gray-400">Firebase Products:</div>
+            {firebaseProducts.map((product, index) => (
+              <div key={product.id} className="text-xs text-gray-300 bg-gray-800/50 p-1 rounded">
+                {index + 1}. {product.title} (ID: {product.id.substring(0, 8)}...)
+              </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );
