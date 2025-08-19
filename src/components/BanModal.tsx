@@ -6,14 +6,44 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Clock } from "lucide-react";
 
 interface BanModalProps {
   isOpen: boolean;
   reason: string;
+  banExpiresAt?: Date | null;
+  bannedAt?: Date;
 }
 
-const BanModal: React.FC<BanModalProps> = ({ isOpen, reason }) => {
+const BanModal: React.FC<BanModalProps> = ({ isOpen, reason, banExpiresAt, bannedAt }) => {
+  const isPermanent = !banExpiresAt;
+  const isExpired = banExpiresAt && new Date() > banExpiresAt;
+
+  // Calculer le temps restant si ban temporaire
+  const getTimeRemaining = () => {
+    if (!banExpiresAt || isPermanent) return null;
+
+    const now = new Date();
+    const timeLeft = banExpiresAt.getTime() - now.getTime();
+
+    if (timeLeft <= 0) return null;
+
+    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+
+    if (hours > 0) {
+      return `${hours}h ${minutes}min`;
+    } else {
+      return `${minutes}min`;
+    }
+  };
+
+  const timeRemaining = getTimeRemaining();
+
+  // Si le ban a expiré, ne pas afficher le modal
+  if (isExpired) {
+    return null;
+  }
   return (
     <Dialog open={isOpen} onOpenChange={() => {}}>
       <DialogContent
@@ -22,13 +52,20 @@ const BanModal: React.FC<BanModalProps> = ({ isOpen, reason }) => {
       >
         <DialogHeader className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-red-600 rounded-full flex items-center justify-center animate-pulse-glow">
-            <AlertTriangle className="w-8 h-8 text-white" />
+            {isPermanent ? (
+              <AlertTriangle className="w-8 h-8 text-white" />
+            ) : (
+              <Clock className="w-8 h-8 text-white" />
+            )}
           </div>
           <DialogTitle className="text-xl font-bold text-white">
-            Vous êtes banni
+            {isPermanent ? "Vous êtes banni" : "Accès temporairement restreint"}
           </DialogTitle>
           <DialogDescription className="text-red-200 mt-4">
-            Votre accès à la plateforme a été restreint de manière permanente.
+            {isPermanent
+              ? "Votre accès à la plateforme a été restreint de manière permanente."
+              : `Votre accès à la plateforme est temporairement restreint${timeRemaining ? ` pour encore ${timeRemaining}` : ""}."`
+            }
           </DialogDescription>
         </DialogHeader>
 
@@ -41,11 +78,22 @@ const BanModal: React.FC<BanModalProps> = ({ isOpen, reason }) => {
 
         <div className="text-center mt-6">
           <div className="text-red-200 text-sm">
-            Votre accès à la plateforme a été restreint de manière permanente.
+            {isPermanent
+              ? "Votre accès à la plateforme a été restreint de manière permanente."
+              : `Restriction temporaire${timeRemaining ? ` - ${timeRemaining} restant` : ""}.`
+            }
           </div>
           <div className="text-red-300 text-xs mt-2">
-            Cette décision est définitive et ne peut pas être contestée.
+            {isPermanent
+              ? "Cette décision est définitive et ne peut pas être contestée."
+              : "Vous pourrez accéder à nouveau à la plateforme une fois la période écoulée."
+            }
           </div>
+          {banExpiresAt && !isPermanent && (
+            <div className="text-red-400 text-xs mt-1">
+              Fin de restriction : {banExpiresAt.toLocaleString('fr-FR')}
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
