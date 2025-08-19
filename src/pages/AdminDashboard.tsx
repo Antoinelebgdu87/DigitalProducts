@@ -511,20 +511,37 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Product deletion handler
+  // Product deletion handler amélioré
   const handleDeleteProduct = async () => {
     if (!productToDelete) return;
 
     try {
+      console.log(`🚀 Début de suppression du produit: "${productToDelete.title}"`);
+
+      // Toast informatif de début
+      toast.info(`Suppression en cours de "${productToDelete.title}"...`);
+
       await deleteProduct(productToDelete.id);
-      toast.success(`Produit "${productToDelete.title}" supprimé avec succès`);
+
+      // Toast de succès avec plus de détails
+      toast.success(`✅ Produit "${productToDelete.title}" supprimé définitivement de Firebase et du système local`);
+
+      // Log de l'action de modération pour traçabilité
+      await logModerationAction(
+        "delete_product",
+        productToDelete.id,
+        "product",
+        `Produit "${productToDelete.title}" supprimé définitivement via panel admin`
+      );
 
       setTimeout(() => {
         setShowDeleteDialog(false);
         setProductToDelete(null);
       }, 500);
-    } catch (error) {
-      toast.error(`Erreur lors de la suppression: ${error.message}`);
+    } catch (error: any) {
+      console.error("❌ Erreur de suppression:", error);
+      const errorMessage = error?.message || "Erreur inconnue lors de la suppression";
+      toast.error(`❌ Erreur: ${errorMessage}`);
     }
   };
 
