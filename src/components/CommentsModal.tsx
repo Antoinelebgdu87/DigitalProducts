@@ -70,8 +70,9 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     try {
       await deleteComment(commentId);
       toast.success("Commentaire supprimé avec succès!");
-    } catch (error) {
-      toast.error("Erreur lors de la suppression du commentaire");
+    } catch (error: any) {
+      const errorMessage = error.message || "Erreur lors de la suppression du commentaire";
+      toast.error(errorMessage);
     }
   };
 
