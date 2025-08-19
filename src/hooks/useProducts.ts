@@ -285,17 +285,30 @@ export const useProducts = () => {
         throw new Error(`ID de produit invalide: "${productId}"`);
       }
 
-      if (shouldUseFirebase()) {
-        if (!db) {
-          throw new Error("Firebase DB non initialisé");
+      // Optimistic update: supprimer immédiatement de l'état local
+      const originalProducts = [...products];
+      const updatedProducts = products.filter((p) => p.id !== productId);
+      setProducts(updatedProducts);
+
+      try {
+        if (shouldUseFirebase()) {
+          if (!db) {
+            throw new Error("Firebase DB non initialisé");
+          }
+
+          const docRef = doc(db, "products", productId);
+          await deleteDoc(docRef);
+          console.log("🗑️ Produit supprimé de Firebase:", productId);
         }
 
-        const docRef = doc(db, "products", productId);
-        await deleteDoc(docRef);
-      } else {
-        const currentProducts = products.filter((p) => p.id !== productId);
-        setProducts([...currentProducts]);
-        localStorage.setItem("products", JSON.stringify(currentProducts));
+        // Mettre à jour localStorage dans tous les cas
+        localStorage.setItem("products", JSON.stringify(updatedProducts));
+        console.log("🗑️ Produit supprimé avec succès:", productId);
+      } catch (error) {
+        // En cas d'erreur, restaurer l'état original
+        console.error("Erreur lors de la suppression:", error);
+        setProducts(originalProducts);
+        throw error;
       }
     } catch (error) {
       throw error;

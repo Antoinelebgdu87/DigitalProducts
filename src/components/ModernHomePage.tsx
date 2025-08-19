@@ -386,6 +386,8 @@ const ModernHomePage: React.FC = () => {
         <BanModal
           isOpen={true}
           reason={currentUser.banReason || "Aucune raison spécifiée"}
+          banExpiresAt={currentUser.banExpiresAt}
+          bannedAt={currentUser.bannedAt}
         />
       )}
 
