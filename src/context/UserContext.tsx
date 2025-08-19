@@ -150,9 +150,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   // Helper function to find existing user by username
   const findUserByUsername = async (username: string): Promise<User | null> => {
     try {
-      if (!shouldUseFirebase()) {
-        return null;
-      }
+      // Firebase toujours utilisé
 
       const q = query(
         collection(db, "users"),
