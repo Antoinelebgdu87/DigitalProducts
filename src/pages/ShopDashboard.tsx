@@ -83,12 +83,12 @@ const ShopDashboard: React.FC = () => {
       currentUserId: currentUser.id,
       totalProducts: products.length,
       userProducts: userProducts.length,
-      products: products.map(p => ({
+      products: products.map((p) => ({
         id: p.id,
         title: p.title,
         createdBy: p.createdBy,
-        createdByUsername: p.createdByUsername
-      }))
+        createdByUsername: p.createdByUsername,
+      })),
     });
   }, [products, currentUser, userProducts]);
 

@@ -42,9 +42,10 @@ const SecureAdminAccess: React.FC = () => {
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     // Simuler la vérification du mot de passe
-    if (password === "Antoine80") { // Mot de passe admin personnalisé
+    if (password === "Antoine80") {
+      // Mot de passe admin personnalisé
       setStep(2);
       toast.success("Mot de passe correct, entrez le code de vérification");
     } else {
@@ -88,31 +89,42 @@ const SecureAdminAccess: React.FC = () => {
             <span>Accès Sécurisé Admin</span>
           </DialogTitle>
           <DialogDescription className="text-gray-400">
-            {step === 1 
-              ? "Entrez le mot de passe administrateur" 
-              : "Entrez le code de vérification"
-            }
+            {step === 1
+              ? "Entrez le mot de passe administrateur"
+              : "Entrez le code de vérification"}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Indicator */}
           <div className="flex items-center space-x-4">
-            <div className={`flex items-center space-x-2 ${step >= 1 ? 'text-green-400' : 'text-gray-500'}`}>
-              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                step >= 1 ? 'border-green-400 bg-green-400/20' : 'border-gray-500'
-              }`}>
+            <div
+              className={`flex items-center space-x-2 ${step >= 1 ? "text-green-400" : "text-gray-500"}`}
+            >
+              <div
+                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                  step >= 1
+                    ? "border-green-400 bg-green-400/20"
+                    : "border-gray-500"
+                }`}
+              >
                 {step > 1 ? <Lock className="w-3 h-3" /> : "1"}
               </div>
               <span className="text-sm">Mot de passe</span>
             </div>
-            
+
             <div className="flex-1 h-px bg-gray-600"></div>
-            
-            <div className={`flex items-center space-x-2 ${step >= 2 ? 'text-green-400' : 'text-gray-500'}`}>
-              <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                step >= 2 ? 'border-green-400 bg-green-400/20' : 'border-gray-500'
-              }`}>
+
+            <div
+              className={`flex items-center space-x-2 ${step >= 2 ? "text-green-400" : "text-gray-500"}`}
+            >
+              <div
+                className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
+                  step >= 2
+                    ? "border-green-400 bg-green-400/20"
+                    : "border-gray-500"
+                }`}
+              >
                 {step > 2 ? <Key className="w-3 h-3" /> : "2"}
               </div>
               <span className="text-sm">Code</span>
@@ -149,11 +161,15 @@ const SecureAdminAccess: React.FC = () => {
                         onClick={() => setShowPassword(!showPassword)}
                         className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white"
                       >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4" />
+                        ) : (
+                          <Eye className="w-4 h-4" />
+                        )}
                       </button>
                     </div>
                   </div>
-                  
+
                   <Button
                     type="submit"
                     className="w-full bg-red-600 hover:bg-red-700"
@@ -194,7 +210,7 @@ const SecureAdminAccess: React.FC = () => {
                       Entrez le code de sécurité à 4 chiffres
                     </p>
                   </div>
-                  
+
                   <div className="flex space-x-2">
                     <Button
                       type="button"

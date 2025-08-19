@@ -47,7 +47,11 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
 
   // Debug logging for modal
   React.useEffect(() => {
-    console.log(`📖 CommentsModal for ${productId}:`, { loading, commentsCount: comments.length, comments });
+    console.log(`📖 CommentsModal for ${productId}:`, {
+      loading,
+      commentsCount: comments.length,
+      comments,
+    });
   }, [productId, loading, comments]);
 
   const [newComment, setNewComment] = useState("");

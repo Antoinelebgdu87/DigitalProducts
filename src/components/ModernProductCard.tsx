@@ -37,9 +37,12 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
 
   // Debug logging for comments
   React.useEffect(() => {
-    console.log(`💬 Product ${product.title} (${product.id}):`, { commentsCount: comments.length, loading: commentsLoading });
+    console.log(`💬 Product ${product.title} (${product.id}):`, {
+      commentsCount: comments.length,
+      loading: commentsLoading,
+    });
     if (comments.length > 0) {
-      console.log('📝 Comments data:', comments);
+      console.log("📝 Comments data:", comments);
     }
   }, [comments, product.id, product.title, commentsLoading]);
 
@@ -102,7 +105,9 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                   }}
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  {commentsLoading ? "Chargement..." : `Commentaires (${comments.length})`}
+                  {commentsLoading
+                    ? "Chargement..."
+                    : `Commentaires (${comments.length})`}
                 </Button>
                 <Button
                   size="sm"
@@ -283,7 +288,9 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                 size="sm"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
-                {commentsLoading ? "Chargement..." : `${comments.length} commentaire(s)`}
+                {commentsLoading
+                  ? "Chargement..."
+                  : `${comments.length} commentaire(s)`}
               </Button>
             </div>
           </div>

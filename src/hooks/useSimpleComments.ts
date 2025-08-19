@@ -42,15 +42,15 @@ export const useSimpleComments = (productId: string) => {
 
     const q = query(
       collection(db, "simple_comments"),
-      where("productId", "==", productId)
+      where("productId", "==", productId),
     );
 
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const commentsData = snapshot.docs.map(doc => ({
+        const commentsData = snapshot.docs.map((doc) => ({
           id: doc.id,
-          ...doc.data()
+          ...doc.data(),
         })) as SimpleComment[];
 
         // Sort comments by date (newest first) on client side
@@ -68,7 +68,7 @@ export const useSimpleComments = (productId: string) => {
         console.error("❌ Error loading comments:", error);
         setComments([]);
         setLoading(false);
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -82,7 +82,7 @@ export const useSimpleComments = (productId: string) => {
 
     try {
       console.log("�� Adding comment...");
-      
+
       await addDoc(collection(db, "simple_comments"), {
         productId,
         userId: currentUser.id,

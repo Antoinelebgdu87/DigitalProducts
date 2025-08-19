@@ -77,7 +77,7 @@ export const useComments = (productId?: string) => {
               "💬 Commentaires chargés depuis Firebase:",
               commentsData.length,
               "pour le produit",
-              productId
+              productId,
             );
           } catch (error) {
             console.error(
@@ -91,7 +91,11 @@ export const useComments = (productId?: string) => {
         },
         (error) => {
           console.error("❌ Erreur lors de l'écoute des commentaires:", error);
-          console.error("🔥 Firebase error details:", error.code, error.message);
+          console.error(
+            "🔥 Firebase error details:",
+            error.code,
+            error.message,
+          );
           setComments([]);
           setLoading(false);
         },

@@ -73,7 +73,7 @@ const SimpleCommentsModal: React.FC<SimpleCommentsModalProps> = ({
 
   const formatDate = (timestamp: any) => {
     if (!timestamp) return "Maintenant";
-    
+
     try {
       let date: Date;
       if (timestamp?.toDate) {
@@ -83,7 +83,7 @@ const SimpleCommentsModal: React.FC<SimpleCommentsModalProps> = ({
       } else {
         date = new Date(timestamp);
       }
-      
+
       return new Intl.DateTimeFormat("fr-FR", {
         day: "2-digit",
         month: "2-digit",

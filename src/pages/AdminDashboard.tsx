@@ -2829,7 +2829,8 @@ const AdminDashboard: React.FC = () => {
                         );
                         const lastProduct = userProducts.sort(
                           (a, b) =>
-                            getTimestamp(b.createdAt) - getTimestamp(a.createdAt),
+                            getTimestamp(b.createdAt) -
+                            getTimestamp(a.createdAt),
                         )[0];
                         const canCreate =
                           !lastProduct ||
