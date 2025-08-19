@@ -43,7 +43,7 @@ console.log("📊 Firebase Analytics initialized");
 export { db, analytics };
 export const isFirebaseAvailable = true;
 
-// Export Firebase functions with fallback handling
+// Export Firebase functions directly
 export const collection = fsCollection;
 export const doc = fsDoc;
 export const addDoc = fsAddDoc;
@@ -57,38 +57,3 @@ export const getDocs = fsGetDocs;
 export const Timestamp = fsTimestamp;
 export const setDoc = fsSetDoc;
 export const orderBy = fsOrderBy;
-
-// Helper function to check if Firebase operations should proceed
-export const shouldUseFirebase = () => {
-  return isFirebaseAvailable && db !== null;
-};
-
-// Mock Firestore functions for fallback mode
-export const createMockFirestoreError = () => {
-  throw new Error("Firebase not configured - using localStorage fallback");
-};
-
-// Safe Firebase operations that handle offline mode
-export const safeFirebaseOperation = async (
-  operation: () => Promise<any>,
-  fallback?: () => any,
-) => {
-  if (!shouldUseFirebase()) {
-    if (fallback) {
-      return fallback();
-    }
-    console.warn("🔄 Firebase operation skipped - using fallback");
-    return null;
-  }
-
-  try {
-    return await operation();
-  } catch (error) {
-    console.error("❌ Firebase operation failed:", error);
-    if (fallback) {
-      console.warn("🔄 Using fallback after Firebase error");
-      return fallback();
-    }
-    throw error;
-  }
-};
