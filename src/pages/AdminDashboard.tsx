@@ -1446,6 +1446,16 @@ const AdminDashboard: React.FC = () => {
                 </Card>
                 <Card className="border-gray-800 bg-gray-900/50">
                   <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-green-400">
+                      {getModerationStats().unbannedUsers}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      Utilisateurs débannis
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-yellow-400">
                       {getModerationStats().warnedUsers}
                     </div>
