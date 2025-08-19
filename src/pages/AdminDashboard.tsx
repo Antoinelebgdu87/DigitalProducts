@@ -158,11 +158,17 @@ const AdminDashboard: React.FC = () => {
 
   // Product deletion states
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [productToDelete, setProductToDelete] = useState<{id: string, title: string} | null>(null);
+  const [productToDelete, setProductToDelete] = useState<{
+    id: string;
+    title: string;
+  } | null>(null);
 
   // License deletion states
   const [showDeleteLicenseDialog, setShowDeleteLicenseDialog] = useState(false);
-  const [licenseToDelete, setLicenseToDelete] = useState<{id: string, code: string} | null>(null);
+  const [licenseToDelete, setLicenseToDelete] = useState<{
+    id: string;
+    code: string;
+  } | null>(null);
 
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -367,7 +373,12 @@ const AdminDashboard: React.FC = () => {
 
     try {
       await unbanUser(selectedUserId);
-      await logModerationAction("unban_user", selectedUserId, "user", "Utilisateur débanni par l'administration");
+      await logModerationAction(
+        "unban_user",
+        selectedUserId,
+        "user",
+        "Utilisateur débanni par l'administration",
+      );
       toast.success("Utilisateur débanni avec succès");
       setShowUnbanDialog(false);
       setSelectedUserId("");
@@ -1434,7 +1445,10 @@ const AdminDashboard: React.FC = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => {
-                              setProductToDelete({id: product.id, title: product.title});
+                              setProductToDelete({
+                                id: product.id,
+                                title: product.title,
+                              });
                               setShowDeleteDialog(true);
                             }}
                             className="border-red-700 text-red-400 hover:bg-red-500/10"
@@ -1449,20 +1463,25 @@ const AdminDashboard: React.FC = () => {
               </div>
 
               {/* Product Delete Confirmation Dialog */}
-              <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+              <Dialog
+                open={showDeleteDialog}
+                onOpenChange={setShowDeleteDialog}
+              >
                 <DialogContent className="bg-gray-900 border-gray-800">
                   <DialogHeader>
                     <DialogTitle className="text-white">
                       Supprimer le produit
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
-                      Cette action est irréversible. Le produit sera définitivement supprimé.
+                      Cette action est irréversible. Le produit sera
+                      définitivement supprimé.
                     </DialogDescription>
                   </DialogHeader>
                   {productToDelete && (
                     <div className="bg-red-900/50 border border-red-700 rounded p-3">
                       <p className="text-red-200 text-sm">
-                        <strong>Produit à supprimer :</strong> {productToDelete.title}
+                        <strong>Produit à supprimer :</strong>{" "}
+                        {productToDelete.title}
                       </p>
                     </div>
                   )}
@@ -2159,7 +2178,8 @@ const AdminDashboard: React.FC = () => {
                   <form onSubmit={handleUnbanUser} className="space-y-4">
                     <div className="bg-green-900/50 border border-green-700 rounded p-3">
                       <p className="text-green-200 text-sm">
-                        <strong>Confirmation:</strong> Cette action débannira définitivement l'utilisateur.
+                        <strong>Confirmation:</strong> Cette action débannira
+                        définitivement l'utilisateur.
                       </p>
                     </div>
                     <DialogFooter>
@@ -2692,7 +2712,10 @@ const AdminDashboard: React.FC = () => {
                               variant="outline"
                               size="sm"
                               onClick={() => {
-                                setLicenseToDelete({id: license.id, code: license.code});
+                                setLicenseToDelete({
+                                  id: license.id,
+                                  code: license.code,
+                                });
                                 setShowDeleteLicenseDialog(true);
                               }}
                               className="border-red-700 text-red-400 hover:bg-red-500/10"
@@ -2708,20 +2731,25 @@ const AdminDashboard: React.FC = () => {
               </div>
 
               {/* License Delete Confirmation Dialog */}
-              <Dialog open={showDeleteLicenseDialog} onOpenChange={setShowDeleteLicenseDialog}>
+              <Dialog
+                open={showDeleteLicenseDialog}
+                onOpenChange={setShowDeleteLicenseDialog}
+              >
                 <DialogContent className="bg-gray-900 border-gray-800">
                   <DialogHeader>
                     <DialogTitle className="text-white">
                       Supprimer la license
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
-                      Cette action est irréversible. La license sera définitivement supprimée.
+                      Cette action est irréversible. La license sera
+                      définitivement supprimée.
                     </DialogDescription>
                   </DialogHeader>
                   {licenseToDelete && (
                     <div className="bg-red-900/50 border border-red-700 rounded p-3">
                       <p className="text-red-200 text-sm">
-                        <strong>License à supprimer :</strong> {licenseToDelete.code}
+                        <strong>License à supprimer :</strong>{" "}
+                        {licenseToDelete.code}
                       </p>
                     </div>
                   )}

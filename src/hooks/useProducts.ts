@@ -227,20 +227,32 @@ export const useProducts = () => {
       } else {
         console.log("💾 Mode localStorage - suppression locale...");
         const currentProducts = products.filter((p) => p.id !== productId);
-        console.log("📋 Produits après filtrage:", currentProducts.length, "produits restants");
+        console.log(
+          "📋 Produits après filtrage:",
+          currentProducts.length,
+          "produits restants",
+        );
 
         // Force immediate update
         setProducts([...currentProducts]);
         localStorage.setItem("products", JSON.stringify(currentProducts));
 
         console.log("🗑️ Produit supprimé en mode offline:", productId);
-        console.log("💾 localStorage mis à jour avec", currentProducts.length, "produits");
+        console.log(
+          "💾 localStorage mis à jour avec",
+          currentProducts.length,
+          "produits",
+        );
 
         // Double check localStorage was updated
         const stored = localStorage.getItem("products");
         if (stored) {
           const parsedStored = JSON.parse(stored);
-          console.log("✅ Vérification localStorage:", parsedStored.length, "produits stockés");
+          console.log(
+            "✅ Vérification localStorage:",
+            parsedStored.length,
+            "produits stockés",
+          );
         }
       }
     } catch (error) {
@@ -286,7 +298,11 @@ export const useProducts = () => {
               createdAt: new Date(p.createdAt),
             })),
           );
-          console.log("🔄 Force reload depuis localStorage:", localProducts.length, "produits");
+          console.log(
+            "🔄 Force reload depuis localStorage:",
+            localProducts.length,
+            "produits",
+          );
         }
       } catch (error) {
         console.error("Error force reloading products:", error);
