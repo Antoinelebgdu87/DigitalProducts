@@ -1507,6 +1507,8 @@ const AdminDashboard: React.FC = () => {
                                 "Commentaire supprimé"}
                               {action.type === "ban_user" &&
                                 "Utilisateur banni"}
+                              {action.type === "unban_user" &&
+                                "Utilisateur débanni"}
                               {action.type === "warn_user" &&
                                 "Avertissement envoyé"}
                             </p>
