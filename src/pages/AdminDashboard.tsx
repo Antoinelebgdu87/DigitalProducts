@@ -49,6 +49,7 @@ import {
   Download,
   Shield,
   User,
+  UserCheck,
   CreditCard,
   Zap,
   Euro,
