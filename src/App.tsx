@@ -65,7 +65,7 @@ const AppContent = () => {
 
     return (
       <>
-        {/* <DevToolsProtection /> */}
+        <DevToolsProtection />
         <Routes>
           <Route
             path="/"

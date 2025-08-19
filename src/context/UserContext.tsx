@@ -10,6 +10,7 @@ import {
   getDocs,
   updateDoc,
   addDoc,
+  deleteDoc,
   Timestamp,
   orderBy,
 } from "firebase/firestore";
@@ -25,6 +26,7 @@ export interface User {
   isBanned: boolean;
   banReason?: string;
   bannedAt?: Date;
+  banExpiresAt?: Date | null;
   warnings: Warning[];
   createdAt: Date;
   lastSeen: Date;
@@ -46,13 +48,18 @@ interface UserContextType {
   currentUser: User | null;
   users: User[] | null;
   createUsername: (username?: string) => Promise<User>;
-  banUser: (userId: string, reason: string) => Promise<void>;
+  banUser: (
+    userId: string,
+    reason: string,
+    expiresAt?: Date | null,
+  ) => Promise<void>;
   unbanUser: (userId: string) => Promise<void>;
   addWarning: (userId: string, reason: string) => Promise<void>;
   markWarningsAsRead: (userId: string) => Promise<void>;
   checkUserStatus: () => Promise<void>;
   generateRandomUsername: () => string;
   updateUserRole: (userId: string, role: UserRole) => Promise<void>;
+  deleteUser: (userId: string) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -115,6 +122,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       createdAt: userData.createdAt?.toDate() || new Date(),
       lastSeen: userData.lastSeen?.toDate() || new Date(),
       bannedAt: userData.bannedAt?.toDate() || undefined,
+      banExpiresAt: userData.banExpiresAt?.toDate() || null,
       warnings: (userData.warnings || []).map((warning: any) => ({
         ...warning,
         createdAt: warning.createdAt?.toDate() || new Date(),
@@ -129,6 +137,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       createdAt: Timestamp.fromDate(user.createdAt),
       lastSeen: Timestamp.fromDate(user.lastSeen),
       bannedAt: user.bannedAt ? Timestamp.fromDate(user.bannedAt) : null,
+      banExpiresAt: user.banExpiresAt
+        ? Timestamp.fromDate(user.banExpiresAt)
+        : null,
       warnings: user.warnings.map((warning) => ({
         ...warning,
         createdAt: Timestamp.fromDate(warning.createdAt),
@@ -327,14 +338,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const banUser = async (userId: string, reason: string): Promise<void> => {
+  const banUser = async (
+    userId: string,
+    reason: string,
+    expiresAt?: Date | null,
+  ): Promise<void> => {
     try {
-      await updateDoc(doc(db, "users", userId), {
+      const updateData: any = {
         isBanned: true,
         banReason: reason,
         bannedAt: Timestamp.now(),
-      });
-      console.log("🚫 Utilisateur Firebase banni:", userId);
+        banExpiresAt: expiresAt ? Timestamp.fromDate(expiresAt) : null,
+      };
+
+      await updateDoc(doc(db, "users", userId), updateData);
+
+      const banType = expiresAt ? "temporaire" : "permanent";
+      console.log(`🚫 Utilisateur Firebase banni (${banType}):`, userId);
     } catch (error) {
       console.error("Erreur lors du bannissement:", error);
       throw error;
@@ -347,6 +367,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         isBanned: false,
         banReason: null,
         bannedAt: null,
+        banExpiresAt: null,
       });
       console.log("✅ Utilisateur Firebase débanni:", userId);
     } catch (error) {
@@ -455,6 +476,47 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const deleteUser = async (userId: string): Promise<void> => {
+    try {
+      if (!shouldUseFirebase()) {
+        // Mode local - supprimer de la liste
+        setUsers(
+          (prevUsers) =>
+            prevUsers?.filter((user) => user.id !== userId) || null,
+        );
+
+        // Si c'est l'utilisateur actuel, le déconnecter
+        if (currentUser?.id === userId) {
+          setCurrentUser(null);
+          localStorage.removeItem("userId");
+          localStorage.removeItem("username");
+          localStorage.removeItem("userRole");
+        }
+
+        console.log("🗑️ Utilisateur supprimé localement:", userId);
+        return;
+      }
+
+      // Supprimer de Firebase
+      await deleteDoc(doc(db, "users", userId));
+
+      // Si c'est l'utilisateur actuel, le déconnecter
+      if (currentUser?.id === userId) {
+        setCurrentUser(null);
+        localStorage.removeItem("userId");
+        localStorage.removeItem("username");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("lastUsername");
+        localStorage.removeItem("hasCreatedUser");
+      }
+
+      console.log("🗑️ Utilisateur Firebase supprimé:", userId);
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'utilisateur:", error);
+      throw error;
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -468,6 +530,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         checkUserStatus,
         generateRandomUsername,
         updateUserRole,
+        deleteUser,
       }}
     >
       {children}

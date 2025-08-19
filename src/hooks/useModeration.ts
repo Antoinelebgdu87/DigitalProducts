@@ -261,6 +261,8 @@ export const useModeration = () => {
         .length,
       warnedUsers: moderationActions.filter((a) => a.type === "warn_user")
         .length,
+      deletedUsers: moderationActions.filter((a) => a.type === "delete_user")
+        .length,
     };
 
     return stats;

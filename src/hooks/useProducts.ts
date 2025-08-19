@@ -24,10 +24,61 @@ export const useProducts = () => {
 
   // Helper function to convert Firestore data to Product objects
   const parseProduct = (productData: any): Product => {
-    return {
-      ...productData,
-      createdAt: productData.createdAt?.toDate() || new Date(),
-    };
+    try {
+      let createdAt = new Date();
+
+      // Gérer différents formats de date
+      if (productData.createdAt) {
+        if (typeof productData.createdAt.toDate === "function") {
+          // Firestore Timestamp
+          createdAt = productData.createdAt.toDate();
+        } else if (productData.createdAt instanceof Date) {
+          createdAt = productData.createdAt;
+        } else if (typeof productData.createdAt === "string") {
+          createdAt = new Date(productData.createdAt);
+        } else if (typeof productData.createdAt === "number") {
+          createdAt = new Date(productData.createdAt);
+        }
+      }
+
+      return {
+        id: productData.id || "",
+        title: productData.title || "Sans titre",
+        description: productData.description || "",
+        imageUrl: productData.imageUrl || "",
+        downloadUrl: productData.downloadUrl || "",
+        type: productData.type || "free",
+        actionType: productData.actionType || "download",
+        contentType: productData.contentType || "link",
+        content: productData.content || "",
+        discordUrl: productData.discordUrl || "",
+        price: productData.price || 0,
+        lives: productData.lives || 1,
+        createdBy: productData.createdBy || "",
+        createdByUsername: productData.createdByUsername || "",
+        createdAt,
+        ...productData, // Inclure autres champs potentiels
+      };
+    } catch (error) {
+      // Retourner un produit minimal en cas d'erreur
+      return {
+        id: productData.id || "",
+        title: "Produit endommagé",
+        description: "Données corrompues",
+        imageUrl: "",
+        downloadUrl: "",
+        type: "free",
+        actionType: "download",
+        contentType: "link",
+        content: "",
+        discordUrl: "",
+        price: 0,
+        lives: 1,
+        createdBy: "",
+        createdByUsername: "",
+        createdAt: new Date(),
+      };
+    }
   };
 
   // Helper function to convert Product object to Firestore data
@@ -71,35 +122,44 @@ export const useProducts = () => {
 
       // Use Firebase if available
       const unsubscribe = onSnapshot(
-        query(collection(db, "products"), orderBy("createdAt", "desc")),
+        collection(db, "products"),
         (snapshot) => {
           try {
-            const productsData = snapshot.docs.map((doc) =>
-              parseProduct({ id: doc.id, ...doc.data() }),
-            );
-            setProducts(productsData);
-            console.log("📦 Produits Firebase chargés:", productsData.length);
+            const productsData = [];
 
-            // Also save to localStorage as backup
+            for (const docSnap of snapshot.docs) {
+              try {
+                const data = docSnap.data();
+                const product = parseProduct({ id: docSnap.id, ...data });
+                productsData.push(product);
+              } catch (parseError) {
+                // Continue avec les autres documents
+              }
+            }
+
+            // Trier manuellement par date décroissante
+            productsData.sort((a, b) => {
+              const dateA =
+                a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
+              const dateB =
+                b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
+              return dateB - dateA;
+            });
+
+            setProducts(productsData);
             localStorage.setItem("products", JSON.stringify(productsData));
           } catch (error) {
-            console.error("Error parsing products:", error);
             setProducts([]);
           } finally {
             setLoading(false);
           }
         },
         (error) => {
-          console.error("Error fetching products:", error);
           // Fallback to localStorage
           try {
             const stored = localStorage.getItem("products");
             if (stored) {
               const localProducts = JSON.parse(stored);
-              console.log(
-                "📦 Fallback: produits chargés depuis localStorage",
-                localProducts.length,
-              );
               setProducts(
                 localProducts.map((p: any) => ({
                   ...p,
@@ -108,7 +168,7 @@ export const useProducts = () => {
               );
             }
           } catch (localError) {
-            console.log("⚠️ Aucun produit local trouvé");
+            // Silent fail
           }
           setProducts([]);
           setLoading(false);
@@ -179,7 +239,7 @@ export const useProducts = () => {
         if (lastProduct && !canCreateProduct(lastProduct.createdAt)) {
           const remaining = getRemainingCooldown(lastProduct.createdAt);
           throw new Error(
-            `Vous devez attendre encore ${remaining} minute(s) avant de créer un nouveau produit.`,
+            `Vous devez attendre encore ${remaining} minute(s) avant de cr��er un nouveau produit.`,
           );
         }
       }
@@ -216,47 +276,28 @@ export const useProducts = () => {
 
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
-      console.log("🔄 deleteProduct appelé avec ID:", productId);
-      console.log("📋 Produits actuels:", products.length);
-      console.log("🔥 shouldUseFirebase():", shouldUseFirebase());
+      // Validation de l'ID
+      if (
+        !productId ||
+        typeof productId !== "string" ||
+        productId.trim() === ""
+      ) {
+        throw new Error(`ID de produit invalide: "${productId}"`);
+      }
 
       if (shouldUseFirebase()) {
-        console.log("🔥 Suppression Firebase...");
-        await deleteDoc(doc(db, "products", productId));
-        console.log("🗑️ Produit Firebase supprimé:", productId);
-      } else {
-        console.log("💾 Mode localStorage - suppression locale...");
-        const currentProducts = products.filter((p) => p.id !== productId);
-        console.log(
-          "📋 Produits après filtrage:",
-          currentProducts.length,
-          "produits restants",
-        );
+        if (!db) {
+          throw new Error("Firebase DB non initialisé");
+        }
 
-        // Force immediate update
+        const docRef = doc(db, "products", productId);
+        await deleteDoc(docRef);
+      } else {
+        const currentProducts = products.filter((p) => p.id !== productId);
         setProducts([...currentProducts]);
         localStorage.setItem("products", JSON.stringify(currentProducts));
-
-        console.log("🗑️ Produit supprimé en mode offline:", productId);
-        console.log(
-          "💾 localStorage mis à jour avec",
-          currentProducts.length,
-          "produits",
-        );
-
-        // Double check localStorage was updated
-        const stored = localStorage.getItem("products");
-        if (stored) {
-          const parsedStored = JSON.parse(stored);
-          console.log(
-            "✅ Vérification localStorage:",
-            parsedStored.length,
-            "produits stockés",
-          );
-        }
       }
     } catch (error) {
-      console.error("❌ Error deleting product:", error);
       throw error;
     }
   };
