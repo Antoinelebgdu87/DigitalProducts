@@ -2422,6 +2422,67 @@ const AdminDashboard: React.FC = () => {
                   </form>
                 </DialogContent>
               </Dialog>
+
+              {/* Delete User Dialog */}
+              <Dialog open={showDeleteUserDialog} onOpenChange={setShowDeleteUserDialog}>
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Supprimer le compte utilisateur
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      Cette action est définitive et irréversible. Toutes les données de l'utilisateur seront perdues.
+                    </DialogDescription>
+                  </DialogHeader>
+                  {userToDelete && (
+                    <div className="space-y-4">
+                      <div className="bg-red-900/50 border border-red-700 rounded p-3">
+                        <p className="text-red-200 text-sm">
+                          <Trash2 className="w-4 h-4 inline mr-1" />
+                          <strong>Utilisateur à supprimer :</strong> {userToDelete.username}
+                        </p>
+                        <p className="text-red-300 text-xs mt-1">
+                          ID: {userToDelete.id}
+                        </p>
+                      </div>
+
+                      <div className="bg-yellow-900/50 border border-yellow-700 rounded p-3">
+                        <p className="text-yellow-200 text-sm">
+                          <AlertTriangle className="w-4 h-4 inline mr-1" />
+                          <strong>Attention :</strong> Cette action supprimera :
+                        </p>
+                        <ul className="text-yellow-300 text-xs mt-1 ml-4 list-disc">
+                          <li>Le compte utilisateur et ses données</li>
+                          <li>L'historique de connexion</li>
+                          <li>Les avertissements et bannissements</li>
+                          <li>Tous les produits créés par cet utilisateur</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setShowDeleteUserDialog(false);
+                        setUserToDelete(null);
+                      }}
+                      className="border-gray-700"
+                    >
+                      Annuler
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={handleDeleteUser}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Supprimer définitivement
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
 
             {/* Timers Tab */}
