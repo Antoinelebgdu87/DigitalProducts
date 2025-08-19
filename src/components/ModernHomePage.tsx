@@ -22,6 +22,7 @@ import ModernProductCard from "./ModernProductCard";
 import UsernameModal from "./UsernameModal";
 import BanModal from "./BanModal";
 import WarningModal from "./WarningModal";
+import UserRoleBadge from "./UserRoleBadge";
 import { useUser } from "@/context/UserContext";
 
 const ModernHomePage: React.FC = () => {
