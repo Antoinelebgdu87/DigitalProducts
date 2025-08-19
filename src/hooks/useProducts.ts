@@ -10,6 +10,7 @@ import {
   updateDoc,
   onSnapshot,
   Timestamp,
+  getDoc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Product } from "@/types";
@@ -19,257 +20,81 @@ import { useAdminMode } from "@/context/AdminModeContext";
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
-  const { userId, username, userRole } = useAuth();
-  const { canCreateProduct, getRemainingCooldown } = useAdminMode();
+  const { currentUser } = useAuth();
+  const { adminMode } = useAdminMode();
 
-  // Helper function to convert Firestore data to Product objects
-  const parseProduct = (productData: any): Product => {
-    try {
-      let createdAt = new Date();
-
-      // Gérer différents formats de date
-      if (productData.createdAt) {
-        if (typeof productData.createdAt.toDate === "function") {
-          // Firestore Timestamp
-          createdAt = productData.createdAt.toDate();
-        } else if (productData.createdAt instanceof Date) {
-          createdAt = productData.createdAt;
-        } else if (typeof productData.createdAt === "string") {
-          createdAt = new Date(productData.createdAt);
-        } else if (typeof productData.createdAt === "number") {
-          createdAt = new Date(productData.createdAt);
-        }
-      }
-
-      return {
-        id: productData.id || "",
-        title: productData.title || "Sans titre",
-        description: productData.description || "",
-        imageUrl: productData.imageUrl || "",
-        downloadUrl: productData.downloadUrl || "",
-        type: productData.type || "free",
-        actionType: productData.actionType || "download",
-        contentType: productData.contentType || "link",
-        content: productData.content || "",
-        discordUrl: productData.discordUrl || "",
-        price: productData.price || 0,
-        lives: productData.lives || 1,
-        createdBy: productData.createdBy || "",
-        createdByUsername: productData.createdByUsername || "",
-        createdAt,
-        ...productData, // Inclure autres champs potentiels
-      };
-    } catch (error) {
-      // Retourner un produit minimal en cas d'erreur
-      return {
-        id: productData.id || "",
-        title: "Produit endommagé",
-        description: "Données corrompues",
-        imageUrl: "",
-        downloadUrl: "",
-        type: "free",
-        actionType: "download",
-        contentType: "link",
-        content: "",
-        discordUrl: "",
-        price: 0,
-        lives: 1,
-        createdBy: "",
-        createdByUsername: "",
-        createdAt: new Date(),
-      };
-    }
-  };
-
-  // Helper function to convert Product object to Firestore data
-  const productToFirestore = (product: Omit<Product, "id">) => {
-    return {
-      ...product,
-      createdAt: Timestamp.fromDate(product.createdAt),
-    };
-  };
-
-  // Real-time listener for products with Firebase fallback
+  // Load products from Firebase with real-time updates
   useEffect(() => {
-    const loadProducts = async () => {
-      if (!shouldUseFirebase()) {
-        // Use localStorage in offline mode
+    console.log("🚀 Initialisation du hook useProducts...");
+    
+    let isMounted = true;
+    
+    const productsQuery = query(
+      collection(db, "products"),
+      orderBy("createdAt", "desc")
+    );
+
+    const unsubscribe = onSnapshot(
+      productsQuery,
+      (snapshot) => {
+        if (!isMounted) return;
+
         try {
-          const stored = localStorage.getItem("products");
-          if (stored) {
-            const localProducts = JSON.parse(stored);
-            console.log(
-              "📦 Produits chargés depuis localStorage:",
-              localProducts.length,
-            );
-            setProducts(
-              localProducts.map((p: any) => ({
-                ...p,
-                createdAt: new Date(p.createdAt),
-              })),
-            );
-          } else {
-            setProducts([]);
-          }
+          const productsData = snapshot.docs.map((doc) => {
+            const data = doc.data();
+            return {
+              id: doc.id,
+              title: data.title,
+              description: data.description,
+              imageUrl: data.imageUrl,
+              downloadUrl: data.downloadUrl,
+              type: data.type || "free",
+              actionType: data.actionType || "download",
+              contentType: data.contentType || "link",
+              content: data.content || "",
+              discordUrl: data.discordUrl || "",
+              price: data.price || 0,
+              lives: data.lives || 1,
+              createdAt: data.createdAt || Timestamp.now(),
+            } as Product;
+          });
+
+          setProducts(productsData);
+          console.log("📦 Produits chargés depuis Firebase:", productsData.length);
         } catch (error) {
-          console.error("Error loading products from localStorage:", error);
+          console.error("❌ Erreur lors du traitement des produits:", error);
           setProducts([]);
         } finally {
           setLoading(false);
         }
-        return;
+      },
+      (error) => {
+        console.error("❌ Erreur lors de l'écoute des produits:", error);
+        setProducts([]);
+        setLoading(false);
       }
+    );
 
-      // Use Firebase if available
-      const unsubscribe = onSnapshot(
-        collection(db, "products"),
-        (snapshot) => {
-          try {
-            const productsData = [];
-
-            for (const docSnap of snapshot.docs) {
-              try {
-                const data = docSnap.data();
-                const product = parseProduct({ id: docSnap.id, ...data });
-                productsData.push(product);
-              } catch (parseError) {
-                // Continue avec les autres documents
-              }
-            }
-
-            // Trier manuellement par date décroissante
-            productsData.sort((a, b) => {
-              const dateA =
-                a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
-              const dateB =
-                b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
-              return dateB - dateA;
-            });
-
-            setProducts(productsData);
-            localStorage.setItem("products", JSON.stringify(productsData));
-          } catch (error) {
-            setProducts([]);
-          } finally {
-            setLoading(false);
-          }
-        },
-        (error) => {
-          // Fallback to localStorage
-          try {
-            const stored = localStorage.getItem("products");
-            if (stored) {
-              const localProducts = JSON.parse(stored);
-              setProducts(
-                localProducts.map((p: any) => ({
-                  ...p,
-                  createdAt: new Date(p.createdAt),
-                })),
-              );
-            }
-          } catch (localError) {
-            // Silent fail
-          }
-          setProducts([]);
-          setLoading(false);
-        },
-      );
-
-      return () => unsubscribe();
+    return () => {
+      isMounted = false;
+      unsubscribe();
     };
-
-    loadProducts();
-  }, []);
-
-  // Migrate existing localStorage data on first load
-  useEffect(() => {
-    const migrateLocalStorage = async () => {
-      try {
-        const stored = localStorage.getItem("products");
-        if (stored) {
-          const localProducts = JSON.parse(stored) as Product[];
-          console.log(
-            "🔄 Migration de",
-            localProducts.length,
-            "produits vers Firebase...",
-          );
-
-          // Check if Firebase already has data
-          const snapshot = await getDocs(collection(db, "products"));
-          if (snapshot.empty) {
-            // Migrate each product
-            for (const product of localProducts) {
-              const { id, ...productWithoutId } = product;
-              const productData = {
-                ...productWithoutId,
-                createdAt: new Date(product.createdAt),
-              };
-              await addDoc(
-                collection(db, "products"),
-                productToFirestore(productData),
-              );
-            }
-            console.log("✅ Migration des produits terminée");
-            // Remove from localStorage after successful migration
-            localStorage.removeItem("products");
-          }
-        }
-      } catch (error) {
-        console.error("Erreur lors de la migration des produits:", error);
-      }
-    };
-
-    migrateLocalStorage();
   }, []);
 
   const addProduct = async (
-    productData: Omit<
-      Product,
-      "id" | "createdAt" | "createdBy" | "createdByUsername"
-    >,
+    productData: Omit<Product, "id" | "createdAt">
   ): Promise<void> => {
     try {
-      // Vérifier si l'utilisateur peut créer un produit (cooldown)
-      if (userRole === "shop_access") {
-        const userProducts = products.filter((p) => p.createdBy === userId);
-        const lastProduct = userProducts.sort(
-          (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
-        )[0];
+      console.log("➕ Ajout d'un nouveau produit:", productData.title);
 
-        if (lastProduct && !canCreateProduct(lastProduct.createdAt)) {
-          const remaining = getRemainingCooldown(lastProduct.createdAt);
-          throw new Error(
-            `Vous devez attendre encore ${remaining} minute(s) avant de cr��er un nouveau produit.`,
-          );
-        }
-      }
-
-      const newProduct: Product = {
+      const docRef = await addDoc(collection(db, "products"), {
         ...productData,
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-        createdBy: userId,
-        createdByUsername: username,
-        createdAt: new Date(),
-      };
+        createdAt: Timestamp.now(),
+      });
 
-      if (shouldUseFirebase()) {
-        await addDoc(
-          collection(db, "products"),
-          productToFirestore(newProduct),
-        );
-        console.log("🎉 Nouveau produit Firebase créé:", productData.title);
-      } else {
-        // localStorage fallback
-        const currentProducts = [...products, newProduct];
-        setProducts(currentProducts);
-        localStorage.setItem("products", JSON.stringify(currentProducts));
-        console.log(
-          "🎉 Nouveau produit créé en mode offline:",
-          productData.title,
-        );
-      }
+      console.log("✅ Produit ajouté avec ID:", docRef.id);
     } catch (error) {
-      console.error("Error adding product:", error);
+      console.error("❌ Erreur lors de l'ajout du produit:", error);
       throw error;
     }
   };
@@ -277,165 +102,98 @@ export const useProducts = () => {
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
       // Validation de l'ID
-      if (
-        !productId ||
-        typeof productId !== "string" ||
-        productId.trim() === ""
-      ) {
+      if (!productId || typeof productId !== "string" || productId.trim() === "") {
         throw new Error(`ID de produit invalide: "${productId}"`);
       }
 
-      // Vérifier que le produit existe dans la liste locale
+      // Vérifier que le produit existe
       const productToDelete = products.find((p) => p.id === productId);
       if (!productToDelete) {
         throw new Error(`Produit avec l'ID "${productId}" non trouvé`);
       }
 
-      console.log(`🗑️ Début de suppression du produit: "${productToDelete.title}" (ID: ${productId})`);
+      console.log(`🗑️ Suppression du produit: "${productToDelete.title}" (ID: ${productId})`);
 
-      // Optimistic update: supprimer immédiatement de l'état local
-      const originalProducts = [...products];
-      const updatedProducts = products.filter((p) => p.id !== productId);
-      setProducts(updatedProducts);
-
-      let firebaseSuccess = false;
-
-      try {
-        if (shouldUseFirebase()) {
-          if (!db) {
-            throw new Error("Firebase DB non initialisé");
-          }
-
-          const docRef = doc(db, "products", productId);
-
-          // Vérifier que le document existe dans Firebase avant de le supprimer
-          const docSnap = await getDoc(docRef);
-          if (!docSnap.exists()) {
-            console.warn(`⚠️ Le produit ${productId} n'existe pas dans Firebase, suppression locale uniquement`);
-          } else {
-            await deleteDoc(docRef);
-            firebaseSuccess = true;
-            console.log("🗑️ Produit supprimé de Firebase avec succès:", productId);
-          }
-        }
-
-        // Mettre à jour localStorage dans tous les cas
-        localStorage.setItem("products", JSON.stringify(updatedProducts));
-        console.log("💾 Données mises à jour dans localStorage");
-
-        // Succès final
-        const status = firebaseSuccess ? "Firebase + Local" : "Local uniquement";
-        console.log(`✅ Produit "${productToDelete.title}" supprimé avec succès (${status})`);
-
-      } catch (error) {
-        // En cas d'erreur, restaurer l'état original
-        console.error("❌ Erreur lors de la suppression:", error);
-        setProducts(originalProducts);
-
-        // Message d'erreur plus détaillé
-        const errorMessage = error instanceof Error ? error.message : "Erreur inconnue";
-        throw new Error(`Impossible de supprimer le produit "${productToDelete.title}": ${errorMessage}`);
+      // Vérifier que le document existe dans Firebase
+      const docRef = doc(db, "products", productId);
+      const docSnap = await getDoc(docRef);
+      
+      if (!docSnap.exists()) {
+        throw new Error(`Le produit ${productId} n'existe pas dans Firebase`);
       }
+
+      // Supprimer de Firebase
+      await deleteDoc(docRef);
+      console.log(`✅ Produit "${productToDelete.title}" supprimé avec succès de Firebase`);
     } catch (error) {
-      console.error("❌ Erreur de suppression:", error);
+      console.error("❌ Erreur lors de la suppression:", error);
       throw error;
     }
   };
 
   const updateProduct = async (
     productId: string,
-    productData: Partial<Omit<Product, "id" | "createdAt">>,
+    productData: Partial<Omit<Product, "id" | "createdAt">>
   ): Promise<void> => {
     try {
-      if (shouldUseFirebase()) {
-        await updateDoc(doc(db, "products", productId), productData);
-        console.log("📝 Produit Firebase mis à jour:", productId);
-      } else {
-        // localStorage fallback
-        const updatedProducts = products.map((p) =>
-          p.id === productId ? { ...p, ...productData } : p,
-        );
-        setProducts(updatedProducts);
-        localStorage.setItem("products", JSON.stringify(updatedProducts));
-        console.log("📝 Produit mis à jour en mode offline:", productId);
-      }
+      console.log("📝 Mise à jour du produit:", productId);
+
+      const docRef = doc(db, "products", productId);
+      await updateDoc(docRef, productData);
+      
+      console.log("✅ Produit mis à jour avec succès:", productId);
     } catch (error) {
-      console.error("Error updating product:", error);
+      console.error("❌ Erreur lors de la mise à jour du produit:", error);
       throw error;
     }
   };
 
-  const fetchProducts = async () => {
-    // This function is kept for compatibility but real-time updates handle the data
-    if (!shouldUseFirebase()) {
-      // In localStorage mode, force reload from localStorage
-      try {
-        const stored = localStorage.getItem("products");
-        if (stored) {
-          const localProducts = JSON.parse(stored);
-          setProducts(
-            localProducts.map((p: any) => ({
-              ...p,
-              createdAt: new Date(p.createdAt),
-            })),
-          );
-          console.log(
-            "🔄 Force reload depuis localStorage:",
-            localProducts.length,
-            "produits",
-          );
-        }
-      } catch (error) {
-        console.error("Error force reloading products:", error);
-      }
-    } else {
-      console.log("📋 Produits gérés en temps réel via Firebase");
-    }
-  };
-
-  // Fonctions pour vérifier les permissions
-  const canUserCreateProduct = (): { canCreate: boolean; reason?: string } => {
-    if (!userId || !username) {
-      return { canCreate: false, reason: "Vous devez être connecté" };
-    }
-
-    if (!["admin", "shop_access", "partner"].includes(userRole)) {
-      return {
-        canCreate: false,
-        reason: "Vous n'avez pas les permissions n��cessaires",
-      };
-    }
-
-    if (userRole === "shop_access") {
-      const userProducts = products.filter((p) => p.createdBy === userId);
-      const lastProduct = userProducts.sort(
-        (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
-      )[0];
-
-      if (lastProduct && !canCreateProduct(lastProduct.createdAt)) {
-        const remaining = getRemainingCooldown(lastProduct.createdAt);
+  const refetch = async (): Promise<void> => {
+    try {
+      console.log("🔄 Rechargement des produits depuis Firebase...");
+      
+      const productsQuery = query(
+        collection(db, "products"),
+        orderBy("createdAt", "desc")
+      );
+      
+      const snapshot = await getDocs(productsQuery);
+      const productsData = snapshot.docs.map((doc) => {
+        const data = doc.data();
         return {
-          canCreate: false,
-          reason: `Cooldown: ${remaining} minute(s) restante(s)`,
-        };
-      }
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt || Timestamp.now(),
+        } as Product;
+      });
+
+      setProducts(productsData);
+      console.log("✅ Produits rechargés:", productsData.length);
+    } catch (error) {
+      console.error("❌ Erreur lors du rechargement:", error);
+      throw error;
     }
-
-    return { canCreate: true };
   };
 
-  const getUserProducts = (): Product[] => {
-    return products.filter((p) => p.createdBy === userId);
-  };
+  // Filter products based on admin mode
+  const filteredProducts = adminMode.isActive
+    ? products
+    : products.filter((product) => 
+        adminMode.timerSettings.allowedProductTypes.includes(product.type)
+      );
+
+  console.log(
+    "📋 Produits gérés en temps réel via Firebase:",
+    products.length,
+    "produits"
+  );
 
   return {
-    products,
+    products: filteredProducts,
     loading,
     addProduct,
     deleteProduct,
     updateProduct,
-    refetch: fetchProducts,
-    canUserCreateProduct,
-    getUserProducts,
+    refetch,
   };
 };
