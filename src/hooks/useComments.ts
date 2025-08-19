@@ -121,9 +121,17 @@ export const useComments = (productId?: string) => {
 
       await addDoc(collection(db, "comments"), commentToFirestore(newComment));
       console.log("💬 Commentaire ajouté avec succès");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erreur lors de l'ajout du commentaire:", error);
-      throw error;
+
+      // Gestion spécifique des erreurs réseau
+      if (error.code === 'unavailable' || error.message?.includes('Failed to fetch')) {
+        throw new Error("Problème de connexion réseau. Vérifiez votre connexion internet et réessayez.");
+      } else if (error.code === 'permission-denied') {
+        throw new Error("Permissions insuffisantes pour ajouter un commentaire.");
+      } else {
+        throw new Error("Erreur lors de l'ajout du commentaire. Veuillez réessayer.");
+      }
     }
   };
 
