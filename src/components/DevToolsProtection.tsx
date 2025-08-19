@@ -96,25 +96,13 @@ const DevToolsProtection = () => {
     // Vérification DevTools désactivée temporairement
     // const interval = setInterval(detectDevTools, 500);
 
-    // Bloquer la console
-    try {
-      (window as any).console.log = () => {};
-      (window as any).console.warn = () => {};
-      (window as any).console.error = () => {};
-      (window as any).console.info = () => {};
-      (window as any).console.debug = () => {};
-      (window as any).console.trace = () => {};
-    } catch (e) {
-      // Ignore errors
-    }
+    // Console manipulation désactivée pour éviter les conflits
+    // (Code de manipulation de console commenté)
 
-    // Message d'avertissement pour la console
+    // Message d'avertissement simple
     setTimeout(() => {
       try {
-        console.clear();
-        console.log("%cATTENTION!", "color: red; font-size: 50px; font-weight: bold;");
-        console.log("%cL'utilisation des outils de développement est interdite sur ce site.", "color: red; font-size: 16px;");
-        console.log("%cToute tentative de manipulation pourra être signalée.", "color: red; font-size: 16px;");
+        console.warn("⚠️ Les outils de développement sont désactivés sur ce site.");
       } catch (e) {
         // Ignore errors
       }
