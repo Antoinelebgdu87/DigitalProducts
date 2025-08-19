@@ -126,7 +126,7 @@ const DevToolsProtection = () => {
       document.removeEventListener("selectstart", blockTextSelection);
       document.removeEventListener("dragstart", blockDragStart);
       document.removeEventListener("mousedown", disableRightClick);
-      clearInterval(interval);
+      // clearInterval(interval); // Désactivé car interval n'est plus défini
     };
   }, []);
 
