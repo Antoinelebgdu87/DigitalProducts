@@ -1940,6 +1940,231 @@ const AdminDashboard: React.FC = () => {
               </Dialog>
             </TabsContent>
 
+            {/* Timers Tab */}
+            <TabsContent value="timers" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-white">
+                    Gestion des Timers
+                  </h2>
+                  <p className="text-gray-400 text-sm">
+                    Configurez les cooldowns pour les actions utilisateur
+                  </p>
+                </div>
+                <Button
+                  onClick={() => {
+                    setTempTimerSettings(timerSettings);
+                    setShowTimerDialog(true);
+                  }}
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Modifier les timers
+                </Button>
+              </div>
+
+              {/* Current Timer Settings */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center">
+                      <Store className="w-5 h-5 mr-2 text-blue-400" />
+                      Cooldown Produits Boutique
+                    </CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Temps d'attente entre créations de produits pour les utilisateurs "Boutique"
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-blue-400">
+                        {timerSettings.shopProductCooldown}
+                      </div>
+                      <div className="text-sm text-gray-400">minutes</div>
+                    </div>
+                    <div className="mt-4 p-3 bg-blue-900/20 border border-blue-700/30 rounded">
+                      <p className="text-blue-200 text-xs">
+                        Les utilisateurs avec le rôle "Boutique" doivent attendre ce délai entre chaque création de produit.
+                        Les "Partners" et "Admins" ne sont pas affectés.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center">
+                      <MessageSquare className="w-5 h-5 mr-2 text-orange-400" />
+                      Cooldown Commentaires
+                    </CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Temps d'attente entre commentaires pour tous les utilisateurs
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-orange-400">
+                        {timerSettings.commentCooldown}
+                      </div>
+                      <div className="text-sm text-gray-400">minutes</div>
+                    </div>
+                    <div className="mt-4 p-3 bg-orange-900/20 border border-orange-700/30 rounded">
+                      <p className="text-orange-200 text-xs">
+                        Tous les utilisateurs doivent attendre ce délai entre chaque commentaire.
+                        Aide à prévenir le spam de commentaires.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Live Timer Status */}
+              <Card className="border-gray-800 bg-gray-900/50">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <Clock className="w-5 h-5 mr-2 text-green-400" />
+                    Statut des timers en temps réel
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Aperçu des utilisateurs actuellement en cooldown
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {users?.filter(user => user.role === 'shop_access').map(user => {
+                      const userProducts = products.filter(p => p.createdBy === user.id);
+                      const lastProduct = userProducts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0];
+                      const canCreate = !lastProduct || (new Date().getTime() - lastProduct.createdAt.getTime()) / (1000 * 60) >= timerSettings.shopProductCooldown;
+                      const remaining = lastProduct ? Math.max(0, timerSettings.shopProductCooldown - (new Date().getTime() - lastProduct.createdAt.getTime()) / (1000 * 60)) : 0;
+
+                      return (
+                        <div key={user.id} className="flex items-center justify-between p-3 bg-gray-800/30 rounded">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
+                              <User className="w-4 h-4 text-white" />
+                            </div>
+                            <div>
+                              <p className="text-white text-sm font-medium">{user.username}</p>
+                              <p className="text-gray-400 text-xs">
+                                {userProducts.length} produit(s) créé(s)
+                              </p>
+                            </div>
+                          </div>
+                          <div className="text-right">
+                            {canCreate ? (
+                              <Badge className="bg-green-600 text-white">
+                                <Clock className="w-3 h-3 mr-1" />
+                                Disponible
+                              </Badge>
+                            ) : (
+                              <Badge variant="outline" className="border-orange-500 text-orange-400">
+                                <Clock className="w-3 h-3 mr-1" />
+                                {Math.ceil(remaining)} min
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {(!users?.filter(user => user.role === 'shop_access').length) && (
+                      <div className="text-center py-8">
+                        <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-400">Aucun utilisateur "Boutique" trouvé</p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Timer Settings Dialog */}
+              <Dialog open={showTimerDialog} onOpenChange={setShowTimerDialog}>
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Modifier les paramètres de timer
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      Ajustez les cooldowns pour contrôler la fréquence des actions
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleUpdateTimers} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="shopCooldown" className="text-white">
+                        Cooldown produits boutique (minutes)
+                      </Label>
+                      <Input
+                        id="shopCooldown"
+                        type="number"
+                        min="1"
+                        max="1440"
+                        value={tempTimerSettings.shopProductCooldown}
+                        onChange={(e) =>
+                          setTempTimerSettings({
+                            ...tempTimerSettings,
+                            shopProductCooldown: parseInt(e.target.value) || 1,
+                          })
+                        }
+                        className="bg-gray-800 border-gray-700 text-white"
+                      />
+                      <p className="text-gray-400 text-xs">
+                        Entre 1 minute et 24 heures (1440 minutes)
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="commentCooldown" className="text-white">
+                        Cooldown commentaires (minutes)
+                      </Label>
+                      <Input
+                        id="commentCooldown"
+                        type="number"
+                        min="1"
+                        max="60"
+                        value={tempTimerSettings.commentCooldown}
+                        onChange={(e) =>
+                          setTempTimerSettings({
+                            ...tempTimerSettings,
+                            commentCooldown: parseInt(e.target.value) || 1,
+                          })
+                        }
+                        className="bg-gray-800 border-gray-700 text-white"
+                      />
+                      <p className="text-gray-400 text-xs">
+                        Entre 1 minute et 1 heure (60 minutes)
+                      </p>
+                    </div>
+
+                    <div className="bg-yellow-900/50 border border-yellow-700 rounded p-3">
+                      <p className="text-yellow-200 text-sm">
+                        <strong>Important:</strong> Les modifications prendront effet immédiatement.
+                        Les timers en cours ne seront pas affectés.
+                      </p>
+                    </div>
+
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowTimerDialog(false);
+                          setTempTimerSettings(timerSettings);
+                        }}
+                        className="border-gray-700"
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-purple-600 hover:bg-purple-700"
+                      >
+                        Appliquer les modifications
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </TabsContent>
+
             {/* Prix Tab */}
             <TabsContent value="prices" className="space-y-6">
               <div>
