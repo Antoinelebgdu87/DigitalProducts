@@ -48,7 +48,11 @@ interface UserContextType {
   currentUser: User | null;
   users: User[] | null;
   createUsername: (username?: string) => Promise<User>;
-  banUser: (userId: string, reason: string, expiresAt?: Date | null) => Promise<void>;
+  banUser: (
+    userId: string,
+    reason: string,
+    expiresAt?: Date | null,
+  ) => Promise<void>;
   unbanUser: (userId: string) => Promise<void>;
   addWarning: (userId: string, reason: string) => Promise<void>;
   markWarningsAsRead: (userId: string) => Promise<void>;
@@ -133,7 +137,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       createdAt: Timestamp.fromDate(user.createdAt),
       lastSeen: Timestamp.fromDate(user.lastSeen),
       bannedAt: user.bannedAt ? Timestamp.fromDate(user.bannedAt) : null,
-      banExpiresAt: user.banExpiresAt ? Timestamp.fromDate(user.banExpiresAt) : null,
+      banExpiresAt: user.banExpiresAt
+        ? Timestamp.fromDate(user.banExpiresAt)
+        : null,
       warnings: user.warnings.map((warning) => ({
         ...warning,
         createdAt: Timestamp.fromDate(warning.createdAt),
@@ -335,7 +341,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const banUser = async (
     userId: string,
     reason: string,
-    expiresAt?: Date | null
+    expiresAt?: Date | null,
   ): Promise<void> => {
     try {
       const updateData: any = {
@@ -474,8 +480,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     try {
       if (!shouldUseFirebase()) {
         // Mode local - supprimer de la liste
-        setUsers((prevUsers) =>
-          prevUsers?.filter(user => user.id !== userId) || null
+        setUsers(
+          (prevUsers) =>
+            prevUsers?.filter((user) => user.id !== userId) || null,
         );
 
         // Si c'est l'utilisateur actuel, le déconnecter

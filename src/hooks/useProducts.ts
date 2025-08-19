@@ -29,53 +29,53 @@ export const useProducts = () => {
 
       // Gérer différents formats de date
       if (productData.createdAt) {
-        if (typeof productData.createdAt.toDate === 'function') {
+        if (typeof productData.createdAt.toDate === "function") {
           // Firestore Timestamp
           createdAt = productData.createdAt.toDate();
         } else if (productData.createdAt instanceof Date) {
           createdAt = productData.createdAt;
-        } else if (typeof productData.createdAt === 'string') {
+        } else if (typeof productData.createdAt === "string") {
           createdAt = new Date(productData.createdAt);
-        } else if (typeof productData.createdAt === 'number') {
+        } else if (typeof productData.createdAt === "number") {
           createdAt = new Date(productData.createdAt);
         }
       }
 
       return {
-        id: productData.id || '',
-        title: productData.title || 'Sans titre',
-        description: productData.description || '',
-        imageUrl: productData.imageUrl || '',
-        downloadUrl: productData.downloadUrl || '',
-        type: productData.type || 'free',
-        actionType: productData.actionType || 'download',
-        contentType: productData.contentType || 'link',
-        content: productData.content || '',
-        discordUrl: productData.discordUrl || '',
+        id: productData.id || "",
+        title: productData.title || "Sans titre",
+        description: productData.description || "",
+        imageUrl: productData.imageUrl || "",
+        downloadUrl: productData.downloadUrl || "",
+        type: productData.type || "free",
+        actionType: productData.actionType || "download",
+        contentType: productData.contentType || "link",
+        content: productData.content || "",
+        discordUrl: productData.discordUrl || "",
         price: productData.price || 0,
         lives: productData.lives || 1,
-        createdBy: productData.createdBy || '',
-        createdByUsername: productData.createdByUsername || '',
+        createdBy: productData.createdBy || "",
+        createdByUsername: productData.createdByUsername || "",
         createdAt,
-        ...productData // Inclure autres champs potentiels
+        ...productData, // Inclure autres champs potentiels
       };
     } catch (error) {
       // Retourner un produit minimal en cas d'erreur
       return {
-        id: productData.id || '',
-        title: 'Produit endommagé',
-        description: 'Données corrompues',
-        imageUrl: '',
-        downloadUrl: '',
-        type: 'free',
-        actionType: 'download',
-        contentType: 'link',
-        content: '',
-        discordUrl: '',
+        id: productData.id || "",
+        title: "Produit endommagé",
+        description: "Données corrompues",
+        imageUrl: "",
+        downloadUrl: "",
+        type: "free",
+        actionType: "download",
+        contentType: "link",
+        content: "",
+        discordUrl: "",
         price: 0,
         lives: 1,
-        createdBy: '',
-        createdByUsername: '',
+        createdBy: "",
+        createdByUsername: "",
         createdAt: new Date(),
       };
     }
@@ -139,8 +139,10 @@ export const useProducts = () => {
 
             // Trier manuellement par date décroissante
             productsData.sort((a, b) => {
-              const dateA = a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
-              const dateB = b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
+              const dateA =
+                a.createdAt instanceof Date ? a.createdAt.getTime() : 0;
+              const dateB =
+                b.createdAt instanceof Date ? b.createdAt.getTime() : 0;
               return dateB - dateA;
             });
 
@@ -275,7 +277,11 @@ export const useProducts = () => {
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
       // Validation de l'ID
-      if (!productId || typeof productId !== 'string' || productId.trim() === '') {
+      if (
+        !productId ||
+        typeof productId !== "string" ||
+        productId.trim() === ""
+      ) {
         throw new Error(`ID de produit invalide: "${productId}"`);
       }
 

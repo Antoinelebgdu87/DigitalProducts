@@ -88,7 +88,8 @@ const AdminDashboard: React.FC = () => {
     getActiveLicenses,
     loading: licensesLoading,
   } = useLicenses();
-  const { users, banUser, unbanUser, addWarning, updateUserRole, deleteUser } = useUser();
+  const { users, banUser, unbanUser, addWarning, updateUserRole, deleteUser } =
+    useUser();
   const {
     moderationActions,
     moderateDeleteProduct,
@@ -142,7 +143,10 @@ const AdminDashboard: React.FC = () => {
   const [selectedUserRole, setSelectedUserRole] = useState<
     "user" | "shop_access" | "partner" | "admin"
   >("user");
-  const [userToDelete, setUserToDelete] = useState<{ id: string; username: string } | null>(null);
+  const [userToDelete, setUserToDelete] = useState<{
+    id: string;
+    username: string;
+  } | null>(null);
   const [banReason, setBanReason] = useState("");
   const [warnReason, setWarnReason] = useState("");
   const [banDuration, setBanDuration] = useState<string>("permanent");
@@ -158,7 +162,7 @@ const AdminDashboard: React.FC = () => {
     "Tentative de contournement des systèmes",
     "Utilisation abusive des fonctionnalités",
     "Partage de contenu illégal",
-    "Tentative de phishing/arnaque"
+    "Tentative de phishing/arnaque",
   ];
 
   const predefinedWarnReasons = [
@@ -169,7 +173,7 @@ const AdminDashboard: React.FC = () => {
     "Respectez les règles de la communauté",
     "Message hors-sujet supprim��",
     "Avertissement pour comportement limite",
-    "Rappel des règles d'utilisation"
+    "Rappel des règles d'utilisation",
   ];
 
   const banDurationOptions = [
@@ -181,7 +185,7 @@ const AdminDashboard: React.FC = () => {
     { value: "7d", label: "7 jours", hours: 168 },
     { value: "30d", label: "30 jours", hours: 720 },
     { value: "custom", label: "Personnalisé", hours: 0 },
-    { value: "permanent", label: "Permanent", hours: 0 }
+    { value: "permanent", label: "Permanent", hours: 0 },
   ];
 
   // Moderation states
@@ -371,18 +375,21 @@ const AdminDashboard: React.FC = () => {
       // Calculer la date d'expiration du ban
       let banExpiresAt = null;
       if (banDuration !== "permanent") {
-        const hours = banDuration === "custom"
-          ? customBanHours
-          : banDurationOptions.find(o => o.value === banDuration)?.hours || 0;
+        const hours =
+          banDuration === "custom"
+            ? customBanHours
+            : banDurationOptions.find((o) => o.value === banDuration)?.hours ||
+              0;
         banExpiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
       }
 
       // Appel de la fonction ban avec les nouvelles informations
       await banUser(selectedUserId, banReason, banExpiresAt);
 
-      const message = banDuration === "permanent"
-        ? "Utilisateur banni définitivement"
-        : `Utilisateur banni jusqu'au ${banExpiresAt?.toLocaleString("fr-FR")}`;
+      const message =
+        banDuration === "permanent"
+          ? "Utilisateur banni définitivement"
+          : `Utilisateur banni jusqu'au ${banExpiresAt?.toLocaleString("fr-FR")}`;
 
       toast.success(message);
       setShowBanDialog(false);
@@ -451,7 +458,9 @@ const AdminDashboard: React.FC = () => {
       // Utiliser la fonction deleteUser du contexte
       await deleteUser(userToDelete.id);
 
-      toast.success(`Compte utilisateur "${userToDelete.username}" supprimé avec succès`);
+      toast.success(
+        `Compte utilisateur "${userToDelete.username}" supprimé avec succès`,
+      );
 
       // Log de l'action de modération
       await logModerationAction(
@@ -463,7 +472,6 @@ const AdminDashboard: React.FC = () => {
 
       setShowDeleteUserDialog(false);
       setUserToDelete(null);
-
     } catch (error) {
       toast.error("Erreur lors de la suppression du compte");
     }
@@ -1913,10 +1921,18 @@ const AdminDashboard: React.FC = () => {
                   <p className="text-gray-400 text-sm">
                     {users?.length || 0} user(s) total •{" "}
                     {users?.filter((u) => u.isOnline).length || 0} online
-                    {userSearchQuery && ` • ${users?.filter(user =>
-                      user.username.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
-                      user.id.toLowerCase().includes(userSearchQuery.toLowerCase())
-                    ).length || 0} trouvé(s)`}
+                    {userSearchQuery &&
+                      ` • ${
+                        users?.filter(
+                          (user) =>
+                            user.username
+                              .toLowerCase()
+                              .includes(userSearchQuery.toLowerCase()) ||
+                            user.id
+                              .toLowerCase()
+                              .includes(userSearchQuery.toLowerCase()),
+                        ).length || 0
+                      } trouvé(s)`}
                   </p>
                 </div>
               </div>
@@ -1952,144 +1968,155 @@ const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="grid gap-4">
-                {users?.filter(user =>
-                  !userSearchQuery ||
-                  user.username.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
-                  user.id.toLowerCase().includes(userSearchQuery.toLowerCase())
-                ).map((user) => (
-                  <Card
-                    key={user.id}
-                    className="border-gray-800 bg-gray-900/50"
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center">
-                            <User className="w-6 h-6 text-white" />
-                          </div>
-                          <div>
-                            <div className="flex items-center space-x-2">
-                              <h3 className="text-base font-medium text-white">
-                                {user.username}
-                              </h3>
-                              <Badge
-                                variant="outline"
-                                className={getRoleColor(user.role)}
-                              >
-                                {getRoleLabel(user.role)}
-                              </Badge>
-                              <Badge
-                                variant={
-                                  user.isOnline ? "default" : "secondary"
-                                }
-                                className={
-                                  user.isOnline
-                                    ? "bg-green-600 text-white"
-                                    : "bg-gray-600 text-gray-200"
-                                }
-                              >
-                                {user.isOnline ? "En ligne" : "Hors ligne"}
-                              </Badge>
-                              {user.isBanned && (
-                                <Badge
-                                  variant="destructive"
-                                  className="bg-red-600 text-white"
-                                >
-                                  Banni
-                                </Badge>
-                              )}
-                              {user.warnings && user.warnings.length > 0 && (
+                {users
+                  ?.filter(
+                    (user) =>
+                      !userSearchQuery ||
+                      user.username
+                        .toLowerCase()
+                        .includes(userSearchQuery.toLowerCase()) ||
+                      user.id
+                        .toLowerCase()
+                        .includes(userSearchQuery.toLowerCase()),
+                  )
+                  .map((user) => (
+                    <Card
+                      key={user.id}
+                      className="border-gray-800 bg-gray-900/50"
+                    >
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center">
+                              <User className="w-6 h-6 text-white" />
+                            </div>
+                            <div>
+                              <div className="flex items-center space-x-2">
+                                <h3 className="text-base font-medium text-white">
+                                  {user.username}
+                                </h3>
                                 <Badge
                                   variant="outline"
-                                  className="border-orange-500 text-orange-400"
+                                  className={getRoleColor(user.role)}
                                 >
-                                  {user.warnings.length} warn(s)
+                                  {getRoleLabel(user.role)}
                                 </Badge>
+                                <Badge
+                                  variant={
+                                    user.isOnline ? "default" : "secondary"
+                                  }
+                                  className={
+                                    user.isOnline
+                                      ? "bg-green-600 text-white"
+                                      : "bg-gray-600 text-gray-200"
+                                  }
+                                >
+                                  {user.isOnline ? "En ligne" : "Hors ligne"}
+                                </Badge>
+                                {user.isBanned && (
+                                  <Badge
+                                    variant="destructive"
+                                    className="bg-red-600 text-white"
+                                  >
+                                    Banni
+                                  </Badge>
+                                )}
+                                {user.warnings && user.warnings.length > 0 && (
+                                  <Badge
+                                    variant="outline"
+                                    className="border-orange-500 text-orange-400"
+                                  >
+                                    {user.warnings.length} warn(s)
+                                  </Badge>
+                                )}
+                              </div>
+                              <div className="flex items-center space-x-4 mt-1 text-xs text-gray-400">
+                                <span>Créé: {formatDate(user.createdAt)}</span>
+                                <span>
+                                  Dernière connexion:{" "}
+                                  {formatDate(user.lastSeen)}
+                                </span>
+                              </div>
+                              {user.isBanned && user.banReason && (
+                                <div className="mt-2 p-2 bg-red-900/50 rounded border border-red-700">
+                                  <p className="text-red-200 text-xs">
+                                    <strong>Raison:</strong> {user.banReason}
+                                  </p>
+                                </div>
                               )}
                             </div>
-                            <div className="flex items-center space-x-4 mt-1 text-xs text-gray-400">
-                              <span>Créé: {formatDate(user.createdAt)}</span>
-                              <span>
-                                Dernière connexion: {formatDate(user.lastSeen)}
-                              </span>
-                            </div>
-                            {user.isBanned && user.banReason && (
-                              <div className="mt-2 p-2 bg-red-900/50 rounded border border-red-700">
-                                <p className="text-red-200 text-xs">
-                                  <strong>Raison:</strong> {user.banReason}
-                                </p>
-                              </div>
-                            )}
                           </div>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setSelectedUserId(user.id);
-                              setSelectedUserRole(user.role);
-                              setShowRoleDialog(true);
-                            }}
-                            className="border-purple-700 text-purple-400 hover:bg-purple-500/10"
-                          >
-                            Rôle
-                          </Button>
-                          {!user.isBanned && (
-                            <>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  setSelectedUserId(user.id);
-                                  setShowWarnDialog(true);
-                                }}
-                                className="border-orange-700 text-orange-400 hover:bg-orange-500/10"
-                              >
-                                Warn
-                              </Button>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                  setSelectedUserId(user.id);
-                                  setShowBanDialog(true);
-                                }}
-                                className="border-red-700 text-red-400 hover:bg-red-500/10"
-                              >
-                                Ban
-                              </Button>
-                            </>
-                          )}
-                          {user.isBanned && (
+                          <div className="flex items-center space-x-2">
                             <Button
                               variant="outline"
                               size="sm"
                               onClick={() => {
                                 setSelectedUserId(user.id);
-                                setShowUnbanDialog(true);
+                                setSelectedUserRole(user.role);
+                                setShowRoleDialog(true);
                               }}
-                              className="border-green-700 text-green-400 hover:bg-green-500/10"
+                              className="border-purple-700 text-purple-400 hover:bg-purple-500/10"
                             >
-                              Unban
+                              Rôle
                             </Button>
-                          )}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              setUserToDelete({ id: user.id, username: user.username });
-                              setShowDeleteUserDialog(true);
-                            }}
-                            className="border-red-700 text-red-400 hover:bg-red-500/10"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                            {!user.isBanned && (
+                              <>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedUserId(user.id);
+                                    setShowWarnDialog(true);
+                                  }}
+                                  className="border-orange-700 text-orange-400 hover:bg-orange-500/10"
+                                >
+                                  Warn
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedUserId(user.id);
+                                    setShowBanDialog(true);
+                                  }}
+                                  className="border-red-700 text-red-400 hover:bg-red-500/10"
+                                >
+                                  Ban
+                                </Button>
+                              </>
+                            )}
+                            {user.isBanned && (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => {
+                                  setSelectedUserId(user.id);
+                                  setShowUnbanDialog(true);
+                                }}
+                                className="border-green-700 text-green-400 hover:bg-green-500/10"
+                              >
+                                Unban
+                              </Button>
+                            )}
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setUserToDelete({
+                                  id: user.id,
+                                  username: user.username,
+                                });
+                                setShowDeleteUserDialog(true);
+                              }}
+                              className="border-red-700 text-red-400 hover:bg-red-500/10"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  ))}
                 {(!users || users.length === 0) && (
                   <Card className="border-gray-800 bg-gray-900/50">
                     <CardContent className="p-12 text-center">
@@ -2122,7 +2149,10 @@ const AdminDashboard: React.FC = () => {
                       <Label htmlFor="banDuration" className="text-white">
                         Durée du bannissement
                       </Label>
-                      <Select value={banDuration} onValueChange={setBanDuration}>
+                      <Select
+                        value={banDuration}
+                        onValueChange={setBanDuration}
+                      >
                         <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                           <SelectValue />
                         </SelectTrigger>
@@ -2155,7 +2185,9 @@ const AdminDashboard: React.FC = () => {
                           min="1"
                           max="8760"
                           value={customBanHours}
-                          onChange={(e) => setCustomBanHours(parseInt(e.target.value) || 1)}
+                          onChange={(e) =>
+                            setCustomBanHours(parseInt(e.target.value) || 1)
+                          }
                           className="bg-gray-800 border-gray-700 text-white"
                         />
                       </div>
@@ -2201,8 +2233,19 @@ const AdminDashboard: React.FC = () => {
                       <div className="bg-blue-900/50 border border-blue-700 rounded p-3">
                         <p className="text-blue-200 text-sm">
                           <Clock className="w-4 h-4 inline mr-1" />
-                          <strong>Ban temporaire:</strong> L'utilisateur sera automatiquement débanni le{" "}
-                          {new Date(Date.now() + (banDuration === "custom" ? customBanHours : banDurationOptions.find(o => o.value === banDuration)?.hours || 0) * 60 * 60 * 1000).toLocaleString("fr-FR")}
+                          <strong>Ban temporaire:</strong> L'utilisateur sera
+                          automatiquement débanni le{" "}
+                          {new Date(
+                            Date.now() +
+                              (banDuration === "custom"
+                                ? customBanHours
+                                : banDurationOptions.find(
+                                    (o) => o.value === banDuration,
+                                  )?.hours || 0) *
+                                60 *
+                                60 *
+                                1000,
+                          ).toLocaleString("fr-FR")}
                         </p>
                       </div>
                     )}
@@ -2211,7 +2254,8 @@ const AdminDashboard: React.FC = () => {
                       <div className="bg-red-900/50 border border-red-700 rounded p-3">
                         <p className="text-red-200 text-sm">
                           <AlertTriangle className="w-4 h-4 inline mr-1" />
-                          <strong>Ban permanent:</strong> L'utilisateur devra être débanni manuellement.
+                          <strong>Ban permanent:</strong> L'utilisateur devra
+                          être débanni manuellement.
                         </p>
                       </div>
                     )}
@@ -2233,10 +2277,16 @@ const AdminDashboard: React.FC = () => {
                       </Button>
                       <Button
                         type="submit"
-                        className={banDuration === "permanent" ? "bg-red-600 hover:bg-red-700" : "bg-orange-600 hover:bg-orange-700"}
+                        className={
+                          banDuration === "permanent"
+                            ? "bg-red-600 hover:bg-red-700"
+                            : "bg-orange-600 hover:bg-orange-700"
+                        }
                         disabled={!banReason.trim()}
                       >
-                        {banDuration === "permanent" ? "Bannir définitivement" : "Bannir temporairement"}
+                        {banDuration === "permanent"
+                          ? "Bannir définitivement"
+                          : "Bannir temporairement"}
                       </Button>
                     </DialogFooter>
                   </form>
@@ -2347,7 +2397,9 @@ const AdminDashboard: React.FC = () => {
                   <form onSubmit={handleWarnUser} className="space-y-4">
                     {/* Messages prédéfinis */}
                     <div className="space-y-2">
-                      <Label className="text-white">Messages d'avertissement prédéfinis</Label>
+                      <Label className="text-white">
+                        Messages d'avertissement prédéfinis
+                      </Label>
                       <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
                         {predefinedWarnReasons.map((reason, index) => (
                           <Button
@@ -2457,14 +2509,18 @@ const AdminDashboard: React.FC = () => {
               </Dialog>
 
               {/* Delete User Dialog */}
-              <Dialog open={showDeleteUserDialog} onOpenChange={setShowDeleteUserDialog}>
+              <Dialog
+                open={showDeleteUserDialog}
+                onOpenChange={setShowDeleteUserDialog}
+              >
                 <DialogContent className="bg-gray-900 border-gray-800">
                   <DialogHeader>
                     <DialogTitle className="text-white">
                       Supprimer le compte utilisateur
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
-                      Cette action est définitive et irréversible. Toutes les données de l'utilisateur seront perdues.
+                      Cette action est définitive et irréversible. Toutes les
+                      données de l'utilisateur seront perdues.
                     </DialogDescription>
                   </DialogHeader>
                   {userToDelete && (
@@ -2472,7 +2528,8 @@ const AdminDashboard: React.FC = () => {
                       <div className="bg-red-900/50 border border-red-700 rounded p-3">
                         <p className="text-red-200 text-sm">
                           <Trash2 className="w-4 h-4 inline mr-1" />
-                          <strong>Utilisateur à supprimer :</strong> {userToDelete.username}
+                          <strong>Utilisateur à supprimer :</strong>{" "}
+                          {userToDelete.username}
                         </p>
                         <p className="text-red-300 text-xs mt-1">
                           ID: {userToDelete.id}
