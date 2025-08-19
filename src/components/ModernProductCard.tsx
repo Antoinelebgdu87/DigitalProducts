@@ -12,6 +12,10 @@ import {
   Euro,
   MessageCircle,
   ExternalLink,
+  User,
+  Crown,
+  Store,
+  Shield,
 } from "lucide-react";
 import { useLicenses } from "@/hooks/useLicenses";
 import { useComments } from "@/hooks/useComments";
@@ -139,10 +143,30 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
               <p className="text-gray-300 text-sm leading-relaxed line-clamp-3">
                 {product.description}
               </p>
+
+              {/* Attribution du créateur */}
+              {product.createdByUsername && (
+                <div className="flex items-center space-x-2 mt-3 pt-2 border-t border-gray-700">
+                  <div className="flex items-center space-x-1 text-xs text-gray-400">
+                    {/* Icône selon le rôle (on peut déduire du nom ou ajouter le rôle au produit) */}
+                    <User className="w-3 h-3" />
+                    <span>by</span>
+                    <span className="text-gray-200 font-medium">
+                      {product.createdByUsername}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Prix */}
-            <div className="flex items-center justify-end text-sm">
+            {/* Prix et informations */}
+            <div className="flex items-center justify-between text-sm">
+              <div className="flex items-center space-x-2">
+                {/* Date de création */}
+                <span className="text-xs text-gray-500">
+                  {new Date(product.createdAt).toLocaleDateString('fr-FR')}
+                </span>
+              </div>
               <div className="text-red-400 font-semibold flex items-center">
                 {product.type === "free" ? (
                   "Gratuit"
