@@ -98,10 +98,11 @@ const ShopDashboard: React.FC = () => {
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Add createdBy field for shop users
+      // Add createdBy fields for shop users
       const productData = {
         ...productForm,
         createdBy: currentUser.id,
+        createdByUsername: currentUser.username,
       };
       await addProduct(productData);
       toast.success("Produit ajouté avec succès!");
