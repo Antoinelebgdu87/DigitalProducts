@@ -125,8 +125,9 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
               </div>
             </div>
 
-            {/* Action button */}
-            <div className="relative z-10">
+            {/* Action buttons */}
+            <div className="relative z-10 space-y-3">
+              {/* Main download button */}
               <Button
                 onClick={(e) => {
                   e.preventDefault();
@@ -158,10 +159,28 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                 ) : (
                   <>
                     <ShoppingCart className="w-5 h-5 mr-2" />
-                    Get Access Download Now
+                    Get Access
                   </>
                 )}
               </Button>
+
+              {/* Discord button (if URL is provided) */}
+              {product.discordUrl && (
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.open(product.discordUrl, "_blank");
+                  }}
+                  variant="outline"
+                  className="w-full border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 transition-all duration-300"
+                  size="lg"
+                >
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  Join Discord
+                  <ExternalLink className="w-4 h-4 ml-2" />
+                </Button>
+              )}
             </div>
           </div>
 
