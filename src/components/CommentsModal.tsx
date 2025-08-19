@@ -214,10 +214,10 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
 
           {/* Formulaire d'ajout de commentaire */}
           {currentUser ? (
-            !navigator.onLine ? (
+            isOfflineMode ? (
               <div className="bg-orange-900/50 border border-orange-700 rounded-lg p-4 text-center">
                 <p className="text-orange-400 text-sm">
-                  Impossible d'ajouter des commentaires en mode hors ligne
+                  Mode offline : vos commentaires seront synchronisés plus tard
                 </p>
               </div>
             ) : (
