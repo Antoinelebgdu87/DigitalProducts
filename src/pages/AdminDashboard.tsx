@@ -136,14 +136,17 @@ const AdminDashboard: React.FC = () => {
   const [showUnbanDialog, setShowUnbanDialog] = useState(false);
   const [showWarnDialog, setShowWarnDialog] = useState(false);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
+  const [showDeleteUserDialog, setShowDeleteUserDialog] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [selectedUserRole, setSelectedUserRole] = useState<
     "user" | "shop_access" | "partner" | "admin"
   >("user");
+  const [userToDelete, setUserToDelete] = useState<{ id: string; username: string } | null>(null);
   const [banReason, setBanReason] = useState("");
   const [warnReason, setWarnReason] = useState("");
   const [banDuration, setBanDuration] = useState<string>("permanent");
   const [customBanHours, setCustomBanHours] = useState<number>(24);
+  const [userSearchQuery, setUserSearchQuery] = useState<string>("");
 
   // Messages prédéfinis pour ban/warn
   const predefinedBanReasons = [
@@ -163,7 +166,7 @@ const AdminDashboard: React.FC = () => {
     "Évitez le spam dans les commentaires",
     "Contenu non approprié pour cette section",
     "Respectez les règles de la communauté",
-    "Message hors-sujet supprimé",
+    "Message hors-sujet supprim��",
     "Avertissement pour comportement limite",
     "Rappel des règles d'utilisation"
   ];
@@ -416,7 +419,7 @@ const AdminDashboard: React.FC = () => {
       setSelectedUserId("");
       setSelectedUserRole("user");
     } catch (error) {
-      toast.error("Erreur lors de la mise à jour du rôle");
+      toast.error("Erreur lors de la mise à jour du r��le");
     }
   };
 
