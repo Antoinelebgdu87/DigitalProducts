@@ -33,7 +33,12 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   const [showComments, setShowComments] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { validateLicense } = useLicenses();
-  const { comments } = useComments(product.id);
+  const { comments, loading: commentsLoading } = useComments(product.id);
+
+  // Debug logging for comments
+  React.useEffect(() => {
+    console.log(`💬 Comments for product ${product.id}:`, comments.length, comments);
+  }, [comments, product.id]);
 
   const handleLicenseValidate = async (licenseCode: string) => {
     return await validateLicense(licenseCode, product.id);
