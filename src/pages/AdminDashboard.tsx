@@ -2231,7 +2231,7 @@ const AdminDashboard: React.FC = () => {
 
               {/* Warning Dialog */}
               <Dialog open={showWarnDialog} onOpenChange={setShowWarnDialog}>
-                <DialogContent className="bg-gray-900 border-gray-800">
+                <DialogContent className="bg-gray-900 border-gray-800 max-w-2xl">
                   <DialogHeader>
                     <DialogTitle className="text-white">
                       Avertir l'utilisateur
@@ -2241,9 +2241,29 @@ const AdminDashboard: React.FC = () => {
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleWarnUser} className="space-y-4">
+                    {/* Messages prédéfinis */}
+                    <div className="space-y-2">
+                      <Label className="text-white">Messages d'avertissement prédéfinis</Label>
+                      <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+                        {predefinedWarnReasons.map((reason, index) => (
+                          <Button
+                            key={index}
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setWarnReason(reason)}
+                            className="text-xs h-auto p-2 border-gray-700 text-gray-300 hover:bg-gray-700 text-left justify-start"
+                          >
+                            {reason}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Raison personnalisée */}
                     <div className="space-y-2">
                       <Label htmlFor="warnReason" className="text-white">
-                        Raison de l'avertissement
+                        Message d'avertissement
                       </Label>
                       <Textarea
                         id="warnReason"
@@ -2255,6 +2275,17 @@ const AdminDashboard: React.FC = () => {
                         rows={3}
                       />
                     </div>
+
+                    {/* Aperçu du message */}
+                    {warnReason.trim() && (
+                      <div className="bg-orange-900/50 border border-orange-700 rounded p-3">
+                        <p className="text-orange-200 text-sm">
+                          <AlertTriangle className="w-4 h-4 inline mr-1" />
+                          <strong>Aperçu:</strong> "{warnReason}"
+                        </p>
+                      </div>
+                    )}
+
                     <DialogFooter>
                       <Button
                         type="button"
