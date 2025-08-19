@@ -137,7 +137,7 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
       }
       formatted += clean[i];
     }
-    return formatted.substring(0, 19);
+    return formatted;
   };
 
   const handleLicenseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -193,7 +193,6 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
                   onChange={handleLicenseChange}
                   placeholder="XXXX-XXXX-XXXX-XXXX"
                   className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500 text-lg py-6 pl-12"
-                  maxLength={19}
                   disabled={isLoading}
                 />
                 <Key className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />

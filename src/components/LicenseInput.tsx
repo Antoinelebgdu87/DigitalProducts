@@ -64,8 +64,7 @@ const LicenseInput: React.FC<LicenseInputProps> = ({
       formatted += clean[i];
     }
 
-    // Limit to 19 characters (16 + 3 dashes)
-    return formatted.substring(0, 19);
+    return formatted;
   };
 
   const handleLicenseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -98,7 +97,6 @@ const LicenseInput: React.FC<LicenseInputProps> = ({
               onChange={handleLicenseChange}
               placeholder="XXXX-XXXX-XXXX-XXXX"
               className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500"
-              maxLength={19}
               disabled={isLoading}
             />
           </div>
