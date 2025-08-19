@@ -364,10 +364,26 @@ const AdminDashboard: React.FC = () => {
     if (!selectedUserId || !banReason.trim()) return;
 
     try {
-      await banUser(selectedUserId, banReason);
-      toast.success("Utilisateur banni avec succès");
+      // Calculer la date d'expiration du ban
+      let banExpiresAt = null;
+      if (banDuration !== "permanent") {
+        const hours = banDuration === "custom"
+          ? customBanHours
+          : banDurationOptions.find(o => o.value === banDuration)?.hours || 0;
+        banExpiresAt = new Date(Date.now() + hours * 60 * 60 * 1000);
+      }
+
+      // Appel de la fonction ban avec les nouvelles informations
+      await banUser(selectedUserId, banReason, banExpiresAt);
+
+      const message = banDuration === "permanent"
+        ? "Utilisateur banni définitivement"
+        : `Utilisateur banni jusqu'au ${banExpiresAt?.toLocaleString("fr-FR")}`;
+
+      toast.success(message);
       setShowBanDialog(false);
       setBanReason("");
+      setBanDuration("permanent");
       setSelectedUserId("");
     } catch (error) {
       toast.error("Erreur lors du bannissement");
