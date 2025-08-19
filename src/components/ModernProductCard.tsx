@@ -23,11 +23,16 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   };
 
   const handleValidatedDownload = () => {
-    // Si contentType n'est pas défini, utiliser "link" par défaut pour la compatibilité
-    if (!product.contentType || product.contentType === "link") {
-      window.open(product.downloadUrl, "_blank");
+    if (product.actionType === "discord") {
+      // Action validée = Discord
+      window.open(product.discordUrl, "_blank");
     } else {
-      setShowNotepad(true);
+      // Action validée = Download (comportement par défaut)
+      if (!product.contentType || product.contentType === "link") {
+        window.open(product.downloadUrl, "_blank");
+      } else {
+        setShowNotepad(true);
+      }
     }
   };
 
