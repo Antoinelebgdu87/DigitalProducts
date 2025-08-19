@@ -37,16 +37,29 @@ const hasFirebaseConfig = !!(
 
 let app: any = null;
 let db: any = null;
+let analytics: any = null;
 
 try {
   if (hasFirebaseConfig) {
-    // Initialize Firebase only if config is available
+    // Initialize Firebase with the new configuration
     app = initializeApp(firebaseConfig);
     db = getFirestore(app);
+
+    // Initialize Analytics if supported
+    if (typeof window !== "undefined") {
+      try {
+        analytics = getAnalytics(app);
+        console.log("📊 Firebase Analytics initialized");
+      } catch (analyticsError) {
+        console.warn("⚠️ Analytics initialization failed:", analyticsError);
+      }
+    }
+
     console.log(
-      "🔥 Firebase initialized with project:",
+      "🔥 Firebase initialized successfully with project:",
       firebaseConfig.projectId,
     );
+    console.log("🗄️ Firestore database connected");
   } else {
     console.warn(
       "⚠️ Firebase configuration not found. Running in offline mode with localStorage fallback.",
