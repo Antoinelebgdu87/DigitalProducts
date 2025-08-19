@@ -130,9 +130,15 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
           <DialogTitle className="text-white flex items-center space-x-2">
             <MessageCircle className="w-5 h-5 text-blue-400" />
             <span>Commentaires</span>
+            {isOfflineMode && (
+              <Badge variant="outline" className="border-orange-500 text-orange-400 bg-orange-500/10">
+                Mode Offline
+              </Badge>
+            )}
           </DialogTitle>
           <DialogDescription className="text-gray-400">
             {productTitle} • {comments.length} commentaire(s)
+            {isOfflineMode && " • Commentaires locaux"}
           </DialogDescription>
         </DialogHeader>
 
