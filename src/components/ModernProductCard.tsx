@@ -77,6 +77,18 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                   className="bg-white/20 border-white/30 text-white hover:bg-white/30 pointer-events-auto"
                   onClick={(e) => {
                     e.stopPropagation();
+                    setShowComments(true);
+                  }}
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Commentaires ({comments.length})
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-white/20 border-white/30 text-white hover:bg-white/30 pointer-events-auto"
+                  onClick={(e) => {
+                    e.stopPropagation();
                     console.log("Preview clicked");
                   }}
                 >
