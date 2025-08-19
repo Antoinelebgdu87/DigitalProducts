@@ -31,63 +31,14 @@ const firebaseConfig = {
 // Firebase sera toujours utilisé avec cette configuration
 const hasFirebaseConfig = true;
 
-let app: any = null;
-let db: any = null;
-let analytics: any = null;
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const analytics = getAnalytics(app);
 
-try {
-  if (hasFirebaseConfig) {
-    console.log("🚀 Initialisation Firebase en cours...");
-    console.log("📋 Configuration:", {
-      projectId: firebaseConfig.projectId,
-      authDomain: firebaseConfig.authDomain,
-      hasApiKey: !!firebaseConfig.apiKey,
-    });
-
-    // Initialize Firebase with the new configuration
-    app = initializeApp(firebaseConfig);
-    console.log("✅ Firebase App initialisé");
-
-    db = getFirestore(app);
-    console.log("✅ Firestore connecté");
-
-    // Temporairement désactiver Analytics pour éviter les erreurs
-    /*
-    // Initialize Analytics if supported
-    if (typeof window !== "undefined") {
-      try {
-        analytics = getAnalytics(app);
-        console.log("📊 Firebase Analytics initialized");
-      } catch (analyticsError) {
-        console.warn("⚠️ Analytics initialization failed:", analyticsError);
-      }
-    }
-    */
-
-    console.log(
-      "🔥 Firebase initialized successfully with project:",
-      firebaseConfig.projectId,
-    );
-    console.log("🗄️ Firestore database connected");
-  } else {
-    console.warn(
-      "⚠️ Firebase configuration not found. Running in offline mode with localStorage fallback.",
-    );
-  }
-} catch (error: any) {
-  console.error("❌ Firebase initialization failed:", error);
-  console.error("❌ Error details:", {
-    message: error.message,
-    code: error.code,
-    stack: error.stack
-  });
-  console.warn("🔄 Switching to localStorage fallback mode");
-
-  // Force les variables à null pour être sûr
-  app = null;
-  db = null;
-  analytics = null;
-}
+console.log("🔥 Firebase initialized with project:", firebaseConfig.projectId);
+console.log("🗄️ Firestore database connected");
+console.log("📊 Firebase Analytics initialized");
 
 export { db, analytics };
 export const isFirebaseAvailable = !!db && hasFirebaseConfig;
