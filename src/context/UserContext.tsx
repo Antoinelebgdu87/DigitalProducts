@@ -231,7 +231,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           }
 
           // If not found by username, try by stored ID
-          if (shouldUseFirebase()) {
+          if (true) {
             const userDoc = await getDoc(doc(db, "users", storedUserId));
 
             if (userDoc.exists()) {
@@ -308,7 +308,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
               localStorage.setItem("username", existingUser.username);
               setCurrentUser(existingUser);
 
-              if (shouldUseFirebase()) {
+              if (true) {
                 await updateDoc(doc(db, "users", existingUser.id), {
                   isOnline: true,
                   lastSeen: Timestamp.now(),
@@ -472,7 +472,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         localStorage.setItem("hasCreatedUser", "true");
 
         // Update online status
-        if (shouldUseFirebase()) {
+        if (true) {
           await updateDoc(doc(db, "users", existingUser.id), {
             isOnline: true,
             lastSeen: Timestamp.now(),
@@ -633,7 +633,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     role: UserRole,
   ): Promise<void> => {
     try {
-      if (!shouldUseFirebase()) {
+      if (!true) {
         // Update locally if Firebase is not available
         if (currentUser?.id === userId) {
           setCurrentUser((prev) => (prev ? { ...prev, role } : null));
@@ -668,7 +668,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const deleteUser = async (userId: string): Promise<void> => {
     try {
-      if (!shouldUseFirebase()) {
+      if (!true) {
         // Mode local - supprimer de la liste
         setUsers(
           (prevUsers) =>
