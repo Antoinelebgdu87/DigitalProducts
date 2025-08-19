@@ -422,6 +422,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       // Force immediate update for better UX
       if (currentUser?.id === userId) {
         setCurrentUser(prev => prev ? { ...prev, role } : null);
+        // Save role to localStorage for persistence
+        localStorage.setItem("userRole", role);
       }
 
       console.log("👑 Rôle utilisateur Firebase mis à jour:", userId, role);
