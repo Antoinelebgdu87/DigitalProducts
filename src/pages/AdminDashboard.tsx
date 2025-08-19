@@ -357,6 +357,30 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case "admin":
+        return "Admin";
+      case "shop_access":
+        return "Boutique";
+      case "user":
+      default:
+        return "Utilisateur";
+    }
+  };
+
+  const getRoleColor = (role: string) => {
+    switch (role) {
+      case "admin":
+        return "bg-red-600 text-white";
+      case "shop_access":
+        return "bg-purple-600 text-white";
+      case "user":
+      default:
+        return "bg-gray-600 text-gray-200";
+    }
+  };
+
   return (
     <div className="min-h-screen relative">
       <SimpleStarsBackground />
