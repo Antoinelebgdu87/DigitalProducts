@@ -49,6 +49,31 @@ export const FirebaseDebug: React.FC = () => {
     }
   };
 
+  const testDeleteFirstProduct = async () => {
+    if (firebaseProducts.length === 0) {
+      toast.error("Aucun produit à supprimer");
+      return;
+    }
+
+    const productToDelete = firebaseProducts[0];
+    console.log('🧪 Test suppression directe du produit:', productToDelete);
+
+    try {
+      const docRef = doc(db, 'products', productToDelete.id);
+      console.log('🧪 Document ref path:', docRef.path);
+
+      await deleteDoc(docRef);
+      console.log('🧪 Suppression directe réussie!');
+      toast.success(`Produit "${productToDelete.title}" supprimé via test direct`);
+
+      // Refresh
+      await testFirebaseConnection();
+    } catch (error: any) {
+      console.error('🧪 Test suppression échoué:', error);
+      toast.error(`Test suppression échoué: ${error.message}`);
+    }
+  };
+
   useEffect(() => {
     testFirebaseConnection();
   }, []);
