@@ -44,7 +44,7 @@ const SecureAdminAccess: React.FC = () => {
     e.preventDefault();
     
     // Simuler la vérification du mot de passe
-    if (password === "admin123") { // Vous pouvez changer ce mot de passe
+    if (password === "Antoine80") { // Mot de passe admin personnalisé
       setStep(2);
       toast.success("Mot de passe correct, entrez le code de vérification");
     } else {
