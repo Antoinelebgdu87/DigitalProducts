@@ -5,8 +5,10 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Download, Lock, Star, Eye, ShoppingCart, Euro, MessageCircle, ExternalLink } from "lucide-react";
 import { useLicenses } from "@/hooks/useLicenses";
+import { useComments } from "@/hooks/useComments";
 import KeyValidator from "./KeyValidator";
 import NotepadViewer from "./NotepadViewer";
+import CommentsModal from "./CommentsModal";
 
 interface ModernProductCardProps {
   product: Product;
