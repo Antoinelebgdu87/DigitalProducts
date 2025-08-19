@@ -2681,7 +2681,10 @@ const AdminDashboard: React.FC = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => deleteLicense(license.id)}
+                              onClick={() => {
+                                setLicenseToDelete({id: license.id, code: license.code});
+                                setShowDeleteLicenseDialog(true);
+                              }}
                               className="border-red-700 text-red-400 hover:bg-red-500/10"
                             >
                               <Trash2 className="w-4 h-4" />
@@ -2746,7 +2749,7 @@ const AdminDashboard: React.FC = () => {
                       }
                       className="bg-gray-800 border-gray-700 text-white"
                       rows={3}
-                      placeholder="Update in progress, come back later 🛠️"
+                      placeholder="Update in progress, come back later ���️"
                     />
                   </div>
 
