@@ -238,7 +238,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           setCurrentUser((prevUser) => {
             const newUser = userData;
             console.log(
-              "🔄 Mise �� jour utilisateur:",
+              "🔄 Mise à jour utilisateur:",
               newUser.username,
               "|",
               newUser.role,
@@ -462,6 +462,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         users,
         createUsername,
         banUser,
+        unbanUser,
         addWarning,
         markWarningsAsRead,
         checkUserStatus,
