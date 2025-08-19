@@ -185,40 +185,55 @@ export const useComments = (productId?: string) => {
   };
 
   const deleteComment = async (commentId: string): Promise<void> => {
-    // Si on est en mode offline ou si le commentaire est local
-    if (isOfflineMode || commentId.startsWith("local_")) {
-      console.log("🗑️ Suppression de commentaire en mode offline");
-      const success = localCommentsService.deleteComment(commentId);
-      if (!success) {
-        throw new Error("Commentaire introuvable.");
-      }
-      return;
-    }
+    // Optimistic update: supprimer immédiatement de l'état local
+    const originalComments = [...comments];
+    const updatedComments = comments.filter((c) => c.id !== commentId);
+    setComments(updatedComments);
 
-    // Essayer Firebase d'abord
     try {
-      await deleteDoc(doc(db, "comments", commentId));
-      console.log("🗑️ Commentaire supprimé avec succès via Firebase");
-      markFirebaseWorking();
-    } catch (error: any) {
-      console.error(
-        "Erreur lors de la suppression du commentaire via Firebase:",
-        error,
-      );
-      markFirebaseError();
-
-      // Fallback vers le stockage local si le commentaire existe localement
-      const success = localCommentsService.deleteComment(commentId);
-      if (success) {
-        console.log("🗑️ Fallback: suppression de commentaire en mode local");
-        throw new Error(
-          "Commentaire supprimé localement. Il sera synchronisé quand la connexion reviendra.",
-        );
-      } else {
-        throw new Error(
-          "Impossible de supprimer le commentaire. Vérifiez votre connexion internet.",
-        );
+      // Si on est en mode offline ou si le commentaire est local
+      if (isOfflineMode || commentId.startsWith("local_")) {
+        console.log("🗑️ Suppression de commentaire en mode offline");
+        const success = localCommentsService.deleteComment(commentId);
+        if (!success) {
+          // Restaurer en cas d'erreur
+          setComments(originalComments);
+          throw new Error("Commentaire introuvable.");
+        }
+        return;
       }
+
+      // Essayer Firebase d'abord
+      try {
+        await deleteDoc(doc(db, "comments", commentId));
+        console.log("🗑️ Commentaire supprimé avec succès via Firebase");
+        markFirebaseWorking();
+      } catch (error: any) {
+        console.error(
+          "Erreur lors de la suppression du commentaire via Firebase:",
+          error,
+        );
+        markFirebaseError();
+
+        // Fallback vers le stockage local si le commentaire existe localement
+        const success = localCommentsService.deleteComment(commentId);
+        if (success) {
+          console.log("🗑️ Fallback: suppression de commentaire en mode local");
+          throw new Error(
+            "Commentaire supprimé localement. Il sera synchronisé quand la connexion reviendra.",
+          );
+        } else {
+          // Restaurer en cas d'erreur
+          setComments(originalComments);
+          throw new Error(
+            "Impossible de supprimer le commentaire. Vérifiez votre connexion internet.",
+          );
+        }
+      }
+    } catch (error) {
+      // En cas d'erreur générale, restaurer l'état original
+      setComments(originalComments);
+      throw error;
     }
   };
 
