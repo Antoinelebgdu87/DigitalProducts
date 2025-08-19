@@ -12,7 +12,7 @@ import {
   onSnapshot,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, shouldUseFirebase } from "@/lib/firebase";
 import { License } from "@/types";
 
 export const useLicenses = () => {
@@ -35,36 +35,88 @@ export const useLicenses = () => {
     };
   };
 
-  // Real-time listener for licenses
+  // Real-time listener for licenses with fallback
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(collection(db, "licenses"), orderBy("createdAt", "desc")),
-      (snapshot) => {
+    const loadLicenses = () => {
+      if (!shouldUseFirebase()) {
+        // Use localStorage fallback
         try {
-          const licensesData = snapshot.docs.map((doc) =>
-            parseLicense({ id: doc.id, ...doc.data() }),
-          );
-          setLicenses(licensesData);
-          console.log("🔑 Licences Firebase chargées:", licensesData.length);
+          const stored = localStorage.getItem("licenses");
+          if (stored) {
+            const localLicenses = JSON.parse(stored);
+            setLicenses(
+              localLicenses.map((license: any) => ({
+                ...license,
+                createdAt: new Date(license.createdAt),
+              })),
+            );
+            console.log(
+              "🔑 Licences chargées depuis localStorage:",
+              localLicenses.length,
+            );
+          } else {
+            setLicenses([]);
+          }
         } catch (error) {
-          console.error("Error parsing licenses:", error);
+          console.error("Error loading licenses from localStorage:", error);
           setLicenses([]);
-        } finally {
-          setLoading(false);
         }
-      },
-      (error) => {
-        console.error("Error fetching licenses:", error);
-        setLicenses([]);
         setLoading(false);
-      },
-    );
+        return;
+      }
 
-    return () => unsubscribe();
+      // Use Firebase if available
+      const unsubscribe = onSnapshot(
+        query(collection(db, "licenses"), orderBy("createdAt", "desc")),
+        (snapshot) => {
+          try {
+            const licensesData = snapshot.docs.map((doc) =>
+              parseLicense({ id: doc.id, ...doc.data() }),
+            );
+            setLicenses(licensesData);
+            console.log("🔑 Licences Firebase chargées:", licensesData.length);
+            // Save to localStorage as backup
+            localStorage.setItem("licenses", JSON.stringify(licensesData));
+          } catch (error) {
+            console.error("Error parsing licenses:", error);
+            setLicenses([]);
+          } finally {
+            setLoading(false);
+          }
+        },
+        (error) => {
+          console.error("Error fetching licenses:", error);
+          // Fallback to localStorage
+          try {
+            const stored = localStorage.getItem("licenses");
+            if (stored) {
+              const localLicenses = JSON.parse(stored);
+              setLicenses(
+                localLicenses.map((license: any) => ({
+                  ...license,
+                  createdAt: new Date(license.createdAt),
+                })),
+              );
+              console.log("🔑 Fallback: licences chargées depuis localStorage");
+            }
+          } catch (localError) {
+            console.log("⚠️ Aucune licence locale trouvée");
+          }
+          setLicenses([]);
+          setLoading(false);
+        },
+      );
+
+      return () => unsubscribe();
+    };
+
+    loadLicenses();
   }, []);
 
-  // Migrate existing localStorage data on first load
+  // Migrate existing localStorage data on first load (only if Firebase is available)
   useEffect(() => {
+    if (!shouldUseFirebase()) return;
+
     const migrateLocalStorage = async () => {
       try {
         const stored = localStorage.getItem("licenses");
@@ -121,7 +173,8 @@ export const useLicenses = () => {
   ): Promise<string> => {
     try {
       const code = generateLicenseCode();
-      const newLicense = {
+      const newLicense: License = {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
         productId,
         code,
         category,
@@ -131,8 +184,20 @@ export const useLicenses = () => {
         isActive: true,
       };
 
-      await addDoc(collection(db, "licenses"), licenseToFirestore(newLicense));
-      console.log("🎉 Nouvelle licence Firebase créée:", code);
+      if (shouldUseFirebase()) {
+        await addDoc(
+          collection(db, "licenses"),
+          licenseToFirestore(newLicense),
+        );
+        console.log("🎉 Nouvelle licence Firebase créée:", code);
+      } else {
+        // localStorage fallback
+        const currentLicenses = [...licenses, newLicense];
+        setLicenses(currentLicenses);
+        localStorage.setItem("licenses", JSON.stringify(currentLicenses));
+        console.log("🎉 Nouvelle licence créée en mode offline:", code);
+      }
+
       return code;
     } catch (error) {
       console.error("Error creating license:", error);
@@ -142,8 +207,16 @@ export const useLicenses = () => {
 
   const deleteLicense = async (licenseId: string): Promise<void> => {
     try {
-      await deleteDoc(doc(db, "licenses", licenseId));
-      console.log("🗑️ Licence Firebase supprimée:", licenseId);
+      if (shouldUseFirebase()) {
+        await deleteDoc(doc(db, "licenses", licenseId));
+        console.log("🗑️ Licence Firebase supprimée:", licenseId);
+      } else {
+        // localStorage fallback
+        const updatedLicenses = licenses.filter((l) => l.id !== licenseId);
+        setLicenses(updatedLicenses);
+        localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
+        console.log("🗑️ Licence supprimée en mode offline:", licenseId);
+      }
     } catch (error) {
       console.error("Error deleting license:", error);
       throw error;
@@ -155,33 +228,64 @@ export const useLicenses = () => {
     productId: string,
   ): Promise<{ isValid: boolean; license?: License }> => {
     try {
-      const q = query(
-        collection(db, "licenses"),
-        where("code", "==", licenseCode),
-        where("productId", "==", productId),
-      );
+      if (shouldUseFirebase()) {
+        const q = query(
+          collection(db, "licenses"),
+          where("code", "==", licenseCode),
+          where("productId", "==", productId),
+        );
 
-      const snapshot = await getDocs(q);
+        const snapshot = await getDocs(q);
 
-      if (snapshot.empty) {
-        return { isValid: false };
-      }
+        if (snapshot.empty) {
+          return { isValid: false };
+        }
 
-      const licenseDoc = snapshot.docs[0];
-      const license = parseLicense({ id: licenseDoc.id, ...licenseDoc.data() });
-
-      const isValid =
-        license.isActive && license.currentUsages < license.maxUsages;
-
-      if (isValid) {
-        // Increment usage count
-        await updateDoc(doc(db, "licenses", license.id), {
-          currentUsages: license.currentUsages + 1,
+        const licenseDoc = snapshot.docs[0];
+        const license = parseLicense({
+          id: licenseDoc.id,
+          ...licenseDoc.data(),
         });
-        console.log("✅ Licence Firebase validée:", licenseCode);
-      }
 
-      return { isValid, license };
+        const isValid =
+          license.isActive && license.currentUsages < license.maxUsages;
+
+        if (isValid) {
+          // Increment usage count
+          await updateDoc(doc(db, "licenses", license.id), {
+            currentUsages: license.currentUsages + 1,
+          });
+          console.log("✅ Licence Firebase validée:", licenseCode);
+        }
+
+        return { isValid, license };
+      } else {
+        // localStorage fallback
+        const license = licenses.find(
+          (l) => l.code === licenseCode && l.productId === productId,
+        );
+
+        if (!license) {
+          return { isValid: false };
+        }
+
+        const isValid =
+          license.isActive && license.currentUsages < license.maxUsages;
+
+        if (isValid) {
+          // Increment usage count in localStorage
+          const updatedLicenses = licenses.map((l) =>
+            l.id === license.id
+              ? { ...l, currentUsages: l.currentUsages + 1 }
+              : l,
+          );
+          setLicenses(updatedLicenses);
+          localStorage.setItem("licenses", JSON.stringify(updatedLicenses));
+          console.log("✅ Licence validée en mode offline:", licenseCode);
+        }
+
+        return { isValid, license };
+      }
     } catch (error) {
       console.error("Error validating license:", error);
       return { isValid: false };
@@ -196,7 +300,10 @@ export const useLicenses = () => {
 
   const fetchLicenses = async () => {
     // This function is kept for compatibility but real-time updates handle the data
-    console.log("📋 Licences gérées en temps réel via Firebase");
+    console.log(
+      "📋 Licences gérées en temps réel via",
+      shouldUseFirebase() ? "Firebase" : "localStorage",
+    );
   };
 
   return {

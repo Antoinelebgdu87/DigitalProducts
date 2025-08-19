@@ -3,6 +3,10 @@ import { useAuth } from "@/context/AuthContext";
 import { useMaintenance } from "@/context/MaintenanceContext";
 import { useProducts } from "@/hooks/useProducts";
 import { useLicenses } from "@/hooks/useLicenses";
+import { useModeration } from "@/hooks/useModeration";
+import { useComments } from "@/hooks/useComments";
+import { useAdminMode } from "@/context/AdminModeContext";
+import HeaderLogo from "@/components/HeaderLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,6 +56,12 @@ import {
   Edit,
   FileText,
   Link as LinkIcon,
+  AlertTriangle,
+  Clock,
+  MessageSquare,
+  Store,
+  Crown,
+  Timer,
 } from "lucide-react";
 import SimpleStarsBackground from "@/components/SimpleStarsBackground";
 import { toast } from "sonner";
@@ -77,6 +87,15 @@ const AdminDashboard: React.FC = () => {
     loading: licensesLoading,
   } = useLicenses();
   const { users, banUser, addWarning, updateUserRole } = useUser();
+  const {
+    moderationActions,
+    moderateDeleteProduct,
+    moderateDeleteComment,
+    getUserProducts,
+    getModerationStats,
+  } = useModeration();
+  const { adminMode, timerSettings, updateTimerSettings } = useAdminMode();
+  const { comments: allComments } = useComments();
 
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
@@ -116,10 +135,23 @@ const AdminDashboard: React.FC = () => {
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [selectedUserRole, setSelectedUserRole] = useState<
-    "user" | "shop_access" | "admin"
+    "user" | "shop_access" | "partner" | "admin"
   >("user");
   const [banReason, setBanReason] = useState("");
   const [warnReason, setWarnReason] = useState("");
+
+  // Moderation states
+  const [showModerationDialog, setShowModerationDialog] = useState(false);
+  const [moderationTarget, setModerationTarget] = useState<{
+    id: string;
+    type: "product" | "comment";
+    title: string;
+  } | null>(null);
+  const [moderationReason, setModerationReason] = useState("");
+
+  // Timer settings states
+  const [showTimerDialog, setShowTimerDialog] = useState(false);
+  const [tempTimerSettings, setTempTimerSettings] = useState(timerSettings);
 
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -318,6 +350,40 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Moderation handlers
+  const handleModerateDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!moderationTarget || !moderationReason.trim()) return;
+
+    try {
+      if (moderationTarget.type === "product") {
+        await moderateDeleteProduct(moderationTarget.id, moderationReason);
+        toast.success("Produit supprimé avec succès");
+      } else if (moderationTarget.type === "comment") {
+        await moderateDeleteComment(moderationTarget.id, moderationReason);
+        toast.success("Commentaire supprimé avec succès");
+      }
+
+      setShowModerationDialog(false);
+      setModerationTarget(null);
+      setModerationReason("");
+    } catch (error) {
+      toast.error("Erreur lors de la suppression");
+    }
+  };
+
+  // Timer settings handlers
+  const handleUpdateTimers = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await updateTimerSettings(tempTimerSettings);
+      toast.success("Paramètres de timer mis à jour");
+      setShowTimerDialog(false);
+    } catch (error) {
+      toast.error("Erreur lors de la mise à jour des timers");
+    }
+  };
+
   const activeLicenses = getActiveLicenses();
 
   const getCategoryIcon = (category: string) => {
@@ -365,6 +431,8 @@ const AdminDashboard: React.FC = () => {
         return "Admin";
       case "shop_access":
         return "Boutique";
+      case "partner":
+        return "Partenaire";
       case "user":
       default:
         return "Utilisateur";
@@ -377,6 +445,8 @@ const AdminDashboard: React.FC = () => {
         return "bg-red-600 text-white";
       case "shop_access":
         return "bg-purple-600 text-white";
+      case "partner":
+        return "bg-yellow-600 text-white";
       case "user":
       default:
         return "bg-gray-600 text-gray-200";
@@ -392,25 +462,24 @@ const AdminDashboard: React.FC = () => {
         <header className="border-b border-gray-800/50 bg-black/20 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
+              <HeaderLogo />
               <div className="flex items-center space-x-4">
-                <Shield className="w-8 h-8 text-red-500" />
-                <div>
-                  <h1 className="text-xl font-semibold text-white">
-                    Admin Panel
-                  </h1>
-                  <p className="text-gray-400 text-xs">
-                    Products and licenses management
-                  </p>
+                {/* Moderation stats */}
+                <div className="flex items-center space-x-2 text-sm text-gray-400">
+                  <Shield className="w-4 h-4" />
+                  <span>
+                    {getModerationStats().todayActions} actions aujourd'hui
+                  </span>
                 </div>
+                <Button
+                  onClick={logout}
+                  variant="outline"
+                  className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
               </div>
-              <Button
-                onClick={logout}
-                variant="outline"
-                className="border-red-500/50 text-red-400 hover:bg-red-500/10"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </Button>
             </div>
           </div>
         </header>
@@ -418,13 +487,20 @@ const AdminDashboard: React.FC = () => {
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
           <Tabs defaultValue="products" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5 bg-gray-900/50">
+            <TabsList className="grid w-full grid-cols-6 bg-gray-900/50">
               <TabsTrigger
                 value="products"
                 className="data-[state=active]:bg-red-600"
               >
                 <Package className="w-4 h-4 mr-2" />
                 Products
+              </TabsTrigger>
+              <TabsTrigger
+                value="moderation"
+                className="data-[state=active]:bg-red-600"
+              >
+                <Shield className="w-4 h-4 mr-2" />
+                Modération
               </TabsTrigger>
               <TabsTrigger
                 value="users"
@@ -434,11 +510,11 @@ const AdminDashboard: React.FC = () => {
                 Users
               </TabsTrigger>
               <TabsTrigger
-                value="prices"
+                value="timers"
                 className="data-[state=active]:bg-red-600"
               >
-                <Euro className="w-4 h-4 mr-2" />
-                Prix
+                <Timer className="w-4 h-4 mr-2" />
+                Timers
               </TabsTrigger>
               <TabsTrigger
                 value="licenses"
@@ -1305,6 +1381,301 @@ const AdminDashboard: React.FC = () => {
               </div>
             </TabsContent>
 
+            {/* Moderation Tab */}
+            <TabsContent value="moderation" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-white">
+                    Modération & Contrôle
+                  </h2>
+                  <p className="text-gray-400 text-sm">
+                    {getModerationStats().totalActions} action(s) au total •{" "}
+                    {getModerationStats().todayActions} aujourd'hui
+                  </p>
+                </div>
+              </div>
+
+              {/* Moderation Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-red-400">
+                      {getModerationStats().deletedProducts}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      Produits supprimés
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-orange-400">
+                      {getModerationStats().deletedComments}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      Commentaires supprimés
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-purple-400">
+                      {getModerationStats().bannedUsers}
+                    </div>
+                    <div className="text-sm text-gray-400">
+                      Utilisateurs bannis
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-yellow-400">
+                      {getModerationStats().warnedUsers}
+                    </div>
+                    <div className="text-sm text-gray-400">Avertissements</div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Recent Moderation Actions */}
+              <Card className="border-gray-800 bg-gray-900/50">
+                <CardHeader>
+                  <CardTitle className="text-white">Actions récentes</CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Historique des actions de modération
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {moderationActions.slice(0, 10).map((action) => (
+                      <div
+                        key={action.id}
+                        className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg"
+                      >
+                        <div className="flex items-center space-x-3">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              action.type === "delete_product"
+                                ? "bg-red-600"
+                                : action.type === "delete_comment"
+                                  ? "bg-orange-600"
+                                  : action.type === "ban_user"
+                                    ? "bg-purple-600"
+                                    : "bg-yellow-600"
+                            }`}
+                          >
+                            {action.type === "delete_product" && (
+                              <Package className="w-4 h-4 text-white" />
+                            )}
+                            {action.type === "delete_comment" && (
+                              <MessageSquare className="w-4 h-4 text-white" />
+                            )}
+                            {action.type === "ban_user" && (
+                              <User className="w-4 h-4 text-white" />
+                            )}
+                            {action.type === "warn_user" && (
+                              <AlertTriangle className="w-4 h-4 text-white" />
+                            )}
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-medium">
+                              {action.type === "delete_product" &&
+                                "Produit supprimé"}
+                              {action.type === "delete_comment" &&
+                                "Commentaire supprimé"}
+                              {action.type === "ban_user" &&
+                                "Utilisateur banni"}
+                              {action.type === "warn_user" &&
+                                "Avertissement envoyé"}
+                            </p>
+                            <p className="text-gray-400 text-xs">
+                              Par {action.moderatorUsername} •{" "}
+                              {formatDate(action.createdAt)}
+                            </p>
+                            <p className="text-gray-400 text-xs">
+                              Raison: {action.reason}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {moderationActions.length === 0 && (
+                      <div className="text-center py-8">
+                        <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-400">
+                          Aucune action de modération récente
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions */}
+              <Card className="border-gray-800 bg-gray-900/50">
+                <CardHeader>
+                  <CardTitle className="text-white">Actions rapides</CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Suppression rapide de contenu inapproprié
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Recent Products for Quick Moderation */}
+                    <div>
+                      <h4 className="text-white font-medium mb-3">
+                        Produits récents
+                      </h4>
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {products.slice(0, 5).map((product) => (
+                          <div
+                            key={product.id}
+                            className="flex items-center justify-between p-2 bg-gray-800/30 rounded"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <p className="text-white text-sm font-medium truncate">
+                                {product.title}
+                              </p>
+                              <p className="text-gray-400 text-xs">
+                                Par {product.createdByUsername || "Inconnu"} •{" "}
+                                {formatDate(product.createdAt)}
+                              </p>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setModerationTarget({
+                                  id: product.id,
+                                  type: "product",
+                                  title: product.title,
+                                });
+                                setShowModerationDialog(true);
+                              }}
+                              className="border-red-700 text-red-400 hover:bg-red-500/10 ml-2"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Recent Comments for Quick Moderation */}
+                    <div>
+                      <h4 className="text-white font-medium mb-3">
+                        Commentaires récents
+                      </h4>
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {allComments?.slice(0, 5).map((comment) => (
+                          <div
+                            key={comment.id}
+                            className="flex items-center justify-between p-2 bg-gray-800/30 rounded"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <p className="text-white text-sm truncate">
+                                {comment.content}
+                              </p>
+                              <p className="text-gray-400 text-xs">
+                                Par {comment.username} •{" "}
+                                {formatDate(comment.createdAt)}
+                              </p>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setModerationTarget({
+                                  id: comment.id,
+                                  type: "comment",
+                                  title: comment.content.slice(0, 50) + "...",
+                                });
+                                setShowModerationDialog(true);
+                              }}
+                              className="border-red-700 text-red-400 hover:bg-red-500/10 ml-2"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                        {(!allComments || allComments.length === 0) && (
+                          <div className="text-center py-4">
+                            <p className="text-gray-400 text-sm">
+                              Aucun commentaire récent
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Moderation Dialog */}
+              <Dialog
+                open={showModerationDialog}
+                onOpenChange={setShowModerationDialog}
+              >
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Supprimer{" "}
+                      {moderationTarget?.type === "product"
+                        ? "le produit"
+                        : "le commentaire"}
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      "{moderationTarget?.title}"
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleModerateDelete} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="moderationReason" className="text-white">
+                        Raison de la suppression
+                      </Label>
+                      <Textarea
+                        id="moderationReason"
+                        value={moderationReason}
+                        onChange={(e) => setModerationReason(e.target.value)}
+                        className="bg-gray-800 border-gray-700 text-white"
+                        placeholder="Expliquez pourquoi ce contenu est supprimé..."
+                        required
+                        rows={3}
+                      />
+                    </div>
+                    <div className="bg-red-900/50 border border-red-700 rounded p-3">
+                      <p className="text-red-200 text-sm">
+                        <strong>Attention:</strong> Cette action est
+                        irréversible et sera enregistrée dans l'historique de
+                        modération.
+                      </p>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowModerationDialog(false);
+                          setModerationTarget(null);
+                          setModerationReason("");
+                        }}
+                        className="border-gray-700"
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-red-600 hover:bg-red-700"
+                        disabled={!moderationReason.trim()}
+                      >
+                        Supprimer définitivement
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </TabsContent>
+
             {/* Users Tab */}
             <TabsContent value="users" className="space-y-6">
               <div>
@@ -1513,7 +1884,7 @@ const AdminDashboard: React.FC = () => {
                       <Select
                         value={selectedUserRole}
                         onValueChange={(
-                          value: "user" | "shop_access" | "admin",
+                          value: "user" | "shop_access" | "partner" | "admin",
                         ) => setSelectedUserRole(value)}
                       >
                         <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
@@ -1528,8 +1899,14 @@ const AdminDashboard: React.FC = () => {
                           </SelectItem>
                           <SelectItem value="shop_access">
                             <div className="flex items-center space-x-2">
-                              <Package className="w-4 h-4" />
+                              <Store className="w-4 h-4" />
                               <span>Accès Boutique</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="partner">
+                            <div className="flex items-center space-x-2">
+                              <Crown className="w-4 h-4" />
+                              <span>Partenaire</span>
                             </div>
                           </SelectItem>
                           <SelectItem value="admin">
@@ -1547,7 +1924,9 @@ const AdminDashboard: React.FC = () => {
                         {selectedUserRole === "user" &&
                           " Accès utilisateur standard"}
                         {selectedUserRole === "shop_access" &&
-                          " Peut uploader et gérer ses propres produits"}
+                          " Peut uploader et gérer ses propres produits (avec cooldown)"}
+                        {selectedUserRole === "partner" &&
+                          " Partenaire officiel - Peut uploader sans restrictions et titre custom"}
                         {selectedUserRole === "admin" &&
                           " Accès total à l'administration"}
                       </p>
@@ -1628,106 +2007,266 @@ const AdminDashboard: React.FC = () => {
               </Dialog>
             </TabsContent>
 
-            {/* Prix Tab */}
-            <TabsContent value="prices" className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white">
-                  Gestion des Prix
-                </h2>
-                <p className="text-gray-400">
-                  Modifiez les prix et paramètres de vos produits payants
-                </p>
+            {/* Timers Tab */}
+            <TabsContent value="timers" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-white">
+                    Gestion des Timers
+                  </h2>
+                  <p className="text-gray-400 text-sm">
+                    Configurez les cooldowns pour les actions utilisateur
+                  </p>
+                </div>
+                <Button
+                  onClick={() => {
+                    setTempTimerSettings(timerSettings);
+                    setShowTimerDialog(true);
+                  }}
+                  className="bg-purple-600 hover:bg-purple-700"
+                >
+                  <Settings className="w-4 h-4 mr-2" />
+                  Modifier les timers
+                </Button>
               </div>
 
-              <div className="grid gap-4">
-                {products
-                  .filter((product) => product.type === "paid")
-                  .map((product) => (
-                    <Card
-                      key={product.id}
-                      className="border-gray-800 bg-gray-900/50"
-                    >
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-16 h-16 rounded-lg bg-gray-800 flex items-center justify-center overflow-hidden">
-                              {product.imageUrl ? (
-                                <img
-                                  src={product.imageUrl}
-                                  alt={product.title}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <Package className="w-6 h-6 text-gray-400" />
-                              )}
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-semibold text-white">
-                                {product.title}
-                              </h3>
-                              <div className="flex items-center space-x-4 mt-2">
-                                <Badge
-                                  variant="outline"
-                                  className="border-yellow-500 text-yellow-400"
-                                >
-                                  <Euro className="w-3 h-3 mr-1" />
-                                  {product.price?.toFixed(2) || "0.00"}
-                                </Badge>
-                                <Badge
-                                  variant="outline"
-                                  className="border-pink-500 text-pink-400"
-                                >
-                                  <Heart className="w-3 h-3 mr-1" />
-                                  {product.lives || 1} vies
-                                </Badge>
-                                <Badge
-                                  variant="outline"
-                                  className={
-                                    product.contentType === "link"
-                                      ? "border-blue-500 text-blue-400"
-                                      : "border-green-500 text-green-400"
-                                  }
-                                >
-                                  {product.contentType === "link" ? (
-                                    <LinkIcon className="w-3 h-3 mr-1" />
-                                  ) : (
-                                    <FileText className="w-3 h-3 mr-1" />
-                                  )}
-                                  {product.contentType === "link"
-                                    ? "Lien"
-                                    : "Bloc-notes"}
-                                </Badge>
+              {/* Current Timer Settings */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center">
+                      <Store className="w-5 h-5 mr-2 text-blue-400" />
+                      Cooldown Produits Boutique
+                    </CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Temps d'attente entre créations de produits pour les
+                      utilisateurs "Boutique"
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-blue-400">
+                        {timerSettings.shopProductCooldown}
+                      </div>
+                      <div className="text-sm text-gray-400">minutes</div>
+                    </div>
+                    <div className="mt-4 p-3 bg-blue-900/20 border border-blue-700/30 rounded">
+                      <p className="text-blue-200 text-xs">
+                        Les utilisateurs avec le rôle "Boutique" doivent
+                        attendre ce délai entre chaque création de produit. Les
+                        "Partners" et "Admins" ne sont pas affectés.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardHeader>
+                    <CardTitle className="text-white flex items-center">
+                      <MessageSquare className="w-5 h-5 mr-2 text-orange-400" />
+                      Cooldown Commentaires
+                    </CardTitle>
+                    <CardDescription className="text-gray-400">
+                      Temps d'attente entre commentaires pour tous les
+                      utilisateurs
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-orange-400">
+                        {timerSettings.commentCooldown}
+                      </div>
+                      <div className="text-sm text-gray-400">minutes</div>
+                    </div>
+                    <div className="mt-4 p-3 bg-orange-900/20 border border-orange-700/30 rounded">
+                      <p className="text-orange-200 text-xs">
+                        Tous les utilisateurs doivent attendre ce délai entre
+                        chaque commentaire. Aide à prévenir le spam de
+                        commentaires.
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Live Timer Status */}
+              <Card className="border-gray-800 bg-gray-900/50">
+                <CardHeader>
+                  <CardTitle className="text-white flex items-center">
+                    <Clock className="w-5 h-5 mr-2 text-green-400" />
+                    Statut des timers en temps réel
+                  </CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Aperçu des utilisateurs actuellement en cooldown
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {users
+                      ?.filter((user) => user.role === "shop_access")
+                      .map((user) => {
+                        const userProducts = products.filter(
+                          (p) => p.createdBy === user.id,
+                        );
+                        const lastProduct = userProducts.sort(
+                          (a, b) =>
+                            b.createdAt.getTime() - a.createdAt.getTime(),
+                        )[0];
+                        const canCreate =
+                          !lastProduct ||
+                          (new Date().getTime() -
+                            lastProduct.createdAt.getTime()) /
+                            (1000 * 60) >=
+                            timerSettings.shopProductCooldown;
+                        const remaining = lastProduct
+                          ? Math.max(
+                              0,
+                              timerSettings.shopProductCooldown -
+                                (new Date().getTime() -
+                                  lastProduct.createdAt.getTime()) /
+                                  (1000 * 60),
+                            )
+                          : 0;
+
+                        return (
+                          <div
+                            key={user.id}
+                            className="flex items-center justify-between p-3 bg-gray-800/30 rounded"
+                          >
+                            <div className="flex items-center space-x-3">
+                              <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center">
+                                <User className="w-4 h-4 text-white" />
+                              </div>
+                              <div>
+                                <p className="text-white text-sm font-medium">
+                                  {user.username}
+                                </p>
+                                <p className="text-gray-400 text-xs">
+                                  {userProducts.length} produit(s) créé(s)
+                                </p>
                               </div>
                             </div>
+                            <div className="text-right">
+                              {canCreate ? (
+                                <Badge className="bg-green-600 text-white">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  Disponible
+                                </Badge>
+                              ) : (
+                                <Badge
+                                  variant="outline"
+                                  className="border-orange-500 text-orange-400"
+                                >
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  {Math.ceil(remaining)} min
+                                </Badge>
+                              )}
+                            </div>
                           </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditProduct(product)}
-                            className="border-blue-700 text-blue-400 hover:bg-blue-500/10"
-                          >
-                            <Edit className="w-4 h-4 mr-2" />
-                            Modifier
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                {products.filter((product) => product.type === "paid")
-                  .length === 0 && (
-                  <Card className="border-gray-800 bg-gray-900/50">
-                    <CardContent className="p-12 text-center">
-                      <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-white mb-2">
-                        Aucun produit payant
-                      </h3>
-                      <p className="text-gray-400">
-                        Créez des produits payants pour les gérer ici
+                        );
+                      })}
+                    {!users?.filter((user) => user.role === "shop_access")
+                      .length && (
+                      <div className="text-center py-8">
+                        <Clock className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-400">
+                          Aucun utilisateur "Boutique" trouvé
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Timer Settings Dialog */}
+              <Dialog open={showTimerDialog} onOpenChange={setShowTimerDialog}>
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Modifier les paramètres de timer
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      Ajustez les cooldowns pour contrôler la fréquence des
+                      actions
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleUpdateTimers} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="shopCooldown" className="text-white">
+                        Cooldown produits boutique (minutes)
+                      </Label>
+                      <Input
+                        id="shopCooldown"
+                        type="number"
+                        min="1"
+                        max="1440"
+                        value={tempTimerSettings.shopProductCooldown}
+                        onChange={(e) =>
+                          setTempTimerSettings({
+                            ...tempTimerSettings,
+                            shopProductCooldown: parseInt(e.target.value) || 1,
+                          })
+                        }
+                        className="bg-gray-800 border-gray-700 text-white"
+                      />
+                      <p className="text-gray-400 text-xs">
+                        Entre 1 minute et 24 heures (1440 minutes)
                       </p>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="commentCooldown" className="text-white">
+                        Cooldown commentaires (minutes)
+                      </Label>
+                      <Input
+                        id="commentCooldown"
+                        type="number"
+                        min="1"
+                        max="60"
+                        value={tempTimerSettings.commentCooldown}
+                        onChange={(e) =>
+                          setTempTimerSettings({
+                            ...tempTimerSettings,
+                            commentCooldown: parseInt(e.target.value) || 1,
+                          })
+                        }
+                        className="bg-gray-800 border-gray-700 text-white"
+                      />
+                      <p className="text-gray-400 text-xs">
+                        Entre 1 minute et 1 heure (60 minutes)
+                      </p>
+                    </div>
+
+                    <div className="bg-yellow-900/50 border border-yellow-700 rounded p-3">
+                      <p className="text-yellow-200 text-sm">
+                        <strong>Important:</strong> Les modifications prendront
+                        effet immédiatement. Les timers en cours ne seront pas
+                        affectés.
+                      </p>
+                    </div>
+
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowTimerDialog(false);
+                          setTempTimerSettings(timerSettings);
+                        }}
+                        className="border-gray-700"
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-purple-600 hover:bg-purple-700"
+                      >
+                        Appliquer les modifications
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
 
             {/* Licenses Tab */}

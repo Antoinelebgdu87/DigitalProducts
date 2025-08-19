@@ -22,6 +22,9 @@ import ModernProductCard from "./ModernProductCard";
 import UsernameModal from "./UsernameModal";
 import BanModal from "./BanModal";
 import WarningModal from "./WarningModal";
+import UserRoleBadge from "./UserRoleBadge";
+import RoleUpdateNotification from "./RoleUpdateNotification";
+import FloatingRoleBadge from "./FloatingRoleBadge";
 import { useUser } from "@/context/UserContext";
 
 const ModernHomePage: React.FC = () => {
@@ -103,6 +106,8 @@ const ModernHomePage: React.FC = () => {
   return (
     <div className="min-h-screen relative overflow-hidden">
       <SimpleStarsBackground />
+      <RoleUpdateNotification />
+      <FloatingRoleBadge />
 
       {/* Navigation */}
       <motion.nav
@@ -118,35 +123,11 @@ const ModernHomePage: React.FC = () => {
             </div>
 
             <div className="flex items-center space-x-3">
-              {currentUser && (
-                <div className="flex items-center space-x-2">
-                  <div className="flex items-center space-x-2 px-3 py-1 bg-white/10 rounded-full border border-white/20">
-                    <User className="w-4 h-4 text-white" />
-                    <span className="text-white text-sm font-medium">
-                      {currentUser.username}
-                    </span>
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className={
-                      currentUser.role === "admin"
-                        ? "border-red-500 text-red-400 bg-red-500/10"
-                        : currentUser.role === "shop_access"
-                          ? "border-purple-500 text-purple-400 bg-purple-500/10"
-                          : "border-gray-500 text-gray-400 bg-gray-500/10"
-                    }
-                  >
-                    {currentUser.role === "admin"
-                      ? "Admin"
-                      : currentUser.role === "shop_access"
-                        ? "Boutique"
-                        : "Utilisateur"}
-                  </Badge>
-                </div>
-              )}
+              {currentUser && <UserRoleBadge />}
               <div className="flex items-center space-x-2">
                 {currentUser &&
                   (currentUser.role === "shop_access" ||
+                    currentUser.role === "partner" ||
                     currentUser.role === "admin") && (
                     <Link to="/shop">
                       <motion.div

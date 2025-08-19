@@ -1,3 +1,4 @@
+import React from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,6 +10,8 @@ import {
   useMaintenance,
 } from "@/context/MaintenanceContext";
 import { UserProvider } from "@/context/UserContext";
+import { AdminModeProvider } from "@/context/AdminModeContext";
+import { shouldUseFirebase } from "@/lib/firebase";
 import ModernHomePage from "./components/ModernHomePage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -30,6 +33,22 @@ const AppContent = () => {
     const { isMaintenanceMode, maintenanceMessage, isLoading } =
       useMaintenance();
     const { isAuthenticated } = useAuth();
+
+    // Show Firebase status
+    React.useEffect(() => {
+      if (!shouldUseFirebase()) {
+        console.log(
+          "🔧 Mode hors ligne activé - Les données sont stockées localement",
+        );
+        console.log(
+          "💡 Pour activer Firebase, configurez les variables d'environnement dans .env",
+        );
+      } else {
+        console.log(
+          "🔥 Firebase connecté - Synchronisation en temps réel active",
+        );
+      }
+    }, []);
 
     // Show loading state while maintenance context is initializing
     if (isLoading) {
@@ -106,13 +125,15 @@ const App = () => (
       <Sonner position="bottom-right" />
       <BrowserRouter>
         <AuthProvider>
-          <MaintenanceProvider>
-            <UserProvider>
-              <div className="dark min-h-screen bg-background text-foreground">
-                <AppContent />
-              </div>
-            </UserProvider>
-          </MaintenanceProvider>
+          <AdminModeProvider>
+            <MaintenanceProvider>
+              <UserProvider>
+                <div className="dark min-h-screen bg-background text-foreground">
+                  <AppContent />
+                </div>
+              </UserProvider>
+            </MaintenanceProvider>
+          </AdminModeProvider>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
