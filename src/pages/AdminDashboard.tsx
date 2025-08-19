@@ -413,13 +413,17 @@ const AdminDashboard: React.FC = () => {
   const handleDeleteProduct = async () => {
     if (!productToDelete) return;
 
+    console.log("🔄 Tentative de suppression du produit:", productToDelete);
+
     try {
+      console.log("📋 Produits avant suppression:", products.length);
       await deleteProduct(productToDelete.id);
+      console.log("✅ Produit supprimé avec succès:", productToDelete.id);
       toast.success(`Produit "${productToDelete.title}" supprimé avec succès`);
       setShowDeleteDialog(false);
       setProductToDelete(null);
     } catch (error) {
-      console.error("Erreur lors de la suppression:", error);
+      console.error("❌ Erreur lors de la suppression:", error);
       toast.error("Erreur lors de la suppression du produit");
     }
   };
@@ -1488,7 +1492,7 @@ const AdminDashboard: React.FC = () => {
                     Modération & Contrôle
                   </h2>
                   <p className="text-gray-400 text-sm">
-                    {getModerationStats().totalActions} action(s) au total •{" "}
+                    {getModerationStats().totalActions} action(s) au total ��{" "}
                     {getModerationStats().todayActions} aujourd'hui
                   </p>
                 </div>
