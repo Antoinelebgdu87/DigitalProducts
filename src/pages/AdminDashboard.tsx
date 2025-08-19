@@ -443,8 +443,13 @@ const AdminDashboard: React.FC = () => {
       // Note: Pas besoin de refetchProducts() car Firebase listener met à jour automatiquement
 
       toast.success(`Produit "${productToDelete.title}" supprimé avec succès`);
-      setShowDeleteDialog(false);
-      setProductToDelete(null);
+
+      // Délai court pour voir la mise à jour Firebase en temps réel
+      setTimeout(() => {
+        setShowDeleteDialog(false);
+        setProductToDelete(null);
+        console.log("✅ Dialog fermé, produits actuels:", products.length);
+      }, 500);
 
       console.log("✅ Interface mise à jour après suppression");
     } catch (error) {
