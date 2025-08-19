@@ -17,15 +17,15 @@ import {
   orderBy as fsOrderBy,
 } from "firebase/firestore";
 
-// Firebase configuration - Configuration exacte fournie par l'utilisateur
+// Firebase configuration - Configuration mise à jour avec le projet test-a4251
 const firebaseConfig = {
-  apiKey: "AIzaSyDMsFeXMVm61NlmN8QBk7UmH1ngPFW8TWo",
-  authDomain: "keysystem-d0b86.firebaseapp.com",
-  projectId: "keysystem-d0b86",
-  storageBucket: "keysystem-d0b86.firebasestorage.app",
-  messagingSenderId: "1012783086146",
-  appId: "1:1012783086146:web:25b791444539804f2a4bdb",
-  measurementId: "G-LWKWR0VQKM"
+  apiKey: "AIzaSyACAkQ5Q68eKdD5vpFZU7-h8L-qeFlYnDI",
+  authDomain: "test-a4251.firebaseapp.com",
+  projectId: "test-a4251",
+  storageBucket: "test-a4251.firebasestorage.app",
+  messagingSenderId: "75154939894",
+  appId: "1:75154939894:web:0d93f0eaa0e31bdbe5f1d7",
+  measurementId: "G-THRZRBSW9S"
 };
 
 // Firebase sera toujours utilisé avec cette configuration
