@@ -11,7 +11,7 @@ import {
   onSnapshot,
   Timestamp,
 } from "firebase/firestore";
-import { db, shouldUseFirebase, safeFirebaseOperation } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 import { Product } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import { useAdminMode } from "@/context/AdminModeContext";
