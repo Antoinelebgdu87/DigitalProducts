@@ -357,6 +357,7 @@ const AdminDashboard: React.FC = () => {
 
     try {
       await unbanUser(selectedUserId);
+      await logModerationAction("unban_user", selectedUserId, "user", "Utilisateur débanni par l'administration");
       toast.success("Utilisateur débanni avec succès");
       setShowUnbanDialog(false);
       setSelectedUserId("");
@@ -2048,7 +2049,7 @@ const AdminDashboard: React.FC = () => {
                   <form onSubmit={handleUnbanUser} className="space-y-4">
                     <div className="bg-green-900/50 border border-green-700 rounded p-3">
                       <p className="text-green-200 text-sm">
-                        <strong>Confirmation:</strong> Cette action débannira d��finitivement l'utilisateur.
+                        <strong>Confirmation:</strong> Cette action débannira définitivement l'utilisateur.
                       </p>
                     </div>
                     <DialogFooter>
