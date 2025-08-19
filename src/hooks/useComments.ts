@@ -42,39 +42,66 @@ export const useComments = (productId?: string) => {
     }
 
     setLoading(true);
-    // Requête simplifiée sans orderBy pour éviter l'index composite
-    const commentsQuery = query(
-      collection(db, "comments"),
-      where("productId", "==", productId)
-    );
 
-    const unsubscribe = onSnapshot(
-      commentsQuery,
-      (snapshot) => {
-        try {
-          const commentsData = snapshot.docs.map((doc) =>
-            parseComment({ id: doc.id, ...doc.data() })
-          );
-          // Trier côté client pour éviter l'index composite
-          const sortedComments = commentsData.sort((a, b) =>
-            b.createdAt.getTime() - a.createdAt.getTime()
-          );
-          setComments(sortedComments);
-          setLoading(false);
-        } catch (error) {
-          console.error("Erreur lors du chargement des commentaires:", error);
-          setComments([]);
-          setLoading(false);
-        }
-      },
-      (error) => {
-        console.error("Erreur listener commentaires:", error);
+    const loadComments = () => {
+      try {
+        // Requête simplifiée sans orderBy pour éviter l'index composite
+        const commentsQuery = query(
+          collection(db, "comments"),
+          where("productId", "==", productId)
+        );
+
+        const unsubscribe = onSnapshot(
+          commentsQuery,
+          (snapshot) => {
+            try {
+              const commentsData = snapshot.docs.map((doc) =>
+                parseComment({ id: doc.id, ...doc.data() })
+              );
+              // Trier côté client pour éviter l'index composite
+              const sortedComments = commentsData.sort((a, b) =>
+                b.createdAt.getTime() - a.createdAt.getTime()
+              );
+              setComments(sortedComments);
+              setLoading(false);
+            } catch (error) {
+              console.error("Erreur lors du parsing des commentaires:", error);
+              setComments([]);
+              setLoading(false);
+            }
+          },
+          (error) => {
+            console.error("Erreur listener commentaires:", error);
+
+            // Gestion spécifique des erreurs réseau
+            if (error.code === 'unavailable' || error.message.includes('Failed to fetch')) {
+              console.log("🔄 Problème de connectivité détecté, mode offline activé");
+              // En cas d'erreur réseau, on garde un état vide mais on arrête le loading
+              setComments([]);
+              setLoading(false);
+            } else {
+              // Pour autres erreurs, on garde les commentaires vides
+              setComments([]);
+              setLoading(false);
+            }
+          }
+        );
+
+        return unsubscribe;
+      } catch (error) {
+        console.error("Erreur lors de l'initialisation des commentaires:", error);
         setComments([]);
         setLoading(false);
+        return () => {}; // Retourne une fonction vide si erreur
       }
-    );
+    };
 
-    return () => unsubscribe();
+    const unsubscribe = loadComments();
+    return () => {
+      if (typeof unsubscribe === 'function') {
+        unsubscribe();
+      }
+    };
   }, [productId]);
 
   const addComment = async (productId: string, content: string): Promise<void> => {
