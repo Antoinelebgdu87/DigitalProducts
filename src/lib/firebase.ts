@@ -41,10 +41,22 @@ let analytics: any = null;
 
 try {
   if (hasFirebaseConfig) {
+    console.log("🚀 Initialisation Firebase en cours...");
+    console.log("📋 Configuration:", {
+      projectId: firebaseConfig.projectId,
+      authDomain: firebaseConfig.authDomain,
+      hasApiKey: !!firebaseConfig.apiKey,
+    });
+
     // Initialize Firebase with the new configuration
     app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
+    console.log("✅ Firebase App initialisé");
 
+    db = getFirestore(app);
+    console.log("✅ Firestore connecté");
+
+    // Temporairement désactiver Analytics pour éviter les erreurs
+    /*
     // Initialize Analytics if supported
     if (typeof window !== "undefined") {
       try {
@@ -54,6 +66,7 @@ try {
         console.warn("⚠️ Analytics initialization failed:", analyticsError);
       }
     }
+    */
 
     console.log(
       "🔥 Firebase initialized successfully with project:",
@@ -65,9 +78,19 @@ try {
       "⚠️ Firebase configuration not found. Running in offline mode with localStorage fallback.",
     );
   }
-} catch (error) {
+} catch (error: any) {
   console.error("❌ Firebase initialization failed:", error);
+  console.error("❌ Error details:", {
+    message: error.message,
+    code: error.code,
+    stack: error.stack
+  });
   console.warn("🔄 Switching to localStorage fallback mode");
+
+  // Force les variables à null pour être sûr
+  app = null;
+  db = null;
+  analytics = null;
 }
 
 export { db, analytics };
