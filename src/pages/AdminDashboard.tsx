@@ -70,8 +70,6 @@ import { Product } from "@/types";
 import { useUser } from "@/context/UserContext";
 
 const AdminDashboard: React.FC = () => {
-  console.log("🔥 Mode Firebase actuel:", shouldUseFirebase());
-
   const { logout } = useAuth();
   const { isMaintenanceMode, maintenanceMessage, setMaintenanceMode } =
     useMaintenance();
