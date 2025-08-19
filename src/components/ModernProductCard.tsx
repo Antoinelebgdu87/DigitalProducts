@@ -287,6 +287,20 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                 <MessageCircle className="w-4 h-4 mr-2" />
                 {comments.length} commentaire(s)
               </Button>
+
+              {/* Test button - to be removed */}
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  addTestComment();
+                }}
+                variant="outline"
+                className="w-full border-yellow-500/50 text-yellow-400 hover:bg-yellow-500/10 hover:border-yellow-400 transition-all duration-300"
+                size="sm"
+              >
+                🧪 Test Commentaire
+              </Button>
             </div>
           </div>
 
