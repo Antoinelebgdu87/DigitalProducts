@@ -226,12 +226,22 @@ export const useProducts = () => {
         console.log("🗑️ Produit Firebase supprimé:", productId);
       } else {
         console.log("💾 Mode localStorage - suppression locale...");
-        const updatedProducts = products.filter((p) => p.id !== productId);
-        console.log("📋 Produits après filtrage:", updatedProducts.length, "produits restants");
-        setProducts(updatedProducts);
-        localStorage.setItem("products", JSON.stringify(updatedProducts));
+        const currentProducts = products.filter((p) => p.id !== productId);
+        console.log("📋 Produits après filtrage:", currentProducts.length, "produits restants");
+
+        // Force immediate update
+        setProducts([...currentProducts]);
+        localStorage.setItem("products", JSON.stringify(currentProducts));
+
         console.log("🗑️ Produit supprimé en mode offline:", productId);
-        console.log("💾 localStorage mis à jour");
+        console.log("💾 localStorage mis à jour avec", currentProducts.length, "produits");
+
+        // Double check localStorage was updated
+        const stored = localStorage.getItem("products");
+        if (stored) {
+          const parsedStored = JSON.parse(stored);
+          console.log("✅ Vérification localStorage:", parsedStored.length, "produits stockés");
+        }
       }
     } catch (error) {
       console.error("❌ Error deleting product:", error);
