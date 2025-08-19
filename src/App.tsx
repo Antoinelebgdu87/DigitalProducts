@@ -64,6 +64,7 @@ const AppContent = () => {
             </ProtectedRoute>
           }
         />
+        <Route path="/shop" element={<ShopDashboard />} />
         <Route
           path="*"
           element={
