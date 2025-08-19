@@ -13,10 +13,14 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Product } from "@/types";
+import { useAuth } from "@/context/AuthContext";
+import { useAdminMode } from "@/context/AdminModeContext";
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const { userId, username, userRole } = useAuth();
+  const { canCreateProduct, getRemainingCooldown } = useAdminMode();
 
   // Helper function to convert Firestore data to Product objects
   const parseProduct = (productData: any): Product => {
@@ -132,16 +136,29 @@ export const useProducts = () => {
   }, []);
 
   const addProduct = async (
-    productData: Omit<Product, "id" | "createdAt">,
+    productData: Omit<Product, "id" | "createdAt" | "createdBy" | "createdByUsername">,
   ): Promise<void> => {
     try {
+      // Vérifier si l'utilisateur peut créer un produit (cooldown)
+      if (userRole === "shop_access") {
+        const userProducts = products.filter(p => p.createdBy === userId);
+        const lastProduct = userProducts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0];
+
+        if (lastProduct && !canCreateProduct(lastProduct.createdAt)) {
+          const remaining = getRemainingCooldown(lastProduct.createdAt);
+          throw new Error(`Vous devez attendre encore ${remaining} minute(s) avant de créer un nouveau produit.`);
+        }
+      }
+
       const newProduct = {
         ...productData,
+        createdBy: userId,
+        createdByUsername: username,
         createdAt: new Date(),
       };
 
       await addDoc(collection(db, "products"), productToFirestore(newProduct));
-      console.log("🎉 Nouveau produit Firebase créé:", productData.name);
+      console.log("🎉 Nouveau produit Firebase créé:", productData.title);
     } catch (error) {
       console.error("Error adding product:", error);
       throw error;
@@ -176,6 +193,33 @@ export const useProducts = () => {
     console.log("📋 Produits gérés en temps réel via Firebase");
   };
 
+  // Fonctions pour vérifier les permissions
+  const canUserCreateProduct = (): { canCreate: boolean; reason?: string } => {
+    if (!userId || !username) {
+      return { canCreate: false, reason: "Vous devez être connecté" };
+    }
+
+    if (!["admin", "shop_access", "partner"].includes(userRole)) {
+      return { canCreate: false, reason: "Vous n'avez pas les permissions nécessaires" };
+    }
+
+    if (userRole === "shop_access") {
+      const userProducts = products.filter(p => p.createdBy === userId);
+      const lastProduct = userProducts.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())[0];
+
+      if (lastProduct && !canCreateProduct(lastProduct.createdAt)) {
+        const remaining = getRemainingCooldown(lastProduct.createdAt);
+        return { canCreate: false, reason: `Cooldown: ${remaining} minute(s) restante(s)` };
+      }
+    }
+
+    return { canCreate: true };
+  };
+
+  const getUserProducts = (): Product[] => {
+    return products.filter(p => p.createdBy === userId);
+  };
+
   return {
     products,
     loading,
@@ -183,5 +227,7 @@ export const useProducts = () => {
     deleteProduct,
     updateProduct,
     refetch: fetchProducts,
+    canUserCreateProduct,
+    getUserProducts,
   };
 };
