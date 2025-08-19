@@ -216,18 +216,25 @@ export const useProducts = () => {
 
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
+      console.log("🔄 deleteProduct appelé avec ID:", productId);
+      console.log("📋 Produits actuels:", products.length);
+      console.log("🔥 shouldUseFirebase():", shouldUseFirebase());
+
       if (shouldUseFirebase()) {
+        console.log("🔥 Suppression Firebase...");
         await deleteDoc(doc(db, "products", productId));
         console.log("🗑️ Produit Firebase supprimé:", productId);
       } else {
-        // localStorage fallback
+        console.log("💾 Mode localStorage - suppression locale...");
         const updatedProducts = products.filter((p) => p.id !== productId);
+        console.log("📋 Produits après filtrage:", updatedProducts.length, "produits restants");
         setProducts(updatedProducts);
         localStorage.setItem("products", JSON.stringify(updatedProducts));
         console.log("🗑️ Produit supprimé en mode offline:", productId);
+        console.log("💾 localStorage mis à jour");
       }
     } catch (error) {
-      console.error("Error deleting product:", error);
+      console.error("❌ Error deleting product:", error);
       throw error;
     }
   };
