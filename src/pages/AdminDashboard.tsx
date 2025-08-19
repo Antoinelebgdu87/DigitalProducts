@@ -2137,6 +2137,7 @@ const AdminDashboard: React.FC = () => {
                           setShowBanDialog(false);
                           setBanReason("");
                           setBanDuration("permanent");
+                          setCustomBanHours(24);
                           setSelectedUserId("");
                         }}
                         className="border-gray-700"
