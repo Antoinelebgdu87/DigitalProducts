@@ -71,6 +71,8 @@ import { useUser } from "@/context/UserContext";
 import { shouldUseFirebase } from "@/lib/firebase";
 
 const AdminDashboard: React.FC = () => {
+  console.log("🔥 Mode Firebase actuel:", shouldUseFirebase());
+
   const { logout } = useAuth();
   const { isMaintenanceMode, maintenanceMessage, setMaintenanceMode } =
     useMaintenance();
