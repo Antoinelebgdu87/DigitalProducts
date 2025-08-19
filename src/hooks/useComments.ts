@@ -26,16 +26,9 @@ export const useComments = (productId?: string) => {
       productId: commentData.productId,
       userId: commentData.userId,
       username: commentData.username,
-      userAvatar: commentData.userAvatar || "",
+      userRole: commentData.userRole || "user", // Ajout du rôle utilisateur avec valeur par défaut
       content: commentData.content,
-      rating: commentData.rating || 0,
       createdAt: commentData.createdAt || Timestamp.now(),
-      isEdited: commentData.isEdited || false,
-      editedAt: commentData.editedAt || null,
-      likes: commentData.likes || 0,
-      likedBy: commentData.likedBy || [],
-      parentId: commentData.parentId || null,
-      replies: commentData.replies || [],
     };
   };
 
