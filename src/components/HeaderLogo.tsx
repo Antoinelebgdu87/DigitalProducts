@@ -110,25 +110,7 @@ const HeaderLogo: React.FC<HeaderLogoProps> = ({ className }) => {
   return (
     <TooltipProvider>
       <div className={`flex items-center space-x-4 ${className}`}>
-        <motion.div
-          className="relative"
-          whileHover={{ scale: 1.05 }}
-          transition={{ type: "spring", stiffness: 400, damping: 10 }}
-        >
-          {getLogoIcon()}
-
-          {/* Mode indicator for admins */}
-          {isAdmin() && (
-            <motion.div
-              className="absolute -top-1 -right-1 w-3 h-3 rounded-full"
-              animate={{
-                backgroundColor: adminMode.isShopMode ? "#a855f7" : "#ef4444",
-                scale: [1, 1.2, 1],
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-            />
-          )}
-        </motion.div>
+        <div />
 
         <div className="flex flex-col">
           <motion.h1
