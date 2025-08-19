@@ -115,7 +115,9 @@ const AdminDashboard: React.FC = () => {
   const [showWarnDialog, setShowWarnDialog] = useState(false);
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
-  const [selectedUserRole, setSelectedUserRole] = useState<"user" | "shop_access" | "admin">("user");
+  const [selectedUserRole, setSelectedUserRole] = useState<
+    "user" | "shop_access" | "admin"
+  >("user");
   const [banReason, setBanReason] = useState("");
   const [warnReason, setWarnReason] = useState("");
 
@@ -529,7 +531,10 @@ const AdminDashboard: React.FC = () => {
                           <Select
                             value={productForm.actionType}
                             onValueChange={(value: "download" | "discord") =>
-                              setProductForm({ ...productForm, actionType: value })
+                              setProductForm({
+                                ...productForm,
+                                actionType: value,
+                              })
                             }
                           >
                             <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
@@ -690,8 +695,8 @@ const AdminDashboard: React.FC = () => {
                         </Select>
                       </div>
                       {/* Champs conditionnels selon l'action type */}
-                      {productForm.actionType === "download" && (
-                        productForm.contentType === "link" ? (
+                      {productForm.actionType === "download" &&
+                        (productForm.contentType === "link" ? (
                           <div className="space-y-2">
                             <Label htmlFor="downloadUrl" className="text-white">
                               Download URL
@@ -730,13 +735,16 @@ const AdminDashboard: React.FC = () => {
                               required
                             />
                           </div>
-                        )
-                      )}
+                        ))}
 
                       {productForm.actionType === "discord" && (
                         <div className="space-y-2">
-                          <Label htmlFor="discordUrlRequired" className="text-white">
-                            Discord Server URL <span className="text-red-400">*</span>
+                          <Label
+                            htmlFor="discordUrlRequired"
+                            className="text-white"
+                          >
+                            Discord Server URL{" "}
+                            <span className="text-red-400">*</span>
                           </Label>
                           <Input
                             id="discordUrlRequired"
@@ -843,13 +851,19 @@ const AdminDashboard: React.FC = () => {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="edit-actionType" className="text-white">
+                          <Label
+                            htmlFor="edit-actionType"
+                            className="text-white"
+                          >
                             Action principale
                           </Label>
                           <Select
                             value={productForm.actionType}
                             onValueChange={(value: "download" | "discord") =>
-                              setProductForm({ ...productForm, actionType: value })
+                              setProductForm({
+                                ...productForm,
+                                actionType: value,
+                              })
                             }
                           >
                             <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
@@ -1016,8 +1030,8 @@ const AdminDashboard: React.FC = () => {
                         </Select>
                       </div>
                       {/* Champs conditionnels selon l'action type */}
-                      {productForm.actionType === "download" && (
-                        productForm.contentType === "link" ? (
+                      {productForm.actionType === "download" &&
+                        (productForm.contentType === "link" ? (
                           <div className="space-y-2">
                             <Label
                               htmlFor="edit-downloadUrl"
@@ -1041,7 +1055,10 @@ const AdminDashboard: React.FC = () => {
                           </div>
                         ) : (
                           <div className="space-y-2">
-                            <Label htmlFor="edit-content" className="text-white">
+                            <Label
+                              htmlFor="edit-content"
+                              className="text-white"
+                            >
                               Contenu du bloc-notes
                             </Label>
                             <Textarea
@@ -1059,13 +1076,16 @@ const AdminDashboard: React.FC = () => {
                               required
                             />
                           </div>
-                        )
-                      )}
+                        ))}
 
                       {productForm.actionType === "discord" && (
                         <div className="space-y-2">
-                          <Label htmlFor="edit-discordUrlRequired" className="text-white">
-                            Discord Server URL <span className="text-red-400">*</span>
+                          <Label
+                            htmlFor="edit-discordUrlRequired"
+                            className="text-white"
+                          >
+                            Discord Server URL{" "}
+                            <span className="text-red-400">*</span>
                           </Label>
                           <Input
                             id="edit-discordUrlRequired"
@@ -1085,7 +1105,10 @@ const AdminDashboard: React.FC = () => {
 
                       {productForm.actionType === "download" && (
                         <div className="space-y-2">
-                          <Label htmlFor="edit-discordUrl" className="text-white">
+                          <Label
+                            htmlFor="edit-discordUrl"
+                            className="text-white"
+                          >
                             Discord Server URL (optionnel)
                           </Label>
                           <Input
@@ -1207,15 +1230,16 @@ const AdminDashboard: React.FC = () => {
                                   </>
                                 )}
                               </Badge>
-                              {product.discordUrl && product.actionType === "download" && (
-                                <Badge
-                                  variant="outline"
-                                  className="border-blue-500 text-blue-400"
-                                >
-                                  <LinkIcon className="w-3 h-3 mr-1" />
-                                  + Discord
-                                </Badge>
-                              )}
+                              {product.discordUrl &&
+                                product.actionType === "download" && (
+                                  <Badge
+                                    variant="outline"
+                                    className="border-blue-500 text-blue-400"
+                                  >
+                                    <LinkIcon className="w-3 h-3 mr-1" />+
+                                    Discord
+                                  </Badge>
+                                )}
                               <span className="text-gray-500 text-xs">
                                 {formatDate(product.createdAt)}
                               </span>
@@ -1257,7 +1281,9 @@ const AdminDashboard: React.FC = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => window.open(product.discordUrl, "_blank")}
+                              onClick={() =>
+                                window.open(product.discordUrl, "_blank")
+                              }
                               className="border-purple-700 text-purple-400 hover:bg-purple-500/10"
                             >
                               <LinkIcon className="w-4 h-4" />
@@ -1486,9 +1512,9 @@ const AdminDashboard: React.FC = () => {
                       </Label>
                       <Select
                         value={selectedUserRole}
-                        onValueChange={(value: "user" | "shop_access" | "admin") =>
-                          setSelectedUserRole(value)
-                        }
+                        onValueChange={(
+                          value: "user" | "shop_access" | "admin",
+                        ) => setSelectedUserRole(value)}
                       >
                         <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                           <SelectValue />
@@ -1518,9 +1544,12 @@ const AdminDashboard: React.FC = () => {
                     <div className="bg-blue-900/50 border border-blue-700 rounded p-3">
                       <p className="text-blue-200 text-sm">
                         <strong>Permissions :</strong>
-                        {selectedUserRole === "user" && " Accès utilisateur standard"}
-                        {selectedUserRole === "shop_access" && " Peut uploader et gérer ses propres produits"}
-                        {selectedUserRole === "admin" && " Accès total à l'administration"}
+                        {selectedUserRole === "user" &&
+                          " Accès utilisateur standard"}
+                        {selectedUserRole === "shop_access" &&
+                          " Peut uploader et gérer ses propres produits"}
+                        {selectedUserRole === "admin" &&
+                          " Accès total à l'administration"}
                       </p>
                     </div>
                     <DialogFooter>

@@ -12,11 +12,11 @@ class LocalCommentsService {
 
   private loadFromStorage() {
     try {
-      const stored = localStorage.getItem('offline_comments');
+      const stored = localStorage.getItem("offline_comments");
       if (stored) {
         this.comments = JSON.parse(stored).map((c: any) => ({
           ...c,
-          createdAt: new Date(c.createdAt)
+          createdAt: new Date(c.createdAt),
         }));
       }
     } catch (error) {
@@ -27,14 +27,17 @@ class LocalCommentsService {
 
   private saveToStorage() {
     try {
-      localStorage.setItem('offline_comments', JSON.stringify(this.comments));
+      localStorage.setItem("offline_comments", JSON.stringify(this.comments));
     } catch (error) {
-      console.warn("Erreur lors de la sauvegarde des commentaires locaux:", error);
+      console.warn(
+        "Erreur lors de la sauvegarde des commentaires locaux:",
+        error,
+      );
     }
   }
 
   private notifyListeners() {
-    this.listeners.forEach(listener => {
+    this.listeners.forEach((listener) => {
       try {
         listener([...this.comments]);
       } catch (error) {
@@ -44,25 +47,26 @@ class LocalCommentsService {
   }
 
   getComments(productId: string): Comment[] {
-    return this.comments.filter(c => c.productId === productId)
+    return this.comments
+      .filter((c) => c.productId === productId)
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   }
 
-  addComment(comment: Omit<Comment, 'id'>): Comment {
+  addComment(comment: Omit<Comment, "id">): Comment {
     const newComment: Comment = {
       ...comment,
       id: `local_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     };
-    
+
     this.comments.push(newComment);
     this.saveToStorage();
     this.notifyListeners();
-    
+
     return newComment;
   }
 
   deleteComment(commentId: string): boolean {
-    const index = this.comments.findIndex(c => c.id === commentId);
+    const index = this.comments.findIndex((c) => c.id === commentId);
     if (index !== -1) {
       this.comments.splice(index, 1);
       this.saveToStorage();
@@ -72,14 +76,18 @@ class LocalCommentsService {
     return false;
   }
 
-  subscribe(productId: string, callback: (comments: Comment[]) => void): () => void {
+  subscribe(
+    productId: string,
+    callback: (comments: Comment[]) => void,
+  ): () => void {
     // Appeler immédiatement avec les commentaires actuels
     const filteredComments = this.getComments(productId);
     callback(filteredComments);
 
     // Créer un listener spécifique pour ce produit
     const listener = (allComments: Comment[]) => {
-      const productComments = allComments.filter(c => c.productId === productId)
+      const productComments = allComments
+        .filter((c) => c.productId === productId)
         .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
       callback(productComments);
     };
@@ -105,7 +113,9 @@ class LocalCommentsService {
   async syncWithFirebase() {
     // Cette méthode pourrait être utilisée plus tard pour synchroniser
     // les commentaires locaux avec Firebase quand la connexion revient
-    console.log("🔄 Synchronisation avec Firebase (à implémenter si nécessaire)");
+    console.log(
+      "🔄 Synchronisation avec Firebase (à implémenter si nécessaire)",
+    );
   }
 }
 
@@ -120,7 +130,7 @@ export const shouldUseOfflineMode = (): boolean => {
   }
 
   // Vérifier si Firebase a eu des erreurs récentes
-  const lastFirebaseError = localStorage.getItem('last_firebase_error');
+  const lastFirebaseError = localStorage.getItem("last_firebase_error");
   if (lastFirebaseError) {
     const errorTime = parseInt(lastFirebaseError);
     const now = Date.now();
@@ -135,10 +145,10 @@ export const shouldUseOfflineMode = (): boolean => {
 
 // Fonction pour marquer une erreur Firebase
 export const markFirebaseError = () => {
-  localStorage.setItem('last_firebase_error', Date.now().toString());
+  localStorage.setItem("last_firebase_error", Date.now().toString());
 };
 
 // Fonction pour marquer Firebase comme fonctionnel
 export const markFirebaseWorking = () => {
-  localStorage.removeItem('last_firebase_error');
+  localStorage.removeItem("last_firebase_error");
 };

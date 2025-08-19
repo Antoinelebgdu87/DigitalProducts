@@ -15,10 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Card,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   MessageCircle,
   Send,
@@ -45,7 +42,14 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   productTitle,
 }) => {
   const { currentUser } = useUser();
-  const { comments, loading, isOfflineMode, addComment, deleteComment, canDeleteComment } = useComments(productId);
+  const {
+    comments,
+    loading,
+    isOfflineMode,
+    addComment,
+    deleteComment,
+    canDeleteComment,
+  } = useComments(productId);
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -59,7 +63,8 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
       setNewComment("");
       toast.success("Commentaire ajouté avec succès!");
     } catch (error: any) {
-      const errorMessage = error.message || "Erreur lors de l'ajout du commentaire";
+      const errorMessage =
+        error.message || "Erreur lors de l'ajout du commentaire";
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -71,7 +76,8 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
       await deleteComment(commentId);
       toast.success("Commentaire supprimé avec succès!");
     } catch (error: any) {
-      const errorMessage = error.message || "Erreur lors de la suppression du commentaire";
+      const errorMessage =
+        error.message || "Erreur lors de la suppression du commentaire";
       toast.error(errorMessage);
     }
   };
@@ -131,7 +137,10 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
             <MessageCircle className="w-5 h-5 text-blue-400" />
             <span>Commentaires</span>
             {isOfflineMode && (
-              <Badge variant="outline" className="border-orange-500 text-orange-400 bg-orange-500/10">
+              <Badge
+                variant="outline"
+                className="border-orange-500 text-orange-400 bg-orange-500/10"
+              >
                 Mode Offline
               </Badge>
             )}
@@ -149,7 +158,9 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
               {loading ? (
                 <div className="flex items-center justify-center py-8">
                   <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
-                  <span className="ml-2 text-gray-400">Chargement des commentaires...</span>
+                  <span className="ml-2 text-gray-400">
+                    Chargement des commentaires...
+                  </span>
                 </div>
               ) : isOfflineMode && comments.length === 0 ? (
                 <div className="text-center py-8">
@@ -157,17 +168,26 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                     <MessageCircle className="w-6 h-6 text-orange-400" />
                   </div>
                   <p className="text-orange-400 font-medium">Mode hors ligne</p>
-                  <p className="text-gray-500 text-sm">Les commentaires sont stockés localement</p>
+                  <p className="text-gray-500 text-sm">
+                    Les commentaires sont stockés localement
+                  </p>
                 </div>
               ) : comments.length === 0 ? (
                 <div className="text-center py-8">
                   <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-400">Aucun commentaire pour le moment</p>
-                  <p className="text-gray-500 text-sm">Soyez le premier à commenter!</p>
+                  <p className="text-gray-400">
+                    Aucun commentaire pour le moment
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    Soyez le premier à commenter!
+                  </p>
                 </div>
               ) : (
                 comments.map((comment) => (
-                  <Card key={comment.id} className="border-gray-700 bg-gray-800/50">
+                  <Card
+                    key={comment.id}
+                    className="border-gray-700 bg-gray-800/50"
+                  >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-3 flex-1">

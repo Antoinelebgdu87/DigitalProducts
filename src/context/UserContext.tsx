@@ -386,7 +386,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const updateUserRole = async (userId: string, role: UserRole): Promise<void> => {
+  const updateUserRole = async (
+    userId: string,
+    role: UserRole,
+  ): Promise<void> => {
     try {
       await updateDoc(doc(db, "users", userId), {
         role: role,

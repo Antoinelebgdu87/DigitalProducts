@@ -61,14 +61,18 @@ const ShopDashboard: React.FC = () => {
   } = useProducts();
 
   // Redirect if user doesn't have shop access
-  if (!currentUser || (currentUser.role !== "shop_access" && currentUser.role !== "admin")) {
+  if (
+    !currentUser ||
+    (currentUser.role !== "shop_access" && currentUser.role !== "admin")
+  ) {
     return <Navigate to="/" replace />;
   }
 
   // Filter products by current user for shop_access users
-  const userProducts = currentUser.role === "admin" 
-    ? products 
-    : products.filter(product => product.createdBy === currentUser.id);
+  const userProducts =
+    currentUser.role === "admin"
+      ? products
+      : products.filter((product) => product.createdBy === currentUser.id);
 
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
@@ -94,7 +98,7 @@ const ShopDashboard: React.FC = () => {
       // Add createdBy field for shop users
       const productData = {
         ...productForm,
-        createdBy: currentUser.id
+        createdBy: currentUser.id,
       };
       await addProduct(productData);
       toast.success("Produit ajouté avec succès!");
@@ -324,7 +328,10 @@ const ShopDashboard: React.FC = () => {
                           <Select
                             value={productForm.actionType}
                             onValueChange={(value: "download" | "discord") =>
-                              setProductForm({ ...productForm, actionType: value })
+                              setProductForm({
+                                ...productForm,
+                                actionType: value,
+                              })
                             }
                           >
                             <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
@@ -392,7 +399,9 @@ const ShopDashboard: React.FC = () => {
                                 <SelectItem value="25">25 vies</SelectItem>
                                 <SelectItem value="50">50 vies</SelectItem>
                                 <SelectItem value="100">100 vies</SelectItem>
-                                <SelectItem value="999">Illimité (999)</SelectItem>
+                                <SelectItem value="999">
+                                  Illimité (999)
+                                </SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -433,7 +442,7 @@ const ShopDashboard: React.FC = () => {
                           placeholder="https://example.com/image.jpg"
                         />
                       </div>
-                      
+
                       {productForm.actionType === "download" && (
                         <div className="space-y-2">
                           <Label htmlFor="contentType" className="text-white">
@@ -470,8 +479,8 @@ const ShopDashboard: React.FC = () => {
                       )}
 
                       {/* Champs conditionnels selon l'action type */}
-                      {productForm.actionType === "download" && (
-                        productForm.contentType === "link" ? (
+                      {productForm.actionType === "download" &&
+                        (productForm.contentType === "link" ? (
                           <div className="space-y-2">
                             <Label htmlFor="downloadUrl" className="text-white">
                               URL de téléchargement
@@ -510,13 +519,16 @@ const ShopDashboard: React.FC = () => {
                               required
                             />
                           </div>
-                        )
-                      )}
-                      
+                        ))}
+
                       {productForm.actionType === "discord" && (
                         <div className="space-y-2">
-                          <Label htmlFor="discordUrlRequired" className="text-white">
-                            Discord Server URL <span className="text-red-400">*</span>
+                          <Label
+                            htmlFor="discordUrlRequired"
+                            className="text-white"
+                          >
+                            Discord Server URL{" "}
+                            <span className="text-red-400">*</span>
                           </Label>
                           <Input
                             id="discordUrlRequired"
@@ -533,7 +545,7 @@ const ShopDashboard: React.FC = () => {
                           />
                         </div>
                       )}
-                      
+
                       {productForm.actionType === "download" && (
                         <div className="space-y-2">
                           <Label htmlFor="discordUrl" className="text-white">
@@ -553,7 +565,7 @@ const ShopDashboard: React.FC = () => {
                           />
                         </div>
                       )}
-                      
+
                       <DialogFooter>
                         <Button
                           type="button"
@@ -682,7 +694,8 @@ const ShopDashboard: React.FC = () => {
                         Aucun produit
                       </h3>
                       <p className="text-gray-400">
-                        Commencez par ajouter votre premier produit à votre boutique
+                        Commencez par ajouter votre premier produit à votre
+                        boutique
                       </p>
                     </CardContent>
                   </Card>
@@ -725,9 +738,11 @@ const ShopDashboard: React.FC = () => {
                         <Download className="w-6 h-6 text-green-400" />
                       </div>
                       <div>
-                        <p className="text-gray-400 text-sm">Produits Gratuits</p>
+                        <p className="text-gray-400 text-sm">
+                          Produits Gratuits
+                        </p>
                         <p className="text-2xl font-bold text-white">
-                          {userProducts.filter(p => p.type === "free").length}
+                          {userProducts.filter((p) => p.type === "free").length}
                         </p>
                       </div>
                     </div>
@@ -741,9 +756,11 @@ const ShopDashboard: React.FC = () => {
                         <Euro className="w-6 h-6 text-yellow-400" />
                       </div>
                       <div>
-                        <p className="text-gray-400 text-sm">Produits Payants</p>
+                        <p className="text-gray-400 text-sm">
+                          Produits Payants
+                        </p>
                         <p className="text-2xl font-bold text-white">
-                          {userProducts.filter(p => p.type === "paid").length}
+                          {userProducts.filter((p) => p.type === "paid").length}
                         </p>
                       </div>
                     </div>

@@ -3,7 +3,16 @@ import { motion } from "framer-motion";
 import { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Lock, Star, Eye, ShoppingCart, Euro, MessageCircle, ExternalLink } from "lucide-react";
+import {
+  Download,
+  Lock,
+  Star,
+  Eye,
+  ShoppingCart,
+  Euro,
+  MessageCircle,
+  ExternalLink,
+} from "lucide-react";
 import { useLicenses } from "@/hooks/useLicenses";
 import { useComments } from "@/hooks/useComments";
 import KeyValidator from "./KeyValidator";
@@ -153,7 +162,12 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Button clicked!", product.type, product.title, product.actionType);
+                  console.log(
+                    "Button clicked!",
+                    product.type,
+                    product.title,
+                    product.actionType,
+                  );
 
                   if (product.actionType === "discord") {
                     // Action principale = Discord
@@ -194,18 +208,16 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                       Get Discord Access
                     </>
                   )
+                ) : product.type === "free" ? (
+                  <>
+                    <Download className="w-5 h-5 mr-2" />
+                    Download Now
+                  </>
                 ) : (
-                  product.type === "free" ? (
-                    <>
-                      <Download className="w-5 h-5 mr-2" />
-                      Download Now
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingCart className="w-5 h-5 mr-2" />
-                      Get Access
-                    </>
-                  )
+                  <>
+                    <ShoppingCart className="w-5 h-5 mr-2" />
+                    Get Access
+                  </>
                 )}
               </Button>
 

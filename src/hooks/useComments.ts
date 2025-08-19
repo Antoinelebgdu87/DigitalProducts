@@ -16,7 +16,7 @@ import {
   localCommentsService,
   shouldUseOfflineMode,
   markFirebaseError,
-  markFirebaseWorking
+  markFirebaseWorking,
 } from "@/lib/firebase-comments";
 
 export const useComments = (productId?: string) => {
@@ -58,10 +58,13 @@ export const useComments = (productId?: string) => {
     if (useOffline) {
       console.log("📱 Mode offline activé pour les commentaires");
       // Utiliser le service local
-      const unsubscribe = localCommentsService.subscribe(productId, (localComments) => {
-        setComments(localComments);
-        setLoading(false);
-      });
+      const unsubscribe = localCommentsService.subscribe(
+        productId,
+        (localComments) => {
+          setComments(localComments);
+          setLoading(false);
+        },
+      );
       return unsubscribe;
     }
 
@@ -71,7 +74,7 @@ export const useComments = (productId?: string) => {
         // Requête simplifiée sans orderBy pour éviter l'index composite
         const commentsQuery = query(
           collection(db, "comments"),
-          where("productId", "==", productId)
+          where("productId", "==", productId),
         );
 
         const unsubscribe = onSnapshot(
@@ -79,11 +82,11 @@ export const useComments = (productId?: string) => {
           (snapshot) => {
             try {
               const commentsData = snapshot.docs.map((doc) =>
-                parseComment({ id: doc.id, ...doc.data() })
+                parseComment({ id: doc.id, ...doc.data() }),
               );
               // Trier côté client pour éviter l'index composite
-              const sortedComments = commentsData.sort((a, b) =>
-                b.createdAt.getTime() - a.createdAt.getTime()
+              const sortedComments = commentsData.sort(
+                (a, b) => b.createdAt.getTime() - a.createdAt.getTime(),
               );
               setComments(sortedComments);
               setLoading(false);
@@ -98,12 +101,15 @@ export const useComments = (productId?: string) => {
             console.error("Erreur listener commentaires:", error);
             markFirebaseError(); // Marquer l'erreur Firebase
             fallbackToOffline();
-          }
+          },
         );
 
         return unsubscribe;
       } catch (error) {
-        console.error("Erreur lors de l'initialisation des commentaires:", error);
+        console.error(
+          "Erreur lors de l'initialisation des commentaires:",
+          error,
+        );
         fallbackToOffline();
         return () => {}; // Retourne une fonction vide si erreur
       }
@@ -113,22 +119,28 @@ export const useComments = (productId?: string) => {
       console.log("🔄 Passage en mode offline pour les commentaires");
       setIsOfflineMode(true);
       // Basculer vers le service local
-      const unsubscribe = localCommentsService.subscribe(productId, (localComments) => {
-        setComments(localComments);
-        setLoading(false);
-      });
+      const unsubscribe = localCommentsService.subscribe(
+        productId,
+        (localComments) => {
+          setComments(localComments);
+          setLoading(false);
+        },
+      );
       return unsubscribe;
     };
 
     const unsubscribe = loadComments();
     return () => {
-      if (typeof unsubscribe === 'function') {
+      if (typeof unsubscribe === "function") {
         unsubscribe();
       }
     };
   }, [productId]);
 
-  const addComment = async (productId: string, content: string): Promise<void> => {
+  const addComment = async (
+    productId: string,
+    content: string,
+  ): Promise<void> => {
     if (!currentUser || !content.trim()) {
       throw new Error("Utilisateur non connecté ou commentaire vide");
     }
@@ -155,7 +167,10 @@ export const useComments = (productId?: string) => {
       console.log("💬 Commentaire ajouté avec succès via Firebase");
       markFirebaseWorking();
     } catch (error: any) {
-      console.error("Erreur lors de l'ajout du commentaire via Firebase:", error);
+      console.error(
+        "Erreur lors de l'ajout du commentaire via Firebase:",
+        error,
+      );
       markFirebaseError();
 
       // Fallback vers le stockage local
@@ -163,13 +178,15 @@ export const useComments = (productId?: string) => {
       localCommentsService.addComment(newComment);
 
       // Informer l'utilisateur que le commentaire a été sauvé localement
-      throw new Error("Commentaire sauvé localement. Il sera synchronisé quand la connexion reviendra.");
+      throw new Error(
+        "Commentaire sauvé localement. Il sera synchronisé quand la connexion reviendra.",
+      );
     }
   };
 
   const deleteComment = async (commentId: string): Promise<void> => {
     // Si on est en mode offline ou si le commentaire est local
-    if (isOfflineMode || commentId.startsWith('local_')) {
+    if (isOfflineMode || commentId.startsWith("local_")) {
       console.log("🗑️ Suppression de commentaire en mode offline");
       const success = localCommentsService.deleteComment(commentId);
       if (!success) {
@@ -184,16 +201,23 @@ export const useComments = (productId?: string) => {
       console.log("🗑️ Commentaire supprimé avec succès via Firebase");
       markFirebaseWorking();
     } catch (error: any) {
-      console.error("Erreur lors de la suppression du commentaire via Firebase:", error);
+      console.error(
+        "Erreur lors de la suppression du commentaire via Firebase:",
+        error,
+      );
       markFirebaseError();
 
       // Fallback vers le stockage local si le commentaire existe localement
       const success = localCommentsService.deleteComment(commentId);
       if (success) {
         console.log("🗑️ Fallback: suppression de commentaire en mode local");
-        throw new Error("Commentaire supprimé localement. Il sera synchronisé quand la connexion reviendra.");
+        throw new Error(
+          "Commentaire supprimé localement. Il sera synchronisé quand la connexion reviendra.",
+        );
       } else {
-        throw new Error("Impossible de supprimer le commentaire. Vérifiez votre connexion internet.");
+        throw new Error(
+          "Impossible de supprimer le commentaire. Vérifiez votre connexion internet.",
+        );
       }
     }
   };
