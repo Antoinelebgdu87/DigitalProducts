@@ -626,8 +626,6 @@ const AdminDashboard: React.FC = () => {
 
             {/* Products Tab */}
             <TabsContent value="products" className="space-y-6">
-              <FirebaseDebug />
-
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-semibold text-white">
