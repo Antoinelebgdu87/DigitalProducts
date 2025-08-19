@@ -423,38 +423,17 @@ const AdminDashboard: React.FC = () => {
 
   // Product deletion handler
   const handleDeleteProduct = async () => {
-    console.log("🎯 handleDeleteProduct appelé");
-    console.log("📝 productToDelete:", productToDelete);
-
-    if (!productToDelete) {
-      console.log("❌ Aucun produit sélectionné pour suppression");
-      return;
-    }
-
-    console.log("🔄 Tentative de suppression du produit:", productToDelete);
+    if (!productToDelete) return;
 
     try {
-      console.log("📋 Produits avant suppression:", products.length);
-      console.log("🔥 Appel de deleteProduct avec ID:", productToDelete.id);
-
       await deleteProduct(productToDelete.id);
-      console.log("✅ deleteProduct terminé avec succès");
-
-      // Note: Pas besoin de refetchProducts() car Firebase listener met à jour automatiquement
-
       toast.success(`Produit "${productToDelete.title}" supprimé avec succès`);
 
-      // Délai court pour voir la mise à jour Firebase en temps réel
       setTimeout(() => {
         setShowDeleteDialog(false);
         setProductToDelete(null);
-        console.log("✅ Dialog fermé, produits actuels:", products.length);
       }, 500);
-
-      console.log("✅ Interface mise à jour après suppression");
     } catch (error) {
-      console.error("❌ Erreur lors de la suppression:", error);
-      console.error("❌ Stack trace:", error.stack);
       toast.error(`Erreur lors de la suppression: ${error.message}`);
     }
   };
