@@ -126,7 +126,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     }
   };
 
-  const getRoleIcon = (role: string) => {
+  const getRoleIcon = (role: string | undefined) => {
     switch (role) {
       case "admin":
         return <Shield className="w-4 h-4 text-red-400" />;
@@ -139,7 +139,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     }
   };
 
-  const getRoleLabel = (role: string) => {
+  const getRoleLabel = (role: string | undefined) => {
     switch (role) {
       case "admin":
         return "Admin";
@@ -152,7 +152,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     }
   };
 
-  const getRoleColor = (role: string) => {
+  const getRoleColor = (role: string | undefined) => {
     switch (role) {
       case "admin":
         return "bg-red-600 text-white";
