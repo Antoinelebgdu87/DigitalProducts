@@ -351,6 +351,20 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleUnbanUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserId) return;
+
+    try {
+      await unbanUser(selectedUserId);
+      toast.success("Utilisateur débanni avec succès");
+      setShowUnbanDialog(false);
+      setSelectedUserId("");
+    } catch (error) {
+      toast.error("Erreur lors du débannissement");
+    }
+  };
+
   // Moderation handlers
   const handleModerateDelete = async (e: React.FormEvent) => {
     e.preventDefault();
