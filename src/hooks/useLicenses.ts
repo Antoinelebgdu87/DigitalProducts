@@ -89,7 +89,10 @@ export const useLicenses = () => {
 
       // Generate license code with shorter, more readable format
       const timestamp = Date.now().toString().slice(-6); // Last 6 digits of timestamp
-      const randomPart = Math.random().toString(36).substring(2, 6).toLowerCase(); // Shorter random part in lowercase
+      const randomPart = Math.random()
+        .toString(36)
+        .substring(2, 6)
+        .toLowerCase(); // Shorter random part in lowercase
       const code = `${category.toLowerCase()}-${timestamp}-${randomPart}`;
 
       const licenseData = {

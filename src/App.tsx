@@ -125,7 +125,7 @@ const App = () => (
         position="bottom-center"
         toastOptions={{
           style: {
-            marginBottom: '80px',
+            marginBottom: "80px",
           },
         }}
       />

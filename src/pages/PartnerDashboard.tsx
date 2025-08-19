@@ -226,7 +226,10 @@ const PartnerDashboard: React.FC = () => {
                   <Crown className="w-3 h-3 mr-1" />
                   Partenaire
                 </Badge>
-                <Badge variant="outline" className="border-yellow-500 text-yellow-400">
+                <Badge
+                  variant="outline"
+                  className="border-yellow-500 text-yellow-400"
+                >
                   {partnerProducts.length} produit(s)
                 </Badge>
                 <Link to="/">
@@ -271,7 +274,8 @@ const PartnerDashboard: React.FC = () => {
                     Gestion des Produits Partenaire
                   </h2>
                   <p className="text-gray-400 text-sm">
-                    {partnerProducts.length} produit(s) dans votre espace partenaire
+                    {partnerProducts.length} produit(s) dans votre espace
+                    partenaire
                   </p>
                 </div>
                 <Dialog
@@ -290,7 +294,8 @@ const PartnerDashboard: React.FC = () => {
                         Nouveau Produit Partenaire
                       </DialogTitle>
                       <DialogDescription className="text-gray-400">
-                        Ajoutez un nouveau produit exclusif à votre espace partenaire
+                        Ajoutez un nouveau produit exclusif à votre espace
+                        partenaire
                       </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleProductSubmit} className="space-y-4">
@@ -711,7 +716,8 @@ const PartnerDashboard: React.FC = () => {
                         Aucun produit partenaire
                       </h3>
                       <p className="text-gray-400">
-                        Commencez par ajouter votre premier produit exclusif en tant que partenaire
+                        Commencez par ajouter votre premier produit exclusif en
+                        tant que partenaire
                       </p>
                     </CardContent>
                   </Card>
@@ -758,7 +764,10 @@ const PartnerDashboard: React.FC = () => {
                           Produits Gratuits
                         </p>
                         <p className="text-2xl font-bold text-white">
-                          {partnerProducts.filter((p) => p.type === "free").length}
+                          {
+                            partnerProducts.filter((p) => p.type === "free")
+                              .length
+                          }
                         </p>
                       </div>
                     </div>
@@ -776,7 +785,10 @@ const PartnerDashboard: React.FC = () => {
                           Produits Payants
                         </p>
                         <p className="text-2xl font-bold text-white">
-                          {partnerProducts.filter((p) => p.type === "paid").length}
+                          {
+                            partnerProducts.filter((p) => p.type === "paid")
+                              .length
+                          }
                         </p>
                       </div>
                     </div>

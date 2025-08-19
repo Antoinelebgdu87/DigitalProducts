@@ -66,14 +66,16 @@ const ShopDashboard: React.FC = () => {
   if (
     !currentUser ||
     (currentUser.role !== "shop_access" &&
-     currentUser.role !== "admin" &&
-     currentUser.role !== "partner")
+      currentUser.role !== "admin" &&
+      currentUser.role !== "partner")
   ) {
     return <Navigate to="/" replace />;
   }
 
   // Filter products by current user - chaque rôle voit seulement ses propres produits
-  const userProducts = products.filter((product) => product.createdBy === currentUser.id);
+  const userProducts = products.filter(
+    (product) => product.createdBy === currentUser.id,
+  );
 
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
@@ -237,7 +239,10 @@ const ShopDashboard: React.FC = () => {
                   </Badge>
                 )}
 
-                <Badge variant="outline" className="border-purple-500 text-purple-400">
+                <Badge
+                  variant="outline"
+                  className="border-purple-500 text-purple-400"
+                >
                   {userProducts.length} produit(s)
                 </Badge>
                 <Link to="/">

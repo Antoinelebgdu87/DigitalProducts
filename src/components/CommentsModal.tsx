@@ -42,13 +42,8 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   productTitle,
 }) => {
   const { currentUser } = useUser();
-  const {
-    comments,
-    loading,
-    addComment,
-    deleteComment,
-    canDeleteComment,
-  } = useComments(productId);
+  const { comments, loading, addComment, deleteComment, canDeleteComment } =
+    useComments(productId);
 
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);

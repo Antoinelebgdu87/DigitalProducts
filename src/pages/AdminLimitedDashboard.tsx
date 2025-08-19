@@ -299,9 +299,10 @@ const AdminLimitedDashboard: React.FC = () => {
   };
 
   // Filter users based on search query
-  const filteredUsers = users.filter((user) =>
-    user.username.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
-    user.email?.toLowerCase().includes(userSearchQuery.toLowerCase())
+  const filteredUsers = users.filter(
+    (user) =>
+      user.username.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
+      user.email?.toLowerCase().includes(userSearchQuery.toLowerCase()),
   );
 
   return (
@@ -505,8 +506,7 @@ const AdminLimitedDashboard: React.FC = () => {
                                   Banni
                                   {user.banExpiresAt && (
                                     <span className="ml-1">
-                                      jusqu'au{" "}
-                                      {formatDate(user.banExpiresAt)}
+                                      jusqu'au {formatDate(user.banExpiresAt)}
                                     </span>
                                   )}
                                 </Badge>
@@ -687,7 +687,9 @@ const AdminLimitedDashboard: React.FC = () => {
       <Dialog open={showBanDialog} onOpenChange={setShowBanDialog}>
         <DialogContent className="bg-gray-900 border-gray-800">
           <DialogHeader>
-            <DialogTitle className="text-white">Bannir l'utilisateur</DialogTitle>
+            <DialogTitle className="text-white">
+              Bannir l'utilisateur
+            </DialogTitle>
             <DialogDescription className="text-gray-400">
               Sélectionnez la durée du bannissement et la raison
             </DialogDescription>
@@ -767,7 +769,9 @@ const AdminLimitedDashboard: React.FC = () => {
       <Dialog open={showWarnDialog} onOpenChange={setShowWarnDialog}>
         <DialogContent className="bg-gray-900 border-gray-800">
           <DialogHeader>
-            <DialogTitle className="text-white">Avertir l'utilisateur</DialogTitle>
+            <DialogTitle className="text-white">
+              Avertir l'utilisateur
+            </DialogTitle>
             <DialogDescription className="text-gray-400">
               Envoyez un avertissement à l'utilisateur
             </DialogDescription>
@@ -827,9 +831,9 @@ const AdminLimitedDashboard: React.FC = () => {
               </Label>
               <Select
                 value={selectedUserRole}
-                onValueChange={(value: "user" | "shop_access" | "partner" | "admin") =>
-                  setSelectedUserRole(value)
-                }
+                onValueChange={(
+                  value: "user" | "shop_access" | "partner" | "admin",
+                ) => setSelectedUserRole(value)}
               >
                 <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
                   <SelectValue />
@@ -851,10 +855,7 @@ const AdminLimitedDashboard: React.FC = () => {
               >
                 Annuler
               </Button>
-              <Button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700"
-              >
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
                 Mettre à jour
               </Button>
             </DialogFooter>
@@ -866,7 +867,9 @@ const AdminLimitedDashboard: React.FC = () => {
       <Dialog open={showUnbanDialog} onOpenChange={setShowUnbanDialog}>
         <DialogContent className="bg-gray-900 border-gray-800">
           <DialogHeader>
-            <DialogTitle className="text-white">Débannir l'utilisateur</DialogTitle>
+            <DialogTitle className="text-white">
+              Débannir l'utilisateur
+            </DialogTitle>
             <DialogDescription className="text-gray-400">
               Confirmez le débannissement de cet utilisateur
             </DialogDescription>
@@ -881,10 +884,7 @@ const AdminLimitedDashboard: React.FC = () => {
               >
                 Annuler
               </Button>
-              <Button
-                type="submit"
-                className="bg-green-600 hover:bg-green-700"
-              >
+              <Button type="submit" className="bg-green-600 hover:bg-green-700">
                 Débannir
               </Button>
             </DialogFooter>
@@ -893,10 +893,15 @@ const AdminLimitedDashboard: React.FC = () => {
       </Dialog>
 
       {/* Moderation Dialog */}
-      <Dialog open={showModerationDialog} onOpenChange={setShowModerationDialog}>
+      <Dialog
+        open={showModerationDialog}
+        onOpenChange={setShowModerationDialog}
+      >
         <DialogContent className="bg-gray-900 border-gray-800">
           <DialogHeader>
-            <DialogTitle className="text-white">Action de Modération</DialogTitle>
+            <DialogTitle className="text-white">
+              Action de Modération
+            </DialogTitle>
             <DialogDescription className="text-gray-400">
               Supprimer le contenu: {moderationTarget?.title}
             </DialogDescription>
