@@ -4,6 +4,7 @@ export interface Product {
   description: string;
   imageUrl: string;
   type: "free" | "paid";
+  actionType: "download" | "discord";
   downloadUrl: string;
   contentType: "link" | "text";
   content?: string;
