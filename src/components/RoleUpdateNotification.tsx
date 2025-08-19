@@ -84,14 +84,15 @@ const RoleUpdateNotification: React.FC = () => {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, scale: 0.8, y: -50 }}
+        initial={{ opacity: 0, scale: 0.8, y: 50 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.8, y: -50 }}
+        exit={{ opacity: 0, scale: 0.8, y: 50 }}
         transition={{
           type: "spring",
-          stiffness: 500,
+          stiffness: 400,
           damping: 30,
           duration: 0.5,
+          delay: 1.2,
         }}
         className="fixed bottom-24 right-4 z-50 max-w-sm"
       >
