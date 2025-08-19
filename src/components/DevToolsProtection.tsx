@@ -15,25 +15,25 @@ const DevToolsProtection = () => {
         e.preventDefault();
         return false;
       }
-      
+
       // Ctrl+Shift+I (DevTools)
       if (e.ctrlKey && e.shiftKey && e.keyCode === 73) {
         e.preventDefault();
         return false;
       }
-      
+
       // Ctrl+Shift+J (Console)
       if (e.ctrlKey && e.shiftKey && e.keyCode === 74) {
         e.preventDefault();
         return false;
       }
-      
+
       // Ctrl+U (View Source)
       if (e.ctrlKey && e.keyCode === 85) {
         e.preventDefault();
         return false;
       }
-      
+
       // Ctrl+Shift+C (Inspect Element)
       if (e.ctrlKey && e.shiftKey && e.keyCode === 67) {
         e.preventDefault();
@@ -92,7 +92,7 @@ const DevToolsProtection = () => {
     document.addEventListener("selectstart", blockTextSelection);
     document.addEventListener("dragstart", blockDragStart);
     document.addEventListener("mousedown", disableRightClick);
-    
+
     // Vérification DevTools désactivée temporairement
     // const interval = setInterval(detectDevTools, 500);
 
@@ -102,7 +102,9 @@ const DevToolsProtection = () => {
     // Message d'avertissement simple
     setTimeout(() => {
       try {
-        console.warn("⚠️ Les outils de développement sont désactivés sur ce site.");
+        console.warn(
+          "⚠️ Les outils de développement sont désactivés sur ce site.",
+        );
       } catch (e) {
         // Ignore errors
       }
