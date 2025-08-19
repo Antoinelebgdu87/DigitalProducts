@@ -974,46 +974,90 @@ const AdminDashboard: React.FC = () => {
                           </SelectContent>
                         </Select>
                       </div>
-                      {productForm.contentType === "link" ? (
+                      {/* Champs conditionnels selon l'action type */}
+                      {productForm.actionType === "download" && (
+                        productForm.contentType === "link" ? (
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="edit-downloadUrl"
+                              className="text-white"
+                            >
+                              Download URL
+                            </Label>
+                            <Input
+                              id="edit-downloadUrl"
+                              value={productForm.downloadUrl}
+                              onChange={(e) =>
+                                setProductForm({
+                                  ...productForm,
+                                  downloadUrl: e.target.value,
+                                })
+                              }
+                              className="bg-gray-800 border-gray-700 text-white"
+                              placeholder="https://example.com/download"
+                              required
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <Label htmlFor="edit-content" className="text-white">
+                              Contenu du bloc-notes
+                            </Label>
+                            <Textarea
+                              id="edit-content"
+                              value={productForm.content}
+                              onChange={(e) =>
+                                setProductForm({
+                                  ...productForm,
+                                  content: e.target.value,
+                                })
+                              }
+                              className="bg-gray-800 border-gray-700 text-white"
+                              rows={8}
+                              placeholder="Entrez le contenu qui sera affiché dans le bloc-notes..."
+                              required
+                            />
+                          </div>
+                        )
+                      )}
+
+                      {productForm.actionType === "discord" && (
                         <div className="space-y-2">
-                          <Label
-                            htmlFor="edit-downloadUrl"
-                            className="text-white"
-                          >
-                            Download URL
+                          <Label htmlFor="edit-discordUrlRequired" className="text-white">
+                            Discord Server URL <span className="text-red-400">*</span>
                           </Label>
                           <Input
-                            id="edit-downloadUrl"
-                            value={productForm.downloadUrl}
+                            id="edit-discordUrlRequired"
+                            value={productForm.discordUrl}
                             onChange={(e) =>
                               setProductForm({
                                 ...productForm,
-                                downloadUrl: e.target.value,
+                                discordUrl: e.target.value,
                               })
                             }
                             className="bg-gray-800 border-gray-700 text-white"
-                            placeholder="https://example.com/download"
+                            placeholder="https://discord.gg/example"
                             required
                           />
                         </div>
-                      ) : (
+                      )}
+
+                      {productForm.actionType === "download" && (
                         <div className="space-y-2">
-                          <Label htmlFor="edit-content" className="text-white">
-                            Contenu du bloc-notes
+                          <Label htmlFor="edit-discordUrl" className="text-white">
+                            Discord Server URL (optionnel)
                           </Label>
-                          <Textarea
-                            id="edit-content"
-                            value={productForm.content}
+                          <Input
+                            id="edit-discordUrl"
+                            value={productForm.discordUrl}
                             onChange={(e) =>
                               setProductForm({
                                 ...productForm,
-                                content: e.target.value,
+                                discordUrl: e.target.value,
                               })
                             }
                             className="bg-gray-800 border-gray-700 text-white"
-                            rows={8}
-                            placeholder="Entrez le contenu qui sera affiché dans le bloc-notes..."
-                            required
+                            placeholder="https://discord.gg/example"
                           />
                         </div>
                       )}
