@@ -12,6 +12,12 @@ import {
 import { db } from "@/lib/firebase";
 import { Comment } from "@/types";
 import { useUser } from "@/context/UserContext";
+import {
+  localCommentsService,
+  shouldUseOfflineMode,
+  markFirebaseError,
+  markFirebaseWorking
+} from "@/lib/firebase-comments";
 
 export const useComments = (productId?: string) => {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -138,7 +144,7 @@ export const useComments = (productId?: string) => {
   const deleteComment = async (commentId: string): Promise<void> => {
     try {
       await deleteDoc(doc(db, "comments", commentId));
-      console.log("🗑️ Commentaire supprim�� avec succès");
+      console.log("🗑️ Commentaire supprimé avec succès");
     } catch (error: any) {
       console.error("Erreur lors de la suppression du commentaire:", error);
 
