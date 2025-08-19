@@ -39,20 +39,18 @@ import {
   Trash2,
   Download,
   Euro,
-  Heart,
   FileText,
   Link as LinkIcon,
-  Store,
-  BarChart3,
   Crown,
-  Shield,
+  BarChart3,
+  Users,
 } from "lucide-react";
 import SimpleStarsBackground from "@/components/SimpleStarsBackground";
 import { toast } from "sonner";
 import { Product } from "@/types";
 import { Link, Navigate } from "react-router-dom";
 
-const ShopDashboard: React.FC = () => {
+const PartnerDashboard: React.FC = () => {
   const { currentUser } = useUser();
   const {
     products,
@@ -62,18 +60,13 @@ const ShopDashboard: React.FC = () => {
     loading: productsLoading,
   } = useProducts();
 
-  // Redirect if user doesn't have shop access
-  if (
-    !currentUser ||
-    (currentUser.role !== "shop_access" &&
-      currentUser.role !== "admin" &&
-      currentUser.role !== "partner")
-  ) {
+  // Redirect if user doesn't have partner access
+  if (!currentUser || currentUser.role !== "partner") {
     return <Navigate to="/" replace />;
   }
 
-  // Filter products by current user - chaque rôle voit seulement ses propres produits
-  const userProducts = products.filter(
+  // Filter products by current partner
+  const partnerProducts = products.filter(
     (product) => product.createdBy === currentUser.id,
   );
 
@@ -98,10 +91,11 @@ const ShopDashboard: React.FC = () => {
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Add createdBy field for shop users
+      // Add createdBy field for partner products
       const productData = {
         ...productForm,
         createdBy: currentUser.id,
+        partnerCreated: true, // Mark as partner-created
       };
       await addProduct(productData);
       toast.success("Produit ajouté avec succès!");
@@ -160,6 +154,15 @@ const ShopDashboard: React.FC = () => {
     }
   };
 
+  const handleDeleteProduct = async (productId: string) => {
+    try {
+      await deleteProduct(productId);
+      toast.success("Produit supprimé avec succès!");
+    } catch (error) {
+      toast.error("Erreur lors de la suppression du produit");
+    }
+  };
+
   const formatDate = (date: any) => {
     try {
       let validDate: Date;
@@ -208,42 +211,26 @@ const ShopDashboard: React.FC = () => {
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Store className="w-8 h-8 text-purple-500" />
+                <Crown className="w-8 h-8 text-yellow-500" />
                 <div>
                   <h1 className="text-xl font-semibold text-white">
-                    Ma Boutique
+                    Espace Partenaire
                   </h1>
                   <p className="text-gray-400 text-xs">
-                    Gérez vos produits et suivez vos ventes
+                    Gérez vos produits exclusifs en tant que partenaire
                   </p>
                 </div>
               </div>
               <div className="flex items-center space-x-2">
-                {/* Badge de rôle */}
-                {currentUser.role === "shop_access" && (
-                  <Badge className="bg-purple-600 text-white">
-                    <Store className="w-3 h-3 mr-1" />
-                    Boutique
-                  </Badge>
-                )}
-                {currentUser.role === "partner" && (
-                  <Badge className="bg-yellow-600 text-white">
-                    <Crown className="w-3 h-3 mr-1" />
-                    Partenaire
-                  </Badge>
-                )}
-                {currentUser.role === "admin" && (
-                  <Badge className="bg-red-600 text-white">
-                    <Shield className="w-3 h-3 mr-1" />
-                    Admin
-                  </Badge>
-                )}
-
+                <Badge className="bg-yellow-600 text-white">
+                  <Crown className="w-3 h-3 mr-1" />
+                  Partenaire
+                </Badge>
                 <Badge
                   variant="outline"
-                  className="border-purple-500 text-purple-400"
+                  className="border-yellow-500 text-yellow-400"
                 >
-                  {userProducts.length} produit(s)
+                  {partnerProducts.length} produit(s)
                 </Badge>
                 <Link to="/">
                   <Button
@@ -265,14 +252,14 @@ const ShopDashboard: React.FC = () => {
             <TabsList className="grid w-full grid-cols-2 bg-gray-900/50">
               <TabsTrigger
                 value="products"
-                className="data-[state=active]:bg-purple-600"
+                className="data-[state=active]:bg-yellow-600"
               >
                 <Package className="w-4 h-4 mr-2" />
                 Mes Produits
               </TabsTrigger>
               <TabsTrigger
                 value="stats"
-                className="data-[state=active]:bg-purple-600"
+                className="data-[state=active]:bg-yellow-600"
               >
                 <BarChart3 className="w-4 h-4 mr-2" />
                 Statistiques
@@ -284,10 +271,11 @@ const ShopDashboard: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-lg font-semibold text-white">
-                    Gestion des Produits
+                    Gestion des Produits Partenaire
                   </h2>
                   <p className="text-gray-400 text-sm">
-                    {userProducts.length} produit(s) dans votre boutique
+                    {partnerProducts.length} produit(s) dans votre espace
+                    partenaire
                   </p>
                 </div>
                 <Dialog
@@ -295,7 +283,7 @@ const ShopDashboard: React.FC = () => {
                   onOpenChange={setShowProductDialog}
                 >
                   <DialogTrigger asChild>
-                    <Button className="bg-purple-600 hover:bg-purple-700">
+                    <Button className="bg-yellow-600 hover:bg-yellow-700">
                       <Plus className="w-4 h-4 mr-2" />
                       Ajouter un Produit
                     </Button>
@@ -303,10 +291,11 @@ const ShopDashboard: React.FC = () => {
                   <DialogContent className="bg-gray-900 border-gray-800 max-w-2xl">
                     <DialogHeader>
                       <DialogTitle className="text-white">
-                        Nouveau Produit
+                        Nouveau Produit Partenaire
                       </DialogTitle>
                       <DialogDescription className="text-gray-400">
-                        Ajoutez un nouveau produit à votre boutique
+                        Ajoutez un nouveau produit exclusif à votre espace
+                        partenaire
                       </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleProductSubmit} className="space-y-4">
@@ -603,7 +592,7 @@ const ShopDashboard: React.FC = () => {
                         </Button>
                         <Button
                           type="submit"
-                          className="bg-purple-600 hover:bg-purple-700"
+                          className="bg-yellow-600 hover:bg-yellow-700"
                         >
                           Ajouter
                         </Button>
@@ -614,7 +603,7 @@ const ShopDashboard: React.FC = () => {
               </div>
 
               <div className="grid gap-4">
-                {userProducts.map((product) => (
+                {partnerProducts.map((product) => (
                   <Card
                     key={product.id}
                     className="border-gray-800 bg-gray-900/50"
@@ -657,6 +646,13 @@ const ShopDashboard: React.FC = () => {
                               </Badge>
                               <Badge
                                 variant="outline"
+                                className="border-yellow-500 text-yellow-400"
+                              >
+                                <Crown className="w-3 h-3 mr-1" />
+                                Partenaire
+                              </Badge>
+                              <Badge
+                                variant="outline"
                                 className={
                                   product.actionType === "discord"
                                     ? "border-purple-500 text-purple-400"
@@ -666,12 +662,12 @@ const ShopDashboard: React.FC = () => {
                                 {product.actionType === "discord" ? (
                                   <>
                                     <LinkIcon className="w-3 h-3 mr-1" />
-                                    Action: Discord
+                                    Discord
                                   </>
                                 ) : (
                                   <>
                                     <Download className="w-3 h-3 mr-1" />
-                                    Action: Download
+                                    Download
                                   </>
                                 )}
                               </Badge>
@@ -702,7 +698,7 @@ const ShopDashboard: React.FC = () => {
                           <Button
                             variant="outline"
                             size="sm"
-                            onClick={() => deleteProduct(product.id)}
+                            onClick={() => handleDeleteProduct(product.id)}
                             className="border-red-700 text-red-400 hover:bg-red-500/10"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -712,16 +708,16 @@ const ShopDashboard: React.FC = () => {
                     </CardContent>
                   </Card>
                 ))}
-                {userProducts.length === 0 && (
+                {partnerProducts.length === 0 && (
                   <Card className="border-gray-800 bg-gray-900/50">
                     <CardContent className="p-12 text-center">
-                      <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <Crown className="w-12 h-12 text-yellow-400 mx-auto mb-4" />
                       <h3 className="text-lg font-semibold text-white mb-2">
-                        Aucun produit
+                        Aucun produit partenaire
                       </h3>
                       <p className="text-gray-400">
-                        Commencez par ajouter votre premier produit à votre
-                        boutique
+                        Commencez par ajouter votre premier produit exclusif en
+                        tant que partenaire
                       </p>
                     </CardContent>
                   </Card>
@@ -733,10 +729,10 @@ const ShopDashboard: React.FC = () => {
             <TabsContent value="stats" className="space-y-6">
               <div>
                 <h2 className="text-lg font-semibold text-white">
-                  Statistiques de votre Boutique
+                  Statistiques Partenaire
                 </h2>
                 <p className="text-gray-400 text-sm">
-                  Suivez les performances de vos produits
+                  Suivez les performances de vos produits exclusifs
                 </p>
               </div>
 
@@ -744,13 +740,13 @@ const ShopDashboard: React.FC = () => {
                 <Card className="border-gray-800 bg-gray-900/50">
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-purple-600/20 rounded-lg">
-                        <Package className="w-6 h-6 text-purple-400" />
+                      <div className="p-3 bg-yellow-600/20 rounded-lg">
+                        <Package className="w-6 h-6 text-yellow-400" />
                       </div>
                       <div>
                         <p className="text-gray-400 text-sm">Total Produits</p>
                         <p className="text-2xl font-bold text-white">
-                          {userProducts.length}
+                          {partnerProducts.length}
                         </p>
                       </div>
                     </div>
@@ -768,7 +764,10 @@ const ShopDashboard: React.FC = () => {
                           Produits Gratuits
                         </p>
                         <p className="text-2xl font-bold text-white">
-                          {userProducts.filter((p) => p.type === "free").length}
+                          {
+                            partnerProducts.filter((p) => p.type === "free")
+                              .length
+                          }
                         </p>
                       </div>
                     </div>
@@ -778,15 +777,18 @@ const ShopDashboard: React.FC = () => {
                 <Card className="border-gray-800 bg-gray-900/50">
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-yellow-600/20 rounded-lg">
-                        <Euro className="w-6 h-6 text-yellow-400" />
+                      <div className="p-3 bg-purple-600/20 rounded-lg">
+                        <Euro className="w-6 h-6 text-purple-400" />
                       </div>
                       <div>
                         <p className="text-gray-400 text-sm">
                           Produits Payants
                         </p>
                         <p className="text-2xl font-bold text-white">
-                          {userProducts.filter((p) => p.type === "paid").length}
+                          {
+                            partnerProducts.filter((p) => p.type === "paid")
+                              .length
+                          }
                         </p>
                       </div>
                     </div>
@@ -801,4 +803,4 @@ const ShopDashboard: React.FC = () => {
   );
 };
 
-export default ShopDashboard;
+export default PartnerDashboard;

@@ -15,7 +15,9 @@ import { AdminModeProvider } from "@/context/AdminModeContext";
 import ModernHomePage from "./components/ModernHomePage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminLimitedDashboard from "./pages/AdminLimitedDashboard";
 import ShopDashboard from "./pages/ShopDashboard";
+import PartnerDashboard from "./pages/PartnerDashboard";
 import MaintenancePage from "./pages/MaintenancePage";
 import NotFound from "./pages/NotFound";
 import DevToolsProtection from "./components/DevToolsProtection";
@@ -77,7 +79,9 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="/admin-limited" element={<AdminLimitedDashboard />} />
           <Route path="/shop" element={<ShopDashboard />} />
+          <Route path="/partner" element={<PartnerDashboard />} />
           <Route
             path="*"
             element={
@@ -117,7 +121,14 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
-      <Sonner position="bottom-right" />
+      <Sonner
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            marginBottom: "80px",
+          },
+        }}
+      />
       <BrowserRouter>
         <AuthProvider>
           <AdminModeProvider>
