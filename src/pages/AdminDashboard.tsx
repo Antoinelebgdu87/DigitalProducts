@@ -3,6 +3,10 @@ import { useAuth } from "@/context/AuthContext";
 import { useMaintenance } from "@/context/MaintenanceContext";
 import { useProducts } from "@/hooks/useProducts";
 import { useLicenses } from "@/hooks/useLicenses";
+import { useModeration } from "@/hooks/useModeration";
+import { useComments } from "@/hooks/useComments";
+import { useAdminMode } from "@/context/AdminModeContext";
+import HeaderLogo from "@/components/HeaderLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -52,6 +56,12 @@ import {
   Edit,
   FileText,
   Link as LinkIcon,
+  AlertTriangle,
+  Clock,
+  MessageSquare,
+  Store,
+  Crown,
+  Timer,
 } from "lucide-react";
 import SimpleStarsBackground from "@/components/SimpleStarsBackground";
 import { toast } from "sonner";
@@ -77,6 +87,15 @@ const AdminDashboard: React.FC = () => {
     loading: licensesLoading,
   } = useLicenses();
   const { users, banUser, addWarning, updateUserRole } = useUser();
+  const {
+    moderationActions,
+    moderateDeleteProduct,
+    moderateDeleteComment,
+    getUserProducts,
+    getModerationStats
+  } = useModeration();
+  const { adminMode, timerSettings, updateTimerSettings } = useAdminMode();
+  const { comments: allComments } = useComments();
 
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
@@ -116,10 +135,23 @@ const AdminDashboard: React.FC = () => {
   const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [selectedUserRole, setSelectedUserRole] = useState<
-    "user" | "shop_access" | "admin"
+    "user" | "shop_access" | "partner" | "admin"
   >("user");
   const [banReason, setBanReason] = useState("");
   const [warnReason, setWarnReason] = useState("");
+
+  // Moderation states
+  const [showModerationDialog, setShowModerationDialog] = useState(false);
+  const [moderationTarget, setModerationTarget] = useState<{
+    id: string;
+    type: 'product' | 'comment';
+    title: string;
+  } | null>(null);
+  const [moderationReason, setModerationReason] = useState("");
+
+  // Timer settings states
+  const [showTimerDialog, setShowTimerDialog] = useState(false);
+  const [tempTimerSettings, setTempTimerSettings] = useState(timerSettings);
 
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -392,25 +424,22 @@ const AdminDashboard: React.FC = () => {
         <header className="border-b border-gray-800/50 bg-black/20 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
+              <HeaderLogo />
               <div className="flex items-center space-x-4">
-                <Shield className="w-8 h-8 text-red-500" />
-                <div>
-                  <h1 className="text-xl font-semibold text-white">
-                    Admin Panel
-                  </h1>
-                  <p className="text-gray-400 text-xs">
-                    Products and licenses management
-                  </p>
+                {/* Moderation stats */}
+                <div className="flex items-center space-x-2 text-sm text-gray-400">
+                  <Shield className="w-4 h-4" />
+                  <span>{getModerationStats().todayActions} actions aujourd'hui</span>
                 </div>
+                <Button
+                  onClick={logout}
+                  variant="outline"
+                  className="border-red-500/50 text-red-400 hover:bg-red-500/10"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
               </div>
-              <Button
-                onClick={logout}
-                variant="outline"
-                className="border-red-500/50 text-red-400 hover:bg-red-500/10"
-              >
-                <LogOut className="w-4 h-4 mr-2" />
-                Logout
-              </Button>
             </div>
           </div>
         </header>
@@ -418,13 +447,20 @@ const AdminDashboard: React.FC = () => {
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
           <Tabs defaultValue="products" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-5 bg-gray-900/50">
+            <TabsList className="grid w-full grid-cols-7 bg-gray-900/50">
               <TabsTrigger
                 value="products"
                 className="data-[state=active]:bg-red-600"
               >
                 <Package className="w-4 h-4 mr-2" />
                 Products
+              </TabsTrigger>
+              <TabsTrigger
+                value="moderation"
+                className="data-[state=active]:bg-red-600"
+              >
+                <Shield className="w-4 h-4 mr-2" />
+                Modération
               </TabsTrigger>
               <TabsTrigger
                 value="users"
@@ -434,11 +470,11 @@ const AdminDashboard: React.FC = () => {
                 Users
               </TabsTrigger>
               <TabsTrigger
-                value="prices"
+                value="timers"
                 className="data-[state=active]:bg-red-600"
               >
-                <Euro className="w-4 h-4 mr-2" />
-                Prix
+                <Timer className="w-4 h-4 mr-2" />
+                Timers
               </TabsTrigger>
               <TabsTrigger
                 value="licenses"
