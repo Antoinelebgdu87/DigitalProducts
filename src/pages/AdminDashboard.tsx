@@ -516,9 +516,11 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Product deletion handler amélioré
+  // Product deletion handler amélioré avec états
   const handleDeleteProduct = async () => {
-    if (!productToDelete) return;
+    if (!productToDelete || isDeletingProduct) return;
+
+    setIsDeletingProduct(true);
 
     try {
       console.log(`🚀 Début de suppression du produit: "${productToDelete.title}"`);
@@ -527,6 +529,9 @@ const AdminDashboard: React.FC = () => {
       toast.info(`Suppression en cours de "${productToDelete.title}"...`);
 
       await deleteProduct(productToDelete.id);
+
+      // Mettre à jour l'heure de sauvegarde
+      setLastSavedAt(new Date());
 
       // Toast de succès avec plus de détails
       toast.success(`✅ Produit "${productToDelete.title}" supprimé définitivement de Firebase et du système local`);
@@ -547,6 +552,8 @@ const AdminDashboard: React.FC = () => {
       console.error("❌ Erreur de suppression:", error);
       const errorMessage = error?.message || "Erreur inconnue lors de la suppression";
       toast.error(`❌ Erreur: ${errorMessage}`);
+    } finally {
+      setIsDeletingProduct(false);
     }
   };
 
@@ -2494,7 +2501,7 @@ const AdminDashboard: React.FC = () => {
                 <DialogContent className="bg-gray-900 border-gray-800">
                   <DialogHeader>
                     <DialogTitle className="text-white">
-                      D��bannir l'utilisateur
+                      Débannir l'utilisateur
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
                       L'utilisateur pourra de nouveau accéder au site.
