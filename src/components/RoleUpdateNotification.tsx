@@ -23,12 +23,16 @@ const RoleUpdateNotification: React.FC = () => {
       if (lastRole && lastRole !== currentUser.role) {
         // Role changed!
         setPreviousRole(lastRole);
-        setShowNotification(true);
 
-        // Auto hide after 4 seconds
+        // Delay showing notification to sync with other animations
+        setTimeout(() => {
+          setShowNotification(true);
+        }, 100);
+
+        // Auto hide after 5 seconds (including delay)
         const timer = setTimeout(() => {
           setShowNotification(false);
-        }, 4000);
+        }, 5000);
 
         return () => clearTimeout(timer);
       }
