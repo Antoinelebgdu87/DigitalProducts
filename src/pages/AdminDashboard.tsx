@@ -1413,7 +1413,7 @@ const AdminDashboard: React.FC = () => {
               </div>
 
               {/* Moderation Stats */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <Card className="border-gray-800 bg-gray-900/50">
                   <CardContent className="p-4 text-center">
                     <div className="text-2xl font-bold text-red-400">
