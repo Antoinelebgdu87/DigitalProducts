@@ -107,6 +107,7 @@ const ModernHomePage: React.FC = () => {
     <div className="min-h-screen relative overflow-hidden">
       <SimpleStarsBackground />
       <RoleUpdateNotification />
+      <FloatingRoleBadge />
 
       {/* Navigation */}
       <motion.nav
