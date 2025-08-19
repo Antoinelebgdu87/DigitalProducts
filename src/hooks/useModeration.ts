@@ -257,6 +257,8 @@ export const useModeration = () => {
       ).length,
       bannedUsers: moderationActions.filter((a) => a.type === "ban_user")
         .length,
+      unbannedUsers: moderationActions.filter((a) => a.type === "unban_user")
+        .length,
       warnedUsers: moderationActions.filter((a) => a.type === "warn_user")
         .length,
     };
