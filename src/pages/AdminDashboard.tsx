@@ -142,6 +142,8 @@ const AdminDashboard: React.FC = () => {
   >("user");
   const [banReason, setBanReason] = useState("");
   const [warnReason, setWarnReason] = useState("");
+  const [banDuration, setBanDuration] = useState<string>("permanent");
+  const [customBanHours, setCustomBanHours] = useState<number>(24);
 
   // Moderation states
   const [showModerationDialog, setShowModerationDialog] = useState(false);
@@ -2273,7 +2275,7 @@ const AdminDashboard: React.FC = () => {
                     <div className="mt-4 p-3 bg-orange-900/20 border border-orange-700/30 rounded">
                       <p className="text-orange-200 text-xs">
                         Tous les utilisateurs doivent attendre ce délai entre
-                        chaque commentaire. Aide à prévenir le spam de
+                        chaque commentaire. Aide �� prévenir le spam de
                         commentaires.
                       </p>
                     </div>
