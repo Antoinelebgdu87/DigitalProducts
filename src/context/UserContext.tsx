@@ -361,6 +361,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         isBanned: false,
         banReason: null,
         bannedAt: null,
+        banExpiresAt: null,
       });
       console.log("✅ Utilisateur Firebase débanni:", userId);
     } catch (error) {
