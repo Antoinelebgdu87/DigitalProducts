@@ -385,6 +385,18 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const updateUserRole = async (userId: string, role: UserRole): Promise<void> => {
+    try {
+      await updateDoc(doc(db, "users", userId), {
+        role: role,
+      });
+      console.log("👑 Rôle utilisateur Firebase mis à jour:", userId, role);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du rôle:", error);
+      throw error;
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
