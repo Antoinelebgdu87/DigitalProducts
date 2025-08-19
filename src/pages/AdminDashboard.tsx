@@ -86,7 +86,7 @@ const AdminDashboard: React.FC = () => {
     getActiveLicenses,
     loading: licensesLoading,
   } = useLicenses();
-  const { users, banUser, addWarning, updateUserRole } = useUser();
+  const { users, banUser, unbanUser, addWarning, updateUserRole } = useUser();
   const {
     moderationActions,
     moderateDeleteProduct,
