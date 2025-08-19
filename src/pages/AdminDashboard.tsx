@@ -341,7 +341,7 @@ const AdminDashboard: React.FC = () => {
 
     try {
       await updateUserRole(selectedUserId, selectedUserRole);
-      toast.success(`R��le mis à jour vers ${selectedUserRole}`);
+      toast.success(`Rôle mis à jour vers ${selectedUserRole}`);
       setShowRoleDialog(false);
       setSelectedUserId("");
       setSelectedUserRole("user");
@@ -485,7 +485,7 @@ const AdminDashboard: React.FC = () => {
         {/* Main Content */}
         <main className="container mx-auto px-4 py-8">
           <Tabs defaultValue="products" className="space-y-6">
-            <TabsList className="grid w-full grid-cols-7 bg-gray-900/50">
+            <TabsList className="grid w-full grid-cols-6 bg-gray-900/50">
               <TabsTrigger
                 value="products"
                 className="data-[state=active]:bg-red-600"
