@@ -274,7 +274,26 @@ export const useProducts = () => {
 
   const fetchProducts = async () => {
     // This function is kept for compatibility but real-time updates handle the data
-    console.log("📋 Produits gérés en temps réel via Firebase");
+    if (!shouldUseFirebase()) {
+      // In localStorage mode, force reload from localStorage
+      try {
+        const stored = localStorage.getItem("products");
+        if (stored) {
+          const localProducts = JSON.parse(stored);
+          setProducts(
+            localProducts.map((p: any) => ({
+              ...p,
+              createdAt: new Date(p.createdAt),
+            })),
+          );
+          console.log("🔄 Force reload depuis localStorage:", localProducts.length, "produits");
+        }
+      } catch (error) {
+        console.error("Error force reloading products:", error);
+      }
+    } else {
+      console.log("📋 Produits gérés en temps réel via Firebase");
+    }
   };
 
   // Fonctions pour vérifier les permissions
