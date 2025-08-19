@@ -155,6 +155,10 @@ const AdminDashboard: React.FC = () => {
   const [showTimerDialog, setShowTimerDialog] = useState(false);
   const [tempTimerSettings, setTempTimerSettings] = useState(timerSettings);
 
+  // Product deletion states
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [productToDelete, setProductToDelete] = useState<{id: string, title: string} | null>(null);
+
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
