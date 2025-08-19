@@ -252,6 +252,15 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
           content={product.content || "Aucun contenu disponible."}
         />
       )}
+
+      {showComments && (
+        <CommentsModal
+          isOpen={showComments}
+          onClose={() => setShowComments(false)}
+          productId={product.id}
+          productTitle={product.title}
+        />
+      )}
     </>
   );
 };
