@@ -53,8 +53,15 @@ export const useSimpleComments = (productId: string) => {
           ...doc.data()
         })) as SimpleComment[];
 
-        console.log("💬 Comments loaded:", commentsData.length);
-        setComments(commentsData);
+        // Sort comments by date (newest first) on client side
+        const sortedComments = commentsData.sort((a, b) => {
+          const dateA = a.createdAt?.seconds || 0;
+          const dateB = b.createdAt?.seconds || 0;
+          return dateB - dateA;
+        });
+
+        console.log("💬 Comments loaded:", sortedComments.length);
+        setComments(sortedComments);
         setLoading(false);
       },
       (error) => {
@@ -74,7 +81,7 @@ export const useSimpleComments = (productId: string) => {
     }
 
     try {
-      console.log("➕ Adding comment...");
+      console.log("�� Adding comment...");
       
       await addDoc(collection(db, "simple_comments"), {
         productId,
