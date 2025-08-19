@@ -45,11 +45,27 @@ export const useComments = (productId?: string) => {
   useEffect(() => {
     if (!productId) {
       setComments([]);
+      setIsOfflineMode(false);
       return;
     }
 
     setLoading(true);
 
+    // Vérifier si on doit utiliser le mode offline
+    const useOffline = shouldUseOfflineMode();
+    setIsOfflineMode(useOffline);
+
+    if (useOffline) {
+      console.log("📱 Mode offline activé pour les commentaires");
+      // Utiliser le service local
+      const unsubscribe = localCommentsService.subscribe(productId, (localComments) => {
+        setComments(localComments);
+        setLoading(false);
+      });
+      return unsubscribe;
+    }
+
+    // Essayer Firebase d'abord
     const loadComments = () => {
       try {
         // Requête simplifiée sans orderBy pour éviter l'index composite
@@ -71,36 +87,37 @@ export const useComments = (productId?: string) => {
               );
               setComments(sortedComments);
               setLoading(false);
+              setIsOfflineMode(false);
+              markFirebaseWorking(); // Marquer Firebase comme fonctionnel
             } catch (error) {
               console.error("Erreur lors du parsing des commentaires:", error);
-              setComments([]);
-              setLoading(false);
+              fallbackToOffline();
             }
           },
           (error) => {
             console.error("Erreur listener commentaires:", error);
-
-            // Gestion spécifique des erreurs réseau
-            if (error.code === 'unavailable' || error.message.includes('Failed to fetch')) {
-              console.log("🔄 Problème de connectivité détecté, mode offline activé");
-              // En cas d'erreur réseau, on garde un état vide mais on arrête le loading
-              setComments([]);
-              setLoading(false);
-            } else {
-              // Pour autres erreurs, on garde les commentaires vides
-              setComments([]);
-              setLoading(false);
-            }
+            markFirebaseError(); // Marquer l'erreur Firebase
+            fallbackToOffline();
           }
         );
 
         return unsubscribe;
       } catch (error) {
         console.error("Erreur lors de l'initialisation des commentaires:", error);
-        setComments([]);
-        setLoading(false);
+        fallbackToOffline();
         return () => {}; // Retourne une fonction vide si erreur
       }
+    };
+
+    const fallbackToOffline = () => {
+      console.log("🔄 Passage en mode offline pour les commentaires");
+      setIsOfflineMode(true);
+      // Basculer vers le service local
+      const unsubscribe = localCommentsService.subscribe(productId, (localComments) => {
+        setComments(localComments);
+        setLoading(false);
+      });
+      return unsubscribe;
     };
 
     const unsubscribe = loadComments();
