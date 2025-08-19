@@ -1478,7 +1478,9 @@ const AdminDashboard: React.FC = () => {
                                   ? "bg-orange-600"
                                   : action.type === "ban_user"
                                     ? "bg-purple-600"
-                                    : "bg-yellow-600"
+                                    : action.type === "unban_user"
+                                      ? "bg-green-600"
+                                      : "bg-yellow-600"
                             }`}
                           >
                             {action.type === "delete_product" && (
