@@ -1712,6 +1712,8 @@ const AdminDashboard: React.FC = () => {
                                 "Utilisateur débanni"}
                               {action.type === "warn_user" &&
                                 "Avertissement envoyé"}
+                              {action.type === "delete_user" &&
+                                "Compte supprimé"}
                             </p>
                             <p className="text-gray-400 text-xs">
                               Par {action.moderatorUsername} •{" "}
