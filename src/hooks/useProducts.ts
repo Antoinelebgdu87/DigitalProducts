@@ -11,7 +11,7 @@ import {
   onSnapshot,
   Timestamp,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, shouldUseFirebase, safeFirebaseOperation } from "@/lib/firebase";
 import { Product } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import { useAdminMode } from "@/context/AdminModeContext";
@@ -38,35 +38,60 @@ export const useProducts = () => {
     };
   };
 
-  // Real-time listener for products
+  // Real-time listener for products with Firebase fallback
   useEffect(() => {
-    const unsubscribe = onSnapshot(
-      query(collection(db, "products"), orderBy("createdAt", "desc")),
-      (snapshot) => {
+    const loadProducts = async () => {
+      if (!shouldUseFirebase()) {
+        // Use localStorage in offline mode
         try {
-          const productsData = snapshot.docs.map((doc) =>
-            parseProduct({ id: doc.id, ...doc.data() }),
-          );
-          setProducts(productsData);
-          console.log("📦 Produits Firebase chargés:", productsData.length);
+          const stored = localStorage.getItem("products");
+          if (stored) {
+            const localProducts = JSON.parse(stored);
+            console.log(
+              "📦 Produits chargés depuis localStorage:",
+              localProducts.length,
+            );
+            setProducts(
+              localProducts.map((p: any) => ({
+                ...p,
+                createdAt: new Date(p.createdAt),
+              })),
+            );
+          } else {
+            setProducts([]);
+          }
         } catch (error) {
-          console.error("Error parsing products:", error);
+          console.error("Error loading products from localStorage:", error);
           setProducts([]);
         } finally {
           setLoading(false);
         }
-      },
-      (error) => {
-        console.error("Error fetching products:", error);
-        if (
-          error.message &&
-          (error.message.includes("permissions") ||
-            error.message.includes("Missing or insufficient"))
-        ) {
-          console.log(
-            "⚠️ Permissions Firebase manquantes pour les produits - mode dégradé",
-          );
-          // Fallback: essayer de charger depuis localStorage
+        return;
+      }
+
+      // Use Firebase if available
+      const unsubscribe = onSnapshot(
+        query(collection(db, "products"), orderBy("createdAt", "desc")),
+        (snapshot) => {
+          try {
+            const productsData = snapshot.docs.map((doc) =>
+              parseProduct({ id: doc.id, ...doc.data() }),
+            );
+            setProducts(productsData);
+            console.log("📦 Produits Firebase chargés:", productsData.length);
+
+            // Also save to localStorage as backup
+            localStorage.setItem("products", JSON.stringify(productsData));
+          } catch (error) {
+            console.error("Error parsing products:", error);
+            setProducts([]);
+          } finally {
+            setLoading(false);
+          }
+        },
+        (error) => {
+          console.error("Error fetching products:", error);
+          // Fallback to localStorage
           try {
             const stored = localStorage.getItem("products");
             if (stored) {
@@ -85,13 +110,15 @@ export const useProducts = () => {
           } catch (localError) {
             console.log("⚠️ Aucun produit local trouvé");
           }
-        }
-        setProducts([]);
-        setLoading(false);
-      },
-    );
+          setProducts([]);
+          setLoading(false);
+        },
+      );
 
-    return () => unsubscribe();
+      return () => unsubscribe();
+    };
+
+    loadProducts();
   }, []);
 
   // Migrate existing localStorage data on first load
@@ -150,15 +177,24 @@ export const useProducts = () => {
         }
       }
 
-      const newProduct = {
+      const newProduct: Product = {
         ...productData,
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
         createdBy: userId,
         createdByUsername: username,
         createdAt: new Date(),
       };
 
-      await addDoc(collection(db, "products"), productToFirestore(newProduct));
-      console.log("🎉 Nouveau produit Firebase créé:", productData.title);
+      if (shouldUseFirebase()) {
+        await addDoc(collection(db, "products"), productToFirestore(newProduct));
+        console.log("🎉 Nouveau produit Firebase créé:", productData.title);
+      } else {
+        // localStorage fallback
+        const currentProducts = [...products, newProduct];
+        setProducts(currentProducts);
+        localStorage.setItem("products", JSON.stringify(currentProducts));
+        console.log("🎉 Nouveau produit créé en mode offline:", productData.title);
+      }
     } catch (error) {
       console.error("Error adding product:", error);
       throw error;
@@ -167,8 +203,16 @@ export const useProducts = () => {
 
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
-      await deleteDoc(doc(db, "products", productId));
-      console.log("🗑️ Produit Firebase supprimé:", productId);
+      if (shouldUseFirebase()) {
+        await deleteDoc(doc(db, "products", productId));
+        console.log("🗑️ Produit Firebase supprimé:", productId);
+      } else {
+        // localStorage fallback
+        const updatedProducts = products.filter(p => p.id !== productId);
+        setProducts(updatedProducts);
+        localStorage.setItem("products", JSON.stringify(updatedProducts));
+        console.log("🗑️ Produit supprimé en mode offline:", productId);
+      }
     } catch (error) {
       console.error("Error deleting product:", error);
       throw error;
@@ -180,8 +224,18 @@ export const useProducts = () => {
     productData: Partial<Omit<Product, "id" | "createdAt">>,
   ): Promise<void> => {
     try {
-      await updateDoc(doc(db, "products", productId), productData);
-      console.log("📝 Produit Firebase mis à jour:", productId);
+      if (shouldUseFirebase()) {
+        await updateDoc(doc(db, "products", productId), productData);
+        console.log("📝 Produit Firebase mis à jour:", productId);
+      } else {
+        // localStorage fallback
+        const updatedProducts = products.map(p =>
+          p.id === productId ? { ...p, ...productData } : p
+        );
+        setProducts(updatedProducts);
+        localStorage.setItem("products", JSON.stringify(updatedProducts));
+        console.log("📝 Produit mis à jour en mode offline:", productId);
+      }
     } catch (error) {
       console.error("Error updating product:", error);
       throw error;
@@ -200,7 +254,7 @@ export const useProducts = () => {
     }
 
     if (!["admin", "shop_access", "partner"].includes(userRole)) {
-      return { canCreate: false, reason: "Vous n'avez pas les permissions nécessaires" };
+      return { canCreate: false, reason: "Vous n'avez pas les permissions n��cessaires" };
     }
 
     if (userRole === "shop_access") {
