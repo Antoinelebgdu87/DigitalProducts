@@ -696,18 +696,41 @@ const AdminDashboard: React.FC = () => {
               <HeaderLogo />
               <div className="flex items-center space-x-4">
                 {/* Firebase Status */}
-                <div className="flex items-center space-x-2 text-sm">
-                  {isFirebaseAvailable ? (
-                    <div className="flex items-center space-x-2 text-green-400">
-                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                      <span>Firebase Connecté</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center space-x-2 text-yellow-400">
-                      <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                      <span>Mode Local</span>
-                    </div>
-                  )}
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 text-sm">
+                    {isFirebaseAvailable ? (
+                      <div className="flex items-center space-x-2 text-green-400">
+                        <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                        <span>Firebase Connecté</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center space-x-2 text-yellow-400">
+                        <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                        <span>Mode Local</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Test Firebase Button */}
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={testFirebaseConnection}
+                    disabled={isTestingFirebase}
+                    className="border-blue-700 text-blue-400 hover:bg-blue-500/10 text-xs"
+                  >
+                    {isTestingFirebase ? (
+                      <>
+                        <div className="w-3 h-3 mr-1 border border-blue-400/20 border-t-blue-400 rounded-full animate-spin"></div>
+                        Test...
+                      </>
+                    ) : (
+                      <>
+                        <Shield className="w-3 h-3 mr-1" />
+                        Test
+                      </>
+                    )}
+                  </Button>
                 </div>
 
                 {/* Last Saved Indicator */}
