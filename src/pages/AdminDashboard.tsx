@@ -568,6 +568,23 @@ const AdminDashboard: React.FC = () => {
                         />
                       </div>
                       <div className="space-y-2">
+                        <Label htmlFor="discordUrl" className="text-white">
+                          Discord Server URL (optionnel)
+                        </Label>
+                        <Input
+                          id="discordUrl"
+                          value={productForm.discordUrl}
+                          onChange={(e) =>
+                            setProductForm({
+                              ...productForm,
+                              discordUrl: e.target.value,
+                            })
+                          }
+                          className="bg-gray-800 border-gray-700 text-white"
+                          placeholder="https://discord.gg/example"
+                        />
+                      </div>
+                      <div className="space-y-2">
                         <Label htmlFor="contentType" className="text-white">
                           Type de contenu
                         </Label>
