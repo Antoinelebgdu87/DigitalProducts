@@ -10,6 +10,7 @@ export const FirebaseDebug: React.FC = () => {
   const [connectionStatus, setConnectionStatus] = useState<'checking' | 'connected' | 'disconnected'>('checking');
   const [productsCount, setProductsCount] = useState<number | null>(null);
   const [lastTest, setLastTest] = useState<string>('');
+  const [firebaseProducts, setFirebaseProducts] = useState<any[]>([]);
 
   const testFirebaseConnection = async () => {
     setConnectionStatus('checking');
