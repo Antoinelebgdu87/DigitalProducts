@@ -82,16 +82,40 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     }
   };
 
-  const formatDate = (date: Date) => {
+  const formatDate = (date: any) => {
     try {
+      let validDate: Date;
+
+      if (!date) return "Date inconnue";
+      if (date instanceof Date) {
+        validDate = date;
+      } else if (date && typeof date.toDate === "function") {
+        validDate = date.toDate();
+      } else if (typeof date === "number") {
+        validDate = new Date(date);
+      } else if (typeof date === "string") {
+        validDate = new Date(date);
+      } else if (date && typeof date === "object" && "seconds" in date) {
+        validDate = new Date(
+          date.seconds * 1000 + (date.nanoseconds || 0) / 1000000,
+        );
+      } else {
+        return "Date invalide";
+      }
+
+      if (isNaN(validDate.getTime())) {
+        return "Date invalide";
+      }
+
       return new Intl.DateTimeFormat("fr-FR", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      }).format(date);
+      }).format(validDate);
     } catch (error) {
+      console.error("Error formatting date:", error, date);
       return "Date invalide";
     }
   };
