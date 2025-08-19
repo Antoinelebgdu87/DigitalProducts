@@ -2004,16 +2004,80 @@ const AdminDashboard: React.FC = () => {
 
               {/* Ban Dialog */}
               <Dialog open={showBanDialog} onOpenChange={setShowBanDialog}>
-                <DialogContent className="bg-gray-900 border-gray-800">
+                <DialogContent className="bg-gray-900 border-gray-800 max-w-2xl">
                   <DialogHeader>
                     <DialogTitle className="text-white">
                       Bannir l'utilisateur
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
-                      Cette action est définitive et irréversible.
+                      Choisissez la durée et la raison du bannissement.
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleBanUser} className="space-y-4">
+                    {/* Durée du ban */}
+                    <div className="space-y-2">
+                      <Label htmlFor="banDuration" className="text-white">
+                        Durée du bannissement
+                      </Label>
+                      <Select value={banDuration} onValueChange={setBanDuration}>
+                        <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {banDurationOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              <div className="flex items-center space-x-2">
+                                {option.value === "permanent" ? (
+                                  <AlertTriangle className="w-4 h-4 text-red-400" />
+                                ) : (
+                                  <Clock className="w-4 h-4 text-blue-400" />
+                                )}
+                                <span>{option.label}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    {/* Durée personnalisée */}
+                    {banDuration === "custom" && (
+                      <div className="space-y-2">
+                        <Label htmlFor="customHours" className="text-white">
+                          Nombre d'heures (1-8760)
+                        </Label>
+                        <Input
+                          id="customHours"
+                          type="number"
+                          min="1"
+                          max="8760"
+                          value={customBanHours}
+                          onChange={(e) => setCustomBanHours(parseInt(e.target.value) || 1)}
+                          className="bg-gray-800 border-gray-700 text-white"
+                        />
+                      </div>
+                    )}
+
+                    {/* Messages prédéfinis */}
+                    <div className="space-y-2">
+                      <Label className="text-white">Messages prédéfinis</Label>
+                      <div className="grid grid-cols-2 gap-2 max-h-32 overflow-y-auto">
+                        {predefinedBanReasons.map((reason, index) => (
+                          <Button
+                            key={index}
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setBanReason(reason)}
+                            className="text-xs h-auto p-2 border-gray-700 text-gray-300 hover:bg-gray-700 text-left justify-start"
+                          >
+                            {reason}
+                          </Button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Raison personnalisée */}
                     <div className="space-y-2">
                       <Label htmlFor="banReason" className="text-white">
                         Raison du bannissement
@@ -2028,6 +2092,27 @@ const AdminDashboard: React.FC = () => {
                         rows={3}
                       />
                     </div>
+
+                    {/* Aperçu de la durée */}
+                    {banDuration !== "permanent" && (
+                      <div className="bg-blue-900/50 border border-blue-700 rounded p-3">
+                        <p className="text-blue-200 text-sm">
+                          <Clock className="w-4 h-4 inline mr-1" />
+                          <strong>Ban temporaire:</strong> L'utilisateur sera automatiquement débanni le{" "}
+                          {new Date(Date.now() + (banDuration === "custom" ? customBanHours : banDurationOptions.find(o => o.value === banDuration)?.hours || 0) * 60 * 60 * 1000).toLocaleString("fr-FR")}
+                        </p>
+                      </div>
+                    )}
+
+                    {banDuration === "permanent" && (
+                      <div className="bg-red-900/50 border border-red-700 rounded p-3">
+                        <p className="text-red-200 text-sm">
+                          <AlertTriangle className="w-4 h-4 inline mr-1" />
+                          <strong>Ban permanent:</strong> L'utilisateur devra être débanni manuellement.
+                        </p>
+                      </div>
+                    )}
+
                     <DialogFooter>
                       <Button
                         type="button"
@@ -2035,6 +2120,7 @@ const AdminDashboard: React.FC = () => {
                         onClick={() => {
                           setShowBanDialog(false);
                           setBanReason("");
+                          setBanDuration("permanent");
                           setSelectedUserId("");
                         }}
                         className="border-gray-700"
@@ -2043,10 +2129,10 @@ const AdminDashboard: React.FC = () => {
                       </Button>
                       <Button
                         type="submit"
-                        className="bg-red-600 hover:bg-red-700"
+                        className={banDuration === "permanent" ? "bg-red-600 hover:bg-red-700" : "bg-orange-600 hover:bg-orange-700"}
                         disabled={!banReason.trim()}
                       >
-                        Bannir définitivement
+                        {banDuration === "permanent" ? "Bannir définitivement" : "Bannir temporairement"}
                       </Button>
                     </DialogFooter>
                   </form>
