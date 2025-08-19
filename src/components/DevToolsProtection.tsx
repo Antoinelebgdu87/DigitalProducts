@@ -92,8 +92,8 @@ const DevToolsProtection = () => {
     document.addEventListener("dragstart", blockDragStart);
     document.addEventListener("mousedown", disableRightClick);
     
-    // Vérifier périodiquement l'ouverture des DevTools
-    const interval = setInterval(detectDevTools, 500);
+    // Vérification DevTools désactivée temporairement
+    // const interval = setInterval(detectDevTools, 500);
 
     // Bloquer la console
     try {
