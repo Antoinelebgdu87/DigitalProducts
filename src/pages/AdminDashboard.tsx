@@ -1676,7 +1676,9 @@ const AdminDashboard: React.FC = () => {
                                     ? "bg-purple-600"
                                     : action.type === "unban_user"
                                       ? "bg-green-600"
-                                      : "bg-yellow-600"
+                                      : action.type === "delete_user"
+                                        ? "bg-red-800"
+                                        : "bg-yellow-600"
                             }`}
                           >
                             {action.type === "delete_product" && (
@@ -1693,6 +1695,9 @@ const AdminDashboard: React.FC = () => {
                             )}
                             {action.type === "warn_user" && (
                               <AlertTriangle className="w-4 h-4 text-white" />
+                            )}
+                            {action.type === "delete_user" && (
+                              <Trash2 className="w-4 h-4 text-white" />
                             )}
                           </div>
                           <div>
