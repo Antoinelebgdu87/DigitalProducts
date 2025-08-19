@@ -6,7 +6,7 @@ import { useLicenses } from "@/hooks/useLicenses";
 import { useModeration } from "@/hooks/useModeration";
 import { useComments } from "@/hooks/useComments";
 import { useAdminMode } from "@/context/AdminModeContext";
-import { isFirebaseAvailable } from "@/lib/firebase";
+// Firebase toujours utilisé
 import HeaderLogo from "@/components/HeaderLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
