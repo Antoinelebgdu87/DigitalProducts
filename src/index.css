@@ -122,4 +122,50 @@
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--accent));
   }
+
+  /* Protection contre les outils de développement */
+  body {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Empêcher la sélection de texte */
+  * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  }
+
+  /* Permettre la sélection seulement dans les inputs */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+  }
+
+  /* Empêcher le glisser-déposer */
+  * {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+  }
+
+  /* Cacher le texte de sélection */
+  ::selection {
+    background: transparent;
+  }
+
+  ::-moz-selection {
+    background: transparent;
+  }
 }
