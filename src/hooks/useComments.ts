@@ -162,16 +162,9 @@ export const useComments = (productId?: string) => {
         productId,
         userId: currentUser.id,
         username: currentUser.username,
-        userAvatar: currentUser.avatar || "",
+        userRole: currentUser.role, // Inclure le rôle utilisateur
         content,
-        rating: rating || 0,
         createdAt: Timestamp.now(),
-        isEdited: false,
-        editedAt: null,
-        likes: 0,
-        likedBy: [],
-        parentId: parentId || null,
-        replies: [],
       };
 
       await addDoc(collection(db, "comments"), commentData);
