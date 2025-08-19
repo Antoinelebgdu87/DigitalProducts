@@ -11,7 +11,7 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, shouldUseFirebase } from "@/lib/firebase";
 import { ModerationAction, Product } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 
@@ -43,30 +43,57 @@ export const useModeration = () => {
       return;
     }
 
-    const unsubscribe = onSnapshot(
-      query(collection(db, "moderation_actions"), orderBy("createdAt", "desc")),
-      (snapshot) => {
+    const loadModerationActions = () => {
+      if (!shouldUseFirebase()) {
+        // Use localStorage fallback
         try {
-          const actionsData = snapshot.docs.map((doc) =>
-            parseModerationAction({ id: doc.id, ...doc.data() }),
-          );
-          setModerationActions(actionsData);
-          console.log("🛡️ Actions de modération chargées:", actionsData.length);
+          const stored = localStorage.getItem("moderation_actions");
+          if (stored) {
+            const localActions = JSON.parse(stored);
+            setModerationActions(
+              localActions.map((action: any) => ({
+                ...action,
+                createdAt: new Date(action.createdAt),
+              }))
+            );
+            console.log("🛡️ Actions de modération chargées depuis localStorage:", localActions.length);
+          }
         } catch (error) {
-          console.error("Error parsing moderation actions:", error);
-          setModerationActions([]);
-        } finally {
-          setLoading(false);
+          console.error("Error loading moderation actions from localStorage:", error);
         }
-      },
-      (error) => {
-        console.error("Error fetching moderation actions:", error);
-        setModerationActions([]);
         setLoading(false);
-      },
-    );
+        return;
+      }
 
-    return () => unsubscribe();
+      const unsubscribe = onSnapshot(
+        query(collection(db, "moderation_actions"), orderBy("createdAt", "desc")),
+        (snapshot) => {
+          try {
+            const actionsData = snapshot.docs.map((doc) =>
+              parseModerationAction({ id: doc.id, ...doc.data() }),
+            );
+            setModerationActions(actionsData);
+            console.log("🛡️ Actions de modération chargées:", actionsData.length);
+            // Save to localStorage as backup
+            localStorage.setItem("moderation_actions", JSON.stringify(actionsData));
+          } catch (error) {
+            console.error("Error parsing moderation actions:", error);
+            setModerationActions([]);
+          } finally {
+            setLoading(false);
+          }
+        },
+        (error) => {
+          console.error("Error fetching moderation actions:", error);
+          setModerationActions([]);
+          setLoading(false);
+        },
+      );
+
+      return () => unsubscribe();
+    };
+
+    loadModerationActions();
   }, [isAdmin]);
 
   // Log a moderation action
@@ -81,7 +108,8 @@ export const useModeration = () => {
     }
 
     try {
-      const action: Omit<ModerationAction, "id"> = {
+      const action: ModerationAction = {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
         type,
         targetId,
         targetType,
@@ -91,8 +119,16 @@ export const useModeration = () => {
         createdAt: new Date(),
       };
 
-      await addDoc(collection(db, "moderation_actions"), moderationActionToFirestore(action));
-      console.log("📝 Action de modération enregistrée:", type, targetId);
+      if (shouldUseFirebase()) {
+        await addDoc(collection(db, "moderation_actions"), moderationActionToFirestore(action));
+        console.log("📝 Action de modération enregistrée:", type, targetId);
+      } else {
+        // localStorage fallback
+        const currentActions = [...moderationActions, action];
+        setModerationActions(currentActions);
+        localStorage.setItem("moderation_actions", JSON.stringify(currentActions));
+        console.log("📝 Action de modération enregistrée en mode offline:", type, targetId);
+      }
     } catch (error) {
       console.error("Error logging moderation action:", error);
       throw error;
@@ -106,12 +142,14 @@ export const useModeration = () => {
     }
 
     try {
-      // Delete the product
-      await deleteDoc(doc(db, "products", productId));
-      
+      if (shouldUseFirebase()) {
+        // Delete the product
+        await deleteDoc(doc(db, "products", productId));
+      }
+
       // Log the moderation action
       await logModerationAction("delete_product", productId, "product", reason);
-      
+
       console.log("🗑️ Produit supprimé par modération:", productId);
     } catch (error) {
       console.error("Error moderating product deletion:", error);
@@ -126,12 +164,14 @@ export const useModeration = () => {
     }
 
     try {
-      // Delete the comment
-      await deleteDoc(doc(db, "comments", commentId));
-      
+      if (shouldUseFirebase()) {
+        // Delete the comment
+        await deleteDoc(doc(db, "comments", commentId));
+      }
+
       // Log the moderation action
       await logModerationAction("delete_comment", commentId, "comment", reason);
-      
+
       console.log("🗑️ Commentaire supprimé par modération:", commentId);
     } catch (error) {
       console.error("Error moderating comment deletion:", error);
