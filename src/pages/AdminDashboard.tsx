@@ -672,6 +672,29 @@ const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <HeaderLogo />
               <div className="flex items-center space-x-4">
+                {/* Firebase Status */}
+                <div className="flex items-center space-x-2 text-sm">
+                  {isFirebaseAvailable ? (
+                    <div className="flex items-center space-x-2 text-green-400">
+                      <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                      <span>Firebase Connecté</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-2 text-yellow-400">
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                      <span>Mode Local</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Last Saved Indicator */}
+                {lastSavedAt && (
+                  <div className="flex items-center space-x-2 text-xs text-gray-500">
+                    <Clock className="w-3 h-3" />
+                    <span>Sauvé à {lastSavedAt.toLocaleTimeString('fr-FR')}</span>
+                  </div>
+                )}
+
                 {/* Moderation stats */}
                 <div className="flex items-center space-x-2 text-sm text-gray-400">
                   <Shield className="w-4 h-4" />
@@ -679,6 +702,7 @@ const AdminDashboard: React.FC = () => {
                     {getModerationStats().todayActions} actions aujourd'hui
                   </span>
                 </div>
+
                 <Button
                   onClick={logout}
                   variant="outline"
