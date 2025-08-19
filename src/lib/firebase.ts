@@ -41,39 +41,7 @@ console.log("🗄️ Firestore database connected");
 console.log("📊 Firebase Analytics initialized");
 
 export { db, analytics };
-export const isFirebaseAvailable = !!db && hasFirebaseConfig;
-
-// Fonction de suppression sécurisée pour Firebase
-export const safeDeleteDoc = async (docRef: any): Promise<boolean> => {
-  if (!shouldUseFirebase()) {
-    console.warn("🔄 Firebase non disponible - suppression en mode local uniquement");
-    return false;
-  }
-
-  try {
-    await deleteDoc(docRef);
-    console.log("🗑️ Document supprimé avec succès de Firebase");
-    return true;
-  } catch (error) {
-    console.error("❌ Erreur lors de la suppression Firebase:", error);
-    throw error;
-  }
-};
-
-// Fonction pour vérifier l'existence d'un document avant suppression
-export const checkDocumentExists = async (docRef: any): Promise<boolean> => {
-  if (!shouldUseFirebase()) {
-    return false;
-  }
-
-  try {
-    const docSnap = await getDoc(docRef);
-    return docSnap.exists();
-  } catch (error) {
-    console.error("❌ Erreur lors de la vérification du document:", error);
-    return false;
-  }
-};
+export const isFirebaseAvailable = true;
 
 // Export Firebase functions with fallback handling
 export const collection = fsCollection;
