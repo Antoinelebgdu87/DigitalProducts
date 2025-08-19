@@ -1146,13 +1146,33 @@ const AdminDashboard: React.FC = () => {
                                   {product.lives} vies
                                 </Badge>
                               )}
-                              {product.discordUrl && (
+                              <Badge
+                                variant="outline"
+                                className={
+                                  product.actionType === "discord"
+                                    ? "border-purple-500 text-purple-400"
+                                    : "border-blue-500 text-blue-400"
+                                }
+                              >
+                                {product.actionType === "discord" ? (
+                                  <>
+                                    <LinkIcon className="w-3 h-3 mr-1" />
+                                    Action: Discord
+                                  </>
+                                ) : (
+                                  <>
+                                    <Download className="w-3 h-3 mr-1" />
+                                    Action: Download
+                                  </>
+                                )}
+                              </Badge>
+                              {product.discordUrl && product.actionType === "download" && (
                                 <Badge
                                   variant="outline"
                                   className="border-blue-500 text-blue-400"
                                 >
                                   <LinkIcon className="w-3 h-3 mr-1" />
-                                  Discord
+                                  + Discord
                                 </Badge>
                               )}
                               <span className="text-gray-500 text-xs">
