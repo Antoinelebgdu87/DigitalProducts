@@ -185,17 +185,23 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
       setIsMaintenanceMode(isActive);
       setMaintenanceMessage(message);
       localStorage.setItem("maintenanceMode", JSON.stringify(data));
+      console.log("🛠️ Mode maintenance mis à jour localement:", data);
 
-      // Then update Firebase
-      await setDoc(doc(db, "settings", MAINTENANCE_DOC_ID), data);
-      console.log("🛠️ Mode maintenance Firebase mis à jour:", data);
+      // Then update Firebase if available
+      if (shouldUseFirebase() && db && isFirebaseReady) {
+        await setDoc(doc(db, "settings", MAINTENANCE_DOC_ID), data);
+        console.log("🛠️ Mode maintenance Firebase mis à jour:", data);
+      } else {
+        console.log("⚠️ Firebase non disponible - sauvegarde locale uniquement");
+      }
     } catch (error) {
       console.error(
-        "Erreur lors de la mise à jour du mode maintenance:",
+        "❌ Erreur lors de la mise à jour du mode maintenance:",
         error,
       );
       // Local values are already updated, so UI stays responsive
-      throw error;
+      // Ne pas relancer l'erreur pour éviter de bloquer l'UI
+      console.log("🔄 Utilisation de la sauvegarde locale uniquement");
     }
   };
 
