@@ -65,6 +65,7 @@ export interface User {
 export interface TimerSettings {
   shopProductCooldown: number; // En minutes
   commentCooldown: number; // En minutes
+  allowedProductTypes: Array<"free" | "paid">; // Types de produits autorisés
 }
 
 export interface AdminMode {
