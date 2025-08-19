@@ -207,6 +207,7 @@ export const useComments = (productId?: string) => {
   return {
     comments,
     loading,
+    isOfflineMode,
     addComment,
     deleteComment,
     canDeleteComment,
