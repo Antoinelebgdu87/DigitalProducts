@@ -63,7 +63,9 @@ const ShopDashboard: React.FC = () => {
   // Redirect if user doesn't have shop access
   if (
     !currentUser ||
-    (currentUser.role !== "shop_access" && currentUser.role !== "admin")
+    (currentUser.role !== "shop_access" &&
+     currentUser.role !== "admin" &&
+     currentUser.role !== "partner")
   ) {
     return <Navigate to="/" replace />;
   }
