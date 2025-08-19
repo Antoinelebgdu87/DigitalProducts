@@ -54,6 +54,7 @@ interface UserContextType {
   checkUserStatus: () => Promise<void>;
   generateRandomUsername: () => string;
   updateUserRole: (userId: string, role: UserRole) => Promise<void>;
+  deleteUser: (userId: string) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
