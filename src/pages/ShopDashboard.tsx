@@ -44,6 +44,8 @@ import {
   Link as LinkIcon,
   Store,
   BarChart3,
+  Crown,
+  Shield,
 } from "lucide-react";
 import SimpleStarsBackground from "@/components/SimpleStarsBackground";
 import { toast } from "sonner";
