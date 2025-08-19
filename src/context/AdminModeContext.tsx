@@ -18,6 +18,7 @@ const AdminModeContext = createContext<AdminModeContextType | undefined>(
 const DEFAULT_TIMER_SETTINGS: TimerSettings = {
   shopProductCooldown: 30, // 30 minutes par défaut
   commentCooldown: 5, // 5 minutes par défaut
+  allowedProductTypes: ["free", "paid"], // Tous les types autorisés par défaut
 };
 
 export const AdminModeProvider: React.FC<{ children: React.ReactNode }> = ({
