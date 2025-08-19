@@ -59,12 +59,13 @@ const DevToolsProtection = () => {
       }
     };
 
-    // Bloquer la sélection de texte
-    const blockTextSelection = () => {
+    // Bloquer la sélection de texte (simplifié)
+    const blockTextSelection = (e: Event) => {
+      e.preventDefault();
       return false;
     };
 
-    // Bloquer le glisser-déposer
+    // Bloquer le glisser-déposer (simplifié)
     const blockDragStart = (e: DragEvent) => {
       e.preventDefault();
       return false;
