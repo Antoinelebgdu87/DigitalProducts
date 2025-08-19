@@ -51,6 +51,7 @@ interface UserContextType {
   markWarningsAsRead: (userId: string) => Promise<void>;
   checkUserStatus: () => Promise<void>;
   generateRandomUsername: () => string;
+  updateUserRole: (userId: string, role: UserRole) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
