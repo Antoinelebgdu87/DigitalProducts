@@ -129,20 +129,12 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
   };
 
   const formatLicenseCode = (value: string) => {
-    const clean = value.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
-    let formatted = "";
-    for (let i = 0; i < clean.length; i++) {
-      if (i > 0 && i % 4 === 0) {
-        formatted += "-";
-      }
-      formatted += clean[i];
-    }
-    return formatted.substring(0, 19);
+    // Garder le format original de la clé de licence
+    return value.trim();
   };
 
   const handleLicenseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatLicenseCode(e.target.value);
-    setLicenseCode(formatted);
+    setLicenseCode(e.target.value);
     if (showResult) {
       setShowResult(false);
       setValidationResult(null);
@@ -191,9 +183,8 @@ const KeyValidator: React.FC<KeyValidatorProps> = ({
                   id="license"
                   value={licenseCode}
                   onChange={handleLicenseChange}
-                  placeholder="XXXX-XXXX-XXXX-XXXX"
+                  placeholder="Entrez votre clé de licence"
                   className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500 text-lg py-6 pl-12"
-                  maxLength={19}
                   disabled={isLoading}
                 />
                 <Key className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />

@@ -52,25 +52,12 @@ const LicenseInput: React.FC<LicenseInputProps> = ({
   };
 
   const formatLicenseCode = (value: string) => {
-    // Remove all non-alphanumeric characters and convert to uppercase
-    const clean = value.replace(/[^A-Za-z0-9]/g, "").toUpperCase();
-
-    // Add dashes every 4 characters
-    let formatted = "";
-    for (let i = 0; i < clean.length; i++) {
-      if (i > 0 && i % 4 === 0) {
-        formatted += "-";
-      }
-      formatted += clean[i];
-    }
-
-    // Limit to 19 characters (16 + 3 dashes)
-    return formatted.substring(0, 19);
+    // Garder le format original de la clé de licence
+    return value.trim();
   };
 
   const handleLicenseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatLicenseCode(e.target.value);
-    setLicenseCode(formatted);
+    setLicenseCode(e.target.value);
   };
 
   return (
@@ -96,9 +83,8 @@ const LicenseInput: React.FC<LicenseInputProps> = ({
               id="license"
               value={licenseCode}
               onChange={handleLicenseChange}
-              placeholder="XXXX-XXXX-XXXX-XXXX"
+              placeholder="Entrez votre clé de licence"
               className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 focus:border-red-500 focus:ring-red-500"
-              maxLength={19}
               disabled={isLoading}
             />
           </div>
