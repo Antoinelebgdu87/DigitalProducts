@@ -6,6 +6,7 @@ import { useLicenses } from "@/hooks/useLicenses";
 import { useModeration } from "@/hooks/useModeration";
 import { useComments } from "@/hooks/useComments";
 import { useAdminMode } from "@/context/AdminModeContext";
+import { isFirebaseAvailable } from "@/lib/firebase";
 // Firebase toujours utilisé
 import HeaderLogo from "@/components/HeaderLogo";
 import { Button } from "@/components/ui/button";
@@ -370,6 +371,26 @@ const AdminDashboard: React.FC = () => {
     } catch (error) {
       console.error("Error formatting date:", error, date);
       return "Date invalide";
+    }
+  };
+
+  // Helper function to get timestamp from Firebase date
+  const getTimestamp = (date: any): number => {
+    try {
+      if (!date) return 0;
+      if (date instanceof Date) {
+        return date.getTime();
+      } else if (date && typeof date.toDate === "function") {
+        return date.toDate().getTime();
+      } else if (typeof date === "number") {
+        return date;
+      } else if (date && typeof date === "object" && "seconds" in date) {
+        return date.seconds * 1000 + (date.nanoseconds || 0) / 1000000;
+      }
+      return 0;
+    } catch (error) {
+      console.error("Error getting timestamp:", error, date);
+      return 0;
     }
   };
 
@@ -2808,12 +2829,13 @@ const AdminDashboard: React.FC = () => {
                         );
                         const lastProduct = userProducts.sort(
                           (a, b) =>
-                            b.createdAt.getTime() - a.createdAt.getTime(),
+                            getTimestamp(b.createdAt) -
+                            getTimestamp(a.createdAt),
                         )[0];
                         const canCreate =
                           !lastProduct ||
                           (new Date().getTime() -
-                            lastProduct.createdAt.getTime()) /
+                            getTimestamp(lastProduct.createdAt)) /
                             (1000 * 60) >=
                             timerSettings.shopProductCooldown;
                         const remaining = lastProduct
@@ -2821,7 +2843,7 @@ const AdminDashboard: React.FC = () => {
                               0,
                               timerSettings.shopProductCooldown -
                                 (new Date().getTime() -
-                                  lastProduct.createdAt.getTime()) /
+                                  getTimestamp(lastProduct.createdAt)) /
                                   (1000 * 60),
                             )
                           : 0;

@@ -56,6 +56,8 @@ export const useProducts = () => {
                   contentType: data.contentType || "link",
                   content: data.content || "",
                   discordUrl: data.discordUrl || "",
+                  createdBy: data.createdBy || "",
+                  createdByUsername: data.createdByUsername || "Inconnu",
                   price: data.price || 0,
                   lives: data.lives || 1,
                   createdAt: data.createdAt || Timestamp.now(),

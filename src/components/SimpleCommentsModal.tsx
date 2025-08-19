@@ -1,17 +1,15 @@
 import React, { useState } from "react";
-import { useComments } from "@/hooks/useComments";
+import { useSimpleComments } from "@/hooks/useSimpleComments";
 import { useUser } from "@/context/UserContext";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -22,20 +20,20 @@ import {
   Trash2,
   User,
   Shield,
-  Package,
+  Crown,
+  Store,
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Comment } from "@/types";
 
-interface CommentsModalProps {
+interface SimpleCommentsModalProps {
   isOpen: boolean;
   onClose: () => void;
   productId: string;
   productTitle: string;
 }
 
-const CommentsModal: React.FC<CommentsModalProps> = ({
+const SimpleCommentsModal: React.FC<SimpleCommentsModalProps> = ({
   isOpen,
   onClose,
   productId,
@@ -43,16 +41,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
 }) => {
   const { currentUser } = useUser();
   const { comments, loading, addComment, deleteComment, canDeleteComment } =
-    useComments(productId);
-
-  // Debug logging for modal
-  React.useEffect(() => {
-    console.log(`📖 CommentsModal for ${productId}:`, {
-      loading,
-      commentsCount: comments.length,
-      comments,
-    });
-  }, [productId, loading, comments]);
+    useSimpleComments(productId);
 
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,13 +52,11 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
 
     setIsSubmitting(true);
     try {
-      await addComment(productId, newComment);
+      await addComment(newComment);
       setNewComment("");
-      toast.success("Commentaire ajouté avec succès!");
+      toast.success("Commentaire ajouté !");
     } catch (error: any) {
-      const errorMessage =
-        error.message || "Erreur lors de l'ajout du commentaire";
-      toast.error(errorMessage);
+      toast.error("Erreur lors de l'ajout du commentaire");
     } finally {
       setIsSubmitting(false);
     }
@@ -78,86 +65,70 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   const handleDelete = async (commentId: string) => {
     try {
       await deleteComment(commentId);
-      toast.success("Commentaire supprimé avec succès!");
+      toast.success("Commentaire supprimé !");
     } catch (error: any) {
-      const errorMessage =
-        error.message || "Erreur lors de la suppression du commentaire";
-      toast.error(errorMessage);
+      toast.error("Erreur lors de la suppression");
     }
   };
 
-  const formatDate = (date: any) => {
+  const formatDate = (timestamp: any) => {
+    if (!timestamp) return "Maintenant";
+
     try {
-      let validDate: Date;
-
-      if (!date) return "Date inconnue";
-      if (date instanceof Date) {
-        validDate = date;
-      } else if (date && typeof date.toDate === "function") {
-        validDate = date.toDate();
-      } else if (typeof date === "number") {
-        validDate = new Date(date);
-      } else if (typeof date === "string") {
-        validDate = new Date(date);
-      } else if (date && typeof date === "object" && "seconds" in date) {
-        validDate = new Date(
-          date.seconds * 1000 + (date.nanoseconds || 0) / 1000000,
-        );
+      let date: Date;
+      if (timestamp?.toDate) {
+        date = timestamp.toDate();
+      } else if (timestamp?.seconds) {
+        date = new Date(timestamp.seconds * 1000);
       } else {
-        return "Date invalide";
-      }
-
-      if (isNaN(validDate.getTime())) {
-        return "Date invalide";
+        date = new Date(timestamp);
       }
 
       return new Intl.DateTimeFormat("fr-FR", {
         day: "2-digit",
         month: "2-digit",
-        year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      }).format(validDate);
-    } catch (error) {
-      console.error("Error formatting date:", error, date);
+      }).format(date);
+    } catch {
       return "Date invalide";
     }
   };
 
-  const getRoleIcon = (role: string | undefined) => {
+  const getRoleIcon = (role: string) => {
     switch (role) {
       case "admin":
         return <Shield className="w-4 h-4 text-red-400" />;
-      case "shop_access":
-        return <Package className="w-4 h-4 text-purple-400" />;
       case "partner":
-        return <User className="w-4 h-4 text-yellow-400" />;
+        return <Crown className="w-4 h-4 text-yellow-400" />;
+      case "shop_access":
+        return <Store className="w-4 h-4 text-purple-400" />;
       default:
         return <User className="w-4 h-4 text-gray-400" />;
     }
   };
 
-  const getRoleLabel = (role: string | undefined) => {
+  const getRoleLabel = (role: string) => {
     switch (role) {
       case "admin":
         return "Admin";
-      case "shop_access":
-        return "Boutique";
       case "partner":
         return "Partenaire";
+      case "shop_access":
+        return "Boutique";
       default:
-        return "Utilisateur";
+        return "Membre";
     }
   };
 
-  const getRoleColor = (role: string | undefined) => {
+  const getRoleColor = (role: string) => {
     switch (role) {
       case "admin":
         return "bg-red-600 text-white";
-      case "shop_access":
-        return "bg-purple-600 text-white";
       case "partner":
         return "bg-yellow-600 text-white";
+      case "shop_access":
+        return "bg-purple-600 text-white";
       default:
         return "bg-gray-600 text-gray-200";
     }
@@ -177,12 +148,12 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
         </DialogHeader>
 
         <div className="space-y-4">
-          {/* Liste des commentaires */}
+          {/* Comments List */}
           <ScrollArea className="h-96">
             <div className="space-y-3 pr-4">
               {loading ? (
                 <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                  <Loader2 className="w-6 h-6 animate-spin text-blue-400" />
                   <span className="ml-2 text-gray-400">
                     Chargement des commentaires...
                   </span>
@@ -190,11 +161,9 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
               ) : comments.length === 0 ? (
                 <div className="text-center py-8">
                   <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-400">
-                    Aucun commentaire pour le moment
-                  </p>
+                  <p className="text-gray-400">Aucun commentaire</p>
                   <p className="text-gray-500 text-sm">
-                    Soyez le premier à commenter!
+                    Soyez le premier à commenter !
                   </p>
                 </div>
               ) : (
@@ -206,26 +175,26 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-3 flex-1">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                            {getRoleIcon(comment.userRole || "user")}
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                            {getRoleIcon(comment.userRole)}
                           </div>
-                          <div className="flex-1 min-w-0">
+                          <div className="flex-1">
                             <div className="flex items-center space-x-2 mb-1">
                               <span className="text-white font-medium text-sm">
-                                {comment.username || "Utilisateur inconnu"}
+                                {comment.username}
                               </span>
                               <Badge
                                 variant="outline"
-                                className={`text-xs ${getRoleColor(comment.userRole || "user")}`}
+                                className={`text-xs ${getRoleColor(comment.userRole)}`}
                               >
-                                {getRoleLabel(comment.userRole || "user")}
+                                {getRoleLabel(comment.userRole)}
                               </Badge>
                               <span className="text-gray-500 text-xs">
                                 {formatDate(comment.createdAt)}
                               </span>
                             </div>
-                            <p className="text-gray-300 text-sm leading-relaxed break-words">
-                              {comment.content || "Contenu indisponible"}
+                            <p className="text-gray-300 text-sm leading-relaxed">
+                              {comment.content}
                             </p>
                           </div>
                         </div>
@@ -234,7 +203,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDelete(comment.id)}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10 ml-2 flex-shrink-0"
+                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -247,7 +216,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
             </div>
           </ScrollArea>
 
-          {/* Formulaire d'ajout de commentaire */}
+          {/* Add Comment Form */}
           {currentUser ? (
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="space-y-2">
@@ -270,7 +239,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                   <Button
                     type="submit"
                     disabled={!newComment.trim() || isSubmitting}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
+                    className="bg-blue-600 hover:bg-blue-700"
                     size="sm"
                   >
                     {isSubmitting ? (
@@ -286,24 +255,14 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
           ) : (
             <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 text-center">
               <p className="text-gray-400 text-sm">
-                Vous devez être connecté pour commenter
+                Connectez-vous pour commenter
               </p>
             </div>
           )}
         </div>
-
-        <DialogFooter>
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="border-gray-700 text-gray-300"
-          >
-            Fermer
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
 };
 
-export default CommentsModal;
+export default SimpleCommentsModal;

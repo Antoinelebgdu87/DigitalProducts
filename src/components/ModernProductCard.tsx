@@ -18,10 +18,10 @@ import {
   Shield,
 } from "lucide-react";
 import { useLicenses } from "@/hooks/useLicenses";
-import { useComments } from "@/hooks/useComments";
+import { useSimpleComments } from "@/hooks/useSimpleComments";
 import KeyValidator from "./KeyValidator";
 import NotepadViewer from "./NotepadViewer";
-import CommentsModal from "./CommentsModal";
+import SimpleCommentsModal from "./SimpleCommentsModal";
 
 interface ModernProductCardProps {
   product: Product;
@@ -33,7 +33,18 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   const [showComments, setShowComments] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { validateLicense } = useLicenses();
-  const { comments } = useComments(product.id);
+  const { comments, loading: commentsLoading } = useSimpleComments(product.id);
+
+  // Debug logging for comments
+  React.useEffect(() => {
+    console.log(`💬 Product ${product.title} (${product.id}):`, {
+      commentsCount: comments.length,
+      loading: commentsLoading,
+    });
+    if (comments.length > 0) {
+      console.log("📝 Comments data:", comments);
+    }
+  }, [comments, product.id, product.title, commentsLoading]);
 
   const handleLicenseValidate = async (licenseCode: string) => {
     return await validateLicense(licenseCode, product.id);
@@ -94,7 +105,9 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                   }}
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  Commentaires ({comments.length})
+                  {commentsLoading
+                    ? "Chargement..."
+                    : `Commentaires (${comments.length})`}
                 </Button>
                 <Button
                   size="sm"
@@ -275,7 +288,9 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                 size="sm"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
-                {comments.length} commentaire(s)
+                {commentsLoading
+                  ? "Chargement..."
+                  : `${comments.length} commentaire(s)`}
               </Button>
             </div>
           </div>
@@ -305,7 +320,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
       )}
 
       {showComments && (
-        <CommentsModal
+        <SimpleCommentsModal
           isOpen={showComments}
           onClose={() => setShowComments(false)}
           productId={product.id}

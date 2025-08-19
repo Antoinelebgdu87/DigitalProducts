@@ -25,6 +25,7 @@ import WarningModal from "./WarningModal";
 import UserRoleBadge from "./UserRoleBadge";
 import RoleUpdateNotification from "./RoleUpdateNotification";
 import FloatingRoleBadge from "./FloatingRoleBadge";
+import SecureAdminAccess from "./SecureAdminAccess";
 import { useUser } from "@/context/UserContext";
 
 const ModernHomePage: React.FC = () => {
@@ -108,6 +109,7 @@ const ModernHomePage: React.FC = () => {
       <SimpleStarsBackground />
       <RoleUpdateNotification />
       <FloatingRoleBadge />
+      <SecureAdminAccess />
 
       {/* Navigation */}
       <motion.nav
@@ -144,20 +146,6 @@ const ModernHomePage: React.FC = () => {
                       </motion.div>
                     </Link>
                   )}
-                <Link to="/admin">
-                  <motion.div
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-gray-300 hover:text-white hover:bg-white/10 border border-white/20"
-                    >
-                      <Settings className="w-4 h-4" />
-                    </Button>
-                  </motion.div>
-                </Link>
               </div>
             </div>
           </div>

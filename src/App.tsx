@@ -122,10 +122,11 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner
-        position="bottom-center"
+        position="top-right"
         toastOptions={{
           style: {
-            marginBottom: "80px",
+            marginTop: "20px",
+            marginRight: "20px",
           },
         }}
       />

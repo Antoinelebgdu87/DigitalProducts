@@ -23,12 +23,16 @@ const RoleUpdateNotification: React.FC = () => {
       if (lastRole && lastRole !== currentUser.role) {
         // Role changed!
         setPreviousRole(lastRole);
-        setShowNotification(true);
 
-        // Auto hide after 4 seconds
+        // Delay showing notification to sync with other animations
+        setTimeout(() => {
+          setShowNotification(true);
+        }, 100);
+
+        // Auto hide after 5 seconds (including delay)
         const timer = setTimeout(() => {
           setShowNotification(false);
-        }, 4000);
+        }, 5000);
 
         return () => clearTimeout(timer);
       }
@@ -84,16 +88,17 @@ const RoleUpdateNotification: React.FC = () => {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, scale: 0.8, y: -50 }}
+        initial={{ opacity: 0, scale: 0.8, y: 50 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.8, y: -50 }}
+        exit={{ opacity: 0, scale: 0.8, y: 50 }}
         transition={{
           type: "spring",
-          stiffness: 500,
+          stiffness: 400,
           damping: 30,
           duration: 0.5,
+          delay: 1.2,
         }}
-        className="fixed top-4 right-4 z-50 max-w-sm"
+        className="fixed top-20 right-4 z-50 max-w-sm"
       >
         <div className="bg-gray-900/95 backdrop-blur-xl border border-gray-700 rounded-2xl p-4 shadow-2xl">
           <div className="flex items-center space-x-3">

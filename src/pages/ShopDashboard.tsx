@@ -77,6 +77,21 @@ const ShopDashboard: React.FC = () => {
     (product) => product.createdBy === currentUser.id,
   );
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log("🏪 Shop Debug:", {
+      currentUserId: currentUser.id,
+      totalProducts: products.length,
+      userProducts: userProducts.length,
+      products: products.map((p) => ({
+        id: p.id,
+        title: p.title,
+        createdBy: p.createdBy,
+        createdByUsername: p.createdByUsername,
+      })),
+    });
+  }, [products, currentUser, userProducts]);
+
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
@@ -98,10 +113,11 @@ const ShopDashboard: React.FC = () => {
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Add createdBy field for shop users
+      // Add createdBy fields for shop users
       const productData = {
         ...productForm,
         createdBy: currentUser.id,
+        createdByUsername: currentUser.username,
       };
       await addProduct(productData);
       toast.success("Produit ajouté avec succès!");

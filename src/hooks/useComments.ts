@@ -34,59 +34,82 @@ export const useComments = (productId?: string) => {
 
   // Load comments from Firebase with real-time updates
   useEffect(() => {
-    if (!productId) return;
+    if (!productId) {
+      console.log("⚠️ useComments: productId is undefined/empty");
+      setComments([]);
+      setLoading(false);
+      return;
+    }
 
     console.log("🚀 Chargement des commentaires pour le produit:", productId);
     setLoading(true);
 
     let isMounted = true;
 
-    const commentsQuery = query(
-      collection(db, "comments"),
-      where("productId", "==", productId),
-      orderBy("createdAt", "desc"),
-    );
+    try {
+      const commentsQuery = query(
+        collection(db, "comments"),
+        where("productId", "==", productId),
+        orderBy("createdAt", "desc"),
+      );
 
-    const unsubscribe = onSnapshot(
-      commentsQuery,
-      (snapshot) => {
-        if (!isMounted) return;
+      console.log("🔍 Query créée pour les commentaires de:", productId);
 
-        try {
-          const commentsData = snapshot.docs.map((doc) => {
-            const data = doc.data();
-            return parseComment({
-              id: doc.id,
-              ...data,
+      const unsubscribe = onSnapshot(
+        commentsQuery,
+        (snapshot) => {
+          if (!isMounted) return;
+
+          try {
+            console.log("📊 Snapshot reçu:", snapshot.size, "documents");
+
+            const commentsData = snapshot.docs.map((doc) => {
+              const data = doc.data();
+              console.log("📝 Document commentaire:", doc.id, data);
+              return parseComment({
+                id: doc.id,
+                ...data,
+              });
             });
-          });
 
-          setComments(commentsData);
-          console.log(
-            "💬 Commentaires chargés depuis Firebase:",
-            commentsData.length,
-          );
-        } catch (error) {
+            setComments(commentsData);
+            console.log(
+              "💬 Commentaires chargés depuis Firebase:",
+              commentsData.length,
+              "pour le produit",
+              productId,
+            );
+          } catch (error) {
+            console.error(
+              "❌ Erreur lors du traitement des commentaires:",
+              error,
+            );
+            setComments([]);
+          } finally {
+            setLoading(false);
+          }
+        },
+        (error) => {
+          console.error("❌ Erreur lors de l'écoute des commentaires:", error);
           console.error(
-            "❌ Erreur lors du traitement des commentaires:",
-            error,
+            "🔥 Firebase error details:",
+            error.code,
+            error.message,
           );
           setComments([]);
-        } finally {
           setLoading(false);
-        }
-      },
-      (error) => {
-        console.error("❌ Erreur lors de l'écoute des commentaires:", error);
-        setComments([]);
-        setLoading(false);
-      },
-    );
+        },
+      );
 
-    return () => {
-      isMounted = false;
-      unsubscribe();
-    };
+      return () => {
+        isMounted = false;
+        unsubscribe();
+      };
+    } catch (error) {
+      console.error("❌ Erreur lors de la création de la query:", error);
+      setComments([]);
+      setLoading(false);
+    }
   }, [productId]);
 
   // Load all comments (for admin use)
