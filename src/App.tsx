@@ -15,6 +15,7 @@ import { AdminModeProvider } from "@/context/AdminModeContext";
 import ModernHomePage from "./components/ModernHomePage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminLimitedDashboard from "./pages/AdminLimitedDashboard";
 import ShopDashboard from "./pages/ShopDashboard";
 import PartnerDashboard from "./pages/PartnerDashboard";
 import MaintenancePage from "./pages/MaintenancePage";
