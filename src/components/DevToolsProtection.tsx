@@ -70,31 +70,11 @@ const DevToolsProtection = () => {
       return false;
     };
 
-    // Détecter l'ouverture des DevTools
+    // Détecter l'ouverture des DevTools (désactivé temporairement)
     const detectDevTools = () => {
-      const threshold = 160;
-      let devtools = {
-        open: false,
-        orientation: null as "vertical" | "horizontal" | null
-      };
-
-      const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-      const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-
-      if (widthThreshold) {
-        devtools.orientation = "vertical";
-        devtools.open = true;
-      }
-
-      if (heightThreshold) {
-        devtools.orientation = "horizontal";
-        devtools.open = true;
-      }
-
-      if (devtools.open) {
-        // Rediriger vers une page vide ou fermer l'onglet
-        window.location.href = "about:blank";
-      }
+      // Fonction désactivée pour éviter les redirections non voulues
+      // const threshold = 160;
+      // ... code original commenté
     };
 
     // Désactiver le menu contextuel du navigateur
