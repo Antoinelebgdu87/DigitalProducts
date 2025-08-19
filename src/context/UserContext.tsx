@@ -457,6 +457,46 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const deleteUser = async (userId: string): Promise<void> => {
+    try {
+      if (!shouldUseFirebase()) {
+        // Mode local - supprimer de la liste
+        setUsers((prevUsers) =>
+          prevUsers?.filter(user => user.id !== userId) || null
+        );
+
+        // Si c'est l'utilisateur actuel, le déconnecter
+        if (currentUser?.id === userId) {
+          setCurrentUser(null);
+          localStorage.removeItem("userId");
+          localStorage.removeItem("username");
+          localStorage.removeItem("userRole");
+        }
+
+        console.log("🗑️ Utilisateur supprimé localement:", userId);
+        return;
+      }
+
+      // Supprimer de Firebase
+      await deleteDoc(doc(db, "users", userId));
+
+      // Si c'est l'utilisateur actuel, le déconnecter
+      if (currentUser?.id === userId) {
+        setCurrentUser(null);
+        localStorage.removeItem("userId");
+        localStorage.removeItem("username");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("lastUsername");
+        localStorage.removeItem("hasCreatedUser");
+      }
+
+      console.log("🗑️ Utilisateur Firebase supprimé:", userId);
+    } catch (error) {
+      console.error("Erreur lors de la suppression de l'utilisateur:", error);
+      throw error;
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
