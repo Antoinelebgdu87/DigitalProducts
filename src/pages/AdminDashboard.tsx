@@ -440,10 +440,7 @@ const AdminDashboard: React.FC = () => {
       await deleteProduct(productToDelete.id);
       console.log("✅ deleteProduct terminé avec succès");
 
-      // Force refresh des produits pour s'assurer de la mise à jour UI
-      console.log("🔄 Appel de refetchProducts...");
-      await refetchProducts();
-      console.log("🔄 refetchProducts terminé");
+      // Note: Pas besoin de refetchProducts() car Firebase listener met à jour automatiquement
 
       toast.success(`Produit "${productToDelete.title}" supprimé avec succès`);
       setShowDeleteDialog(false);
@@ -1037,7 +1034,7 @@ const AdminDashboard: React.FC = () => {
                               <SelectItem value="download">
                                 <div className="flex items-center space-x-2">
                                   <Download className="w-4 h-4" />
-                                  <span>T��léchargement</span>
+                                  <span>Téléchargement</span>
                                 </div>
                               </SelectItem>
                               <SelectItem value="discord">
