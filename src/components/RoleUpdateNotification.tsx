@@ -93,7 +93,7 @@ const RoleUpdateNotification: React.FC = () => {
           damping: 30,
           duration: 0.5,
         }}
-        className="fixed top-4 right-4 z-50 max-w-sm"
+        className="fixed bottom-24 right-4 z-50 max-w-sm"
       >
         <div className="bg-gray-900/95 backdrop-blur-xl border border-gray-700 rounded-2xl p-4 shadow-2xl">
           <div className="flex items-center space-x-3">
