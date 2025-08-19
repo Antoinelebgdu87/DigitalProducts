@@ -1309,6 +1309,12 @@ const AdminDashboard: React.FC = () => {
                                 {user.username}
                               </h3>
                               <Badge
+                                variant="outline"
+                                className={getRoleColor(user.role)}
+                              >
+                                {getRoleLabel(user.role)}
+                              </Badge>
+                              <Badge
                                 variant={
                                   user.isOnline ? "default" : "secondary"
                                 }
