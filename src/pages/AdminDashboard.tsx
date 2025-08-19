@@ -68,6 +68,7 @@ import SimpleStarsBackground from "@/components/SimpleStarsBackground";
 import { toast } from "sonner";
 import { Product } from "@/types";
 import { useUser } from "@/context/UserContext";
+import { shouldUseFirebase } from "@/lib/firebase";
 
 const AdminDashboard: React.FC = () => {
   const { logout } = useAuth();
