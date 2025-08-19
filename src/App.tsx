@@ -121,7 +121,14 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
-      <Sonner position="bottom-right" />
+      <Sonner
+        position="bottom-center"
+        toastOptions={{
+          style: {
+            marginBottom: '80px',
+          },
+        }}
+      />
       <BrowserRouter>
         <AuthProvider>
           <AdminModeProvider>
