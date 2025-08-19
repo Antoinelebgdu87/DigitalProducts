@@ -29,9 +29,18 @@ export const FirebaseDebug: React.FC = () => {
       // Try to read products collection
       const querySnapshot = await getDocs(collection(db, 'products'));
       const count = querySnapshot.size;
-      
+
+      // Get product details
+      const products = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        title: doc.data().title || 'Sans titre',
+        createdAt: doc.data().createdAt
+      }));
+
       console.log('🔥 Firebase products count:', count);
+      console.log('🔥 Firebase products details:', products);
       setProductsCount(count);
+      setFirebaseProducts(products);
       setConnectionStatus('connected');
       
     } catch (error) {
