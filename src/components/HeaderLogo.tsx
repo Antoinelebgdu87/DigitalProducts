@@ -18,6 +18,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import FirebaseStatus from "./FirebaseStatus";
 
 interface HeaderLogoProps {
   className?: string;
