@@ -18,6 +18,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ShopDashboard from "./pages/ShopDashboard";
 import MaintenancePage from "./pages/MaintenancePage";
 import NotFound from "./pages/NotFound";
+import DevToolsProtection from "./components/DevToolsProtection";
 
 const queryClient = new QueryClient();
 
