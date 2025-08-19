@@ -99,7 +99,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                   }}
                 >
                   <MessageCircle className="w-4 h-4 mr-2" />
-                  Commentaires ({comments.length})
+                  {commentsLoading ? "Chargement..." : `Commentaires (${comments.length})`}
                 </Button>
                 <Button
                   size="sm"
@@ -280,7 +280,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                 size="sm"
               >
                 <MessageCircle className="w-4 h-4 mr-2" />
-                {comments.length} commentaire(s)
+                {commentsLoading ? "Chargement..." : `${comments.length} commentaire(s)`}
               </Button>
             </div>
           </div>
