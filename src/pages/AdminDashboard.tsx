@@ -2696,6 +2696,47 @@ const AdminDashboard: React.FC = () => {
                   );
                 })}
               </div>
+
+              {/* License Delete Confirmation Dialog */}
+              <Dialog open={showDeleteLicenseDialog} onOpenChange={setShowDeleteLicenseDialog}>
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Supprimer la license
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      Cette action est irréversible. La license sera définitivement supprimée.
+                    </DialogDescription>
+                  </DialogHeader>
+                  {licenseToDelete && (
+                    <div className="bg-red-900/50 border border-red-700 rounded p-3">
+                      <p className="text-red-200 text-sm">
+                        <strong>License à supprimer :</strong> {licenseToDelete.code}
+                      </p>
+                    </div>
+                  )}
+                  <DialogFooter>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setShowDeleteLicenseDialog(false);
+                        setLicenseToDelete(null);
+                      }}
+                      className="border-gray-700"
+                    >
+                      Annuler
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={handleDeleteLicense}
+                      className="bg-red-600 hover:bg-red-700"
+                    >
+                      Supprimer définitivement
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
 
             {/* Maintenance Tab */}
