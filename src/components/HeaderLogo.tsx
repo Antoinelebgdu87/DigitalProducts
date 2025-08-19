@@ -204,8 +204,8 @@ const HeaderLogo: React.FC<HeaderLogoProps> = ({ className }) => {
                 onClick={() => setShopMode(!adminMode.isShopMode)}
                 className={`
                   border-gray-600 hover:border-gray-500 transition-all duration-300
-                  ${adminMode.isShopMode 
-                    ? "bg-purple-500/20 border-purple-500 text-purple-400" 
+                  ${adminMode.isShopMode
+                    ? "bg-purple-500/20 border-purple-500 text-purple-400"
                     : "bg-red-500/20 border-red-500 text-red-400"
                   }
                 `}
@@ -219,14 +219,17 @@ const HeaderLogo: React.FC<HeaderLogoProps> = ({ className }) => {
             </TooltipTrigger>
             <TooltipContent>
               <p>
-                {adminMode.isShopMode 
-                  ? "Passer en mode Admin" 
+                {adminMode.isShopMode
+                  ? "Passer en mode Admin"
                   : "Passer en mode Boutique"
                 }
               </p>
             </TooltipContent>
           </Tooltip>
         )}
+
+        {/* Firebase status indicator */}
+        <FirebaseStatus />
       </div>
     </TooltipProvider>
   );
