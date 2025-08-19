@@ -91,10 +91,11 @@ const PartnerDashboard: React.FC = () => {
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      // Add createdBy field for partner products
+      // Add createdBy fields for partner products
       const productData = {
         ...productForm,
         createdBy: currentUser.id,
+        createdByUsername: currentUser.username,
         partnerCreated: true, // Mark as partner-created
       };
       await addProduct(productData);
