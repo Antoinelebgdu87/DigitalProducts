@@ -62,7 +62,7 @@ const SecureAdminAccess: React.FC = () => {
         toast.success("🎉 Accès autorisé ! Redirection...");
         setTimeout(() => {
           setIsOpen(false);
-          navigate("/admin");
+          navigate("/admin/dashboard");
         }, 1000);
       } else {
         toast.error("Code de vérification incorrect");
