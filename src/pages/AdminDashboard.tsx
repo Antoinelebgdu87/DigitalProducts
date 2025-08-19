@@ -1857,7 +1857,9 @@ const AdminDashboard: React.FC = () => {
                         {selectedUserRole === "user" &&
                           " Accès utilisateur standard"}
                         {selectedUserRole === "shop_access" &&
-                          " Peut uploader et gérer ses propres produits"}
+                          " Peut uploader et gérer ses propres produits (avec cooldown)"}
+                        {selectedUserRole === "partner" &&
+                          " Partenaire officiel - Peut uploader sans restrictions et titre custom"}
                         {selectedUserRole === "admin" &&
                           " Accès total à l'administration"}
                       </p>
