@@ -37,18 +37,9 @@ const AppContent = () => {
 
     // Show Firebase status
     React.useEffect(() => {
-      if (!shouldUseFirebase()) {
-        console.log(
-          "🔧 Mode hors ligne activé - Les données sont stockées localement",
-        );
-        console.log(
-          "💡 Pour activer Firebase, configurez les variables d'environnement dans .env",
-        );
-      } else {
-        console.log(
-          "🔥 Firebase connecté - Synchronisation en temps réel active",
-        );
-      }
+      console.log(
+        "🔥 Firebase connecté - Synchronisation en temps réel active",
+      );
     }, []);
 
     // Show loading state while maintenance context is initializing
