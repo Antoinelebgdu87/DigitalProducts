@@ -12,6 +12,7 @@ import { UserProvider } from "@/context/UserContext";
 import ModernHomePage from "./components/ModernHomePage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import ShopDashboard from "./pages/ShopDashboard";
 import MaintenancePage from "./pages/MaintenancePage";
 import NotFound from "./pages/NotFound";
 
