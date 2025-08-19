@@ -123,6 +123,7 @@ const ModernHomePage: React.FC = () => {
               <div className="flex items-center space-x-2">
                 {currentUser &&
                   (currentUser.role === "shop_access" ||
+                    currentUser.role === "partner" ||
                     currentUser.role === "admin") && (
                     <Link to="/shop">
                       <motion.div
