@@ -24,10 +24,62 @@ export const useProducts = () => {
 
   // Helper function to convert Firestore data to Product objects
   const parseProduct = (productData: any): Product => {
-    return {
-      ...productData,
-      createdAt: productData.createdAt?.toDate() || new Date(),
-    };
+    try {
+      let createdAt = new Date();
+
+      // Gérer différents formats de date
+      if (productData.createdAt) {
+        if (typeof productData.createdAt.toDate === 'function') {
+          // Firestore Timestamp
+          createdAt = productData.createdAt.toDate();
+        } else if (productData.createdAt instanceof Date) {
+          createdAt = productData.createdAt;
+        } else if (typeof productData.createdAt === 'string') {
+          createdAt = new Date(productData.createdAt);
+        } else if (typeof productData.createdAt === 'number') {
+          createdAt = new Date(productData.createdAt);
+        }
+      }
+
+      return {
+        id: productData.id || '',
+        title: productData.title || 'Sans titre',
+        description: productData.description || '',
+        imageUrl: productData.imageUrl || '',
+        downloadUrl: productData.downloadUrl || '',
+        type: productData.type || 'free',
+        actionType: productData.actionType || 'download',
+        contentType: productData.contentType || 'link',
+        content: productData.content || '',
+        discordUrl: productData.discordUrl || '',
+        price: productData.price || 0,
+        lives: productData.lives || 1,
+        createdBy: productData.createdBy || '',
+        createdByUsername: productData.createdByUsername || '',
+        createdAt,
+        ...productData // Inclure autres champs potentiels
+      };
+    } catch (error) {
+      console.error("❌ Error parsing product:", productData, error);
+      // Retourner un produit minimal en cas d'erreur
+      return {
+        id: productData.id || '',
+        title: 'Produit endommagé',
+        description: 'Données corrompues',
+        imageUrl: '',
+        downloadUrl: '',
+        type: 'free',
+        actionType: 'download',
+        contentType: 'link',
+        content: '',
+        discordUrl: '',
+        price: 0,
+        lives: 1,
+        createdBy: '',
+        createdByUsername: '',
+        createdAt: new Date(),
+      };
+    }
   };
 
   // Helper function to convert Product object to Firestore data
