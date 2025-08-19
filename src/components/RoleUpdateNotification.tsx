@@ -98,7 +98,7 @@ const RoleUpdateNotification: React.FC = () => {
           duration: 0.5,
           delay: 1.2,
         }}
-        className="fixed top-1/2 right-4 z-50 max-w-sm transform -translate-y-1/2"
+        className="fixed top-20 right-4 z-50 max-w-sm"
       >
         <div className="bg-gray-900/95 backdrop-blur-xl border border-gray-700 rounded-2xl p-4 shadow-2xl">
           <div className="flex items-center space-x-3">
