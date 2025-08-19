@@ -997,6 +997,15 @@ const AdminDashboard: React.FC = () => {
                                   {product.lives} vies
                                 </Badge>
                               )}
+                              {product.discordUrl && (
+                                <Badge
+                                  variant="outline"
+                                  className="border-blue-500 text-blue-400"
+                                >
+                                  <LinkIcon className="w-3 h-3 mr-1" />
+                                  Discord
+                                </Badge>
+                              )}
                               <span className="text-gray-500 text-xs">
                                 {formatDate(product.createdAt)}
                               </span>
