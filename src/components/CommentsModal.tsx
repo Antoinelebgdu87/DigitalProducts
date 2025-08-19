@@ -45,7 +45,6 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   const {
     comments,
     loading,
-    isOfflineMode,
     addComment,
     deleteComment,
     canDeleteComment,
