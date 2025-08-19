@@ -108,9 +108,17 @@ export const useProducts = () => {
       });
 
       console.log("✅ Produit ajouté avec ID:", docRef.id);
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Erreur lors de l'ajout du produit:", error);
-      throw error;
+
+      // Message d'erreur plus convivial selon le type d'erreur
+      if (error.code === 'permission-denied') {
+        throw new Error("Permissions insuffisantes. Vérifiez les règles Firestore.");
+      } else if (error.code === 'unavailable') {
+        throw new Error("Service Firebase temporairement indisponible. Réessayez plus tard.");
+      } else {
+        throw new Error(`Erreur lors de l'ajout: ${error.message || 'Erreur inconnue'}`);
+      }
     }
   };
 
