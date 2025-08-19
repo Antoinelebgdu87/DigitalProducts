@@ -764,7 +764,7 @@ const AdminDashboard: React.FC = () => {
                       </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleUpdateProduct} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-3 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="edit-title" className="text-white">
                             Title
@@ -798,6 +798,35 @@ const AdminDashboard: React.FC = () => {
                             <SelectContent>
                               <SelectItem value="free">Free</SelectItem>
                               <SelectItem value="paid">Paid</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="edit-actionType" className="text-white">
+                            Action principale
+                          </Label>
+                          <Select
+                            value={productForm.actionType}
+                            onValueChange={(value: "download" | "discord") =>
+                              setProductForm({ ...productForm, actionType: value })
+                            }
+                          >
+                            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="download">
+                                <div className="flex items-center space-x-2">
+                                  <Download className="w-4 h-4" />
+                                  <span>Téléchargement</span>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="discord">
+                                <div className="flex items-center space-x-2">
+                                  <LinkIcon className="w-4 h-4" />
+                                  <span>Discord</span>
+                                </div>
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
