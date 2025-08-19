@@ -95,6 +95,7 @@ const AdminDashboard: React.FC = () => {
     moderateDeleteComment,
     getUserProducts,
     getModerationStats,
+    logModerationAction,
   } = useModeration();
   const { adminMode, timerSettings, updateTimerSettings } = useAdminMode();
   const { comments: allComments } = useComments();
