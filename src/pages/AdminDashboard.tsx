@@ -341,7 +341,7 @@ const AdminDashboard: React.FC = () => {
 
     try {
       await updateUserRole(selectedUserId, selectedUserRole);
-      toast.success(`Rôle mis à jour vers ${selectedUserRole}`);
+      toast.success(`R��le mis à jour vers ${selectedUserRole}`);
       setShowRoleDialog(false);
       setSelectedUserId("");
       setSelectedUserRole("user");
@@ -2163,108 +2163,6 @@ const AdminDashboard: React.FC = () => {
                   </form>
                 </DialogContent>
               </Dialog>
-            </TabsContent>
-
-            {/* Prix Tab */}
-            <TabsContent value="prices" className="space-y-6">
-              <div>
-                <h2 className="text-2xl font-bold text-white">
-                  Gestion des Prix
-                </h2>
-                <p className="text-gray-400">
-                  Modifiez les prix et paramètres de vos produits payants
-                </p>
-              </div>
-
-              <div className="grid gap-4">
-                {products
-                  .filter((product) => product.type === "paid")
-                  .map((product) => (
-                    <Card
-                      key={product.id}
-                      className="border-gray-800 bg-gray-900/50"
-                    >
-                      <CardContent className="p-6">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-4">
-                            <div className="w-16 h-16 rounded-lg bg-gray-800 flex items-center justify-center overflow-hidden">
-                              {product.imageUrl ? (
-                                <img
-                                  src={product.imageUrl}
-                                  alt={product.title}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <Package className="w-6 h-6 text-gray-400" />
-                              )}
-                            </div>
-                            <div>
-                              <h3 className="text-lg font-semibold text-white">
-                                {product.title}
-                              </h3>
-                              <div className="flex items-center space-x-4 mt-2">
-                                <Badge
-                                  variant="outline"
-                                  className="border-yellow-500 text-yellow-400"
-                                >
-                                  <Euro className="w-3 h-3 mr-1" />
-                                  {product.price?.toFixed(2) || "0.00"}
-                                </Badge>
-                                <Badge
-                                  variant="outline"
-                                  className="border-pink-500 text-pink-400"
-                                >
-                                  <Heart className="w-3 h-3 mr-1" />
-                                  {product.lives || 1} vies
-                                </Badge>
-                                <Badge
-                                  variant="outline"
-                                  className={
-                                    product.contentType === "link"
-                                      ? "border-blue-500 text-blue-400"
-                                      : "border-green-500 text-green-400"
-                                  }
-                                >
-                                  {product.contentType === "link" ? (
-                                    <LinkIcon className="w-3 h-3 mr-1" />
-                                  ) : (
-                                    <FileText className="w-3 h-3 mr-1" />
-                                  )}
-                                  {product.contentType === "link"
-                                    ? "Lien"
-                                    : "Bloc-notes"}
-                                </Badge>
-                              </div>
-                            </div>
-                          </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditProduct(product)}
-                            className="border-blue-700 text-blue-400 hover:bg-blue-500/10"
-                          >
-                            <Edit className="w-4 h-4 mr-2" />
-                            Modifier
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                {products.filter((product) => product.type === "paid")
-                  .length === 0 && (
-                  <Card className="border-gray-800 bg-gray-900/50">
-                    <CardContent className="p-12 text-center">
-                      <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-white mb-2">
-                        Aucun produit payant
-                      </h3>
-                      <p className="text-gray-400">
-                        Créez des produits payants pour les gérer ici
-                      </p>
-                    </CardContent>
-                  </Card>
-                )}
-              </div>
             </TabsContent>
 
             {/* Licenses Tab */}
