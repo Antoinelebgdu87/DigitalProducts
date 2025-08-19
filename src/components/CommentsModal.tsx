@@ -151,13 +151,13 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                   <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
                   <span className="ml-2 text-gray-400">Chargement des commentaires...</span>
                 </div>
-              ) : !navigator.onLine ? (
+              ) : isOfflineMode && comments.length === 0 ? (
                 <div className="text-center py-8">
                   <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-2">
                     <MessageCircle className="w-6 h-6 text-orange-400" />
                   </div>
                   <p className="text-orange-400 font-medium">Mode hors ligne</p>
-                  <p className="text-gray-500 text-sm">Les commentaires ne peuvent pas être chargés sans connexion internet</p>
+                  <p className="text-gray-500 text-sm">Les commentaires sont stockés localement</p>
                 </div>
               ) : comments.length === 0 ? (
                 <div className="text-center py-8">
