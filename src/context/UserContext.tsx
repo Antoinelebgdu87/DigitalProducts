@@ -14,7 +14,7 @@ import {
   Timestamp,
   orderBy,
 } from "firebase/firestore";
-import { db, shouldUseFirebase } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
 
 export type UserRole = "user" | "shop_access" | "partner" | "admin";
 
