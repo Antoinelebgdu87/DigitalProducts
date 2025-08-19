@@ -447,8 +447,10 @@ const AdminDashboard: React.FC = () => {
     if (!userToDelete) return;
 
     try {
-      // TODO: Implémenter la fonction deleteUser dans le contexte UserContext
-      // Pour l'instant, on simule la suppression
+      // Utiliser la fonction deleteUser du contexte
+      const { deleteUser } = useUser();
+      await deleteUser(userToDelete.id);
+
       toast.success(`Compte utilisateur "${userToDelete.username}" supprimé avec succès`);
 
       // Log de l'action de modération
@@ -456,14 +458,11 @@ const AdminDashboard: React.FC = () => {
         "delete_user",
         userToDelete.id,
         "user",
-        `Compte utilisateur supprimé par l'administration`,
+        `Compte utilisateur "${userToDelete.username}" supprimé par l'administration`,
       );
 
       setShowDeleteUserDialog(false);
       setUserToDelete(null);
-
-      // Force refresh des utilisateurs si nécessaire
-      // refetchUsers(); // À implémenter si besoin
 
     } catch (error) {
       toast.error("Erreur lors de la suppression du compte");
