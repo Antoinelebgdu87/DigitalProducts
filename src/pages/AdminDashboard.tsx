@@ -311,7 +311,7 @@ const AdminDashboard: React.FC = () => {
 
     try {
       await banUser(selectedUserId, banReason);
-      toast.success("Utilisateur banni avec succ��s");
+      toast.success("Utilisateur banni avec succès");
       setShowBanDialog(false);
       setBanReason("");
       setSelectedUserId("");
@@ -1817,7 +1817,7 @@ const AdminDashboard: React.FC = () => {
                       <Select
                         value={selectedUserRole}
                         onValueChange={(
-                          value: "user" | "shop_access" | "admin",
+                          value: "user" | "shop_access" | "partner" | "admin",
                         ) => setSelectedUserRole(value)}
                       >
                         <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
@@ -1832,8 +1832,14 @@ const AdminDashboard: React.FC = () => {
                           </SelectItem>
                           <SelectItem value="shop_access">
                             <div className="flex items-center space-x-2">
-                              <Package className="w-4 h-4" />
+                              <Store className="w-4 h-4" />
                               <span>Accès Boutique</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="partner">
+                            <div className="flex items-center space-x-2">
+                              <Crown className="w-4 h-4" />
+                              <span>Partenaire</span>
                             </div>
                           </SelectItem>
                           <SelectItem value="admin">
