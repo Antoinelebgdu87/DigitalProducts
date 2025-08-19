@@ -350,6 +350,40 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // Moderation handlers
+  const handleModerateDelete = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!moderationTarget || !moderationReason.trim()) return;
+
+    try {
+      if (moderationTarget.type === "product") {
+        await moderateDeleteProduct(moderationTarget.id, moderationReason);
+        toast.success("Produit supprimé avec succès");
+      } else if (moderationTarget.type === "comment") {
+        await moderateDeleteComment(moderationTarget.id, moderationReason);
+        toast.success("Commentaire supprimé avec succès");
+      }
+
+      setShowModerationDialog(false);
+      setModerationTarget(null);
+      setModerationReason("");
+    } catch (error) {
+      toast.error("Erreur lors de la suppression");
+    }
+  };
+
+  // Timer settings handlers
+  const handleUpdateTimers = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      await updateTimerSettings(tempTimerSettings);
+      toast.success("Paramètres de timer mis à jour");
+      setShowTimerDialog(false);
+    } catch (error) {
+      toast.error("Erreur lors de la mise à jour des timers");
+    }
+  };
+
   const activeLicenses = getActiveLicenses();
 
   const getCategoryIcon = (category: string) => {
