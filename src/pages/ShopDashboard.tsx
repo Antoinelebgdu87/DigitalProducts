@@ -77,6 +77,21 @@ const ShopDashboard: React.FC = () => {
     (product) => product.createdBy === currentUser.id,
   );
 
+  // Debug logging
+  React.useEffect(() => {
+    console.log("🏪 Shop Debug:", {
+      currentUserId: currentUser.id,
+      totalProducts: products.length,
+      userProducts: userProducts.length,
+      products: products.map(p => ({
+        id: p.id,
+        title: p.title,
+        createdBy: p.createdBy,
+        createdByUsername: p.createdByUsername
+      }))
+    });
+  }, [products, currentUser, userProducts]);
+
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
   const [showEditDialog, setShowEditDialog] = useState(false);
