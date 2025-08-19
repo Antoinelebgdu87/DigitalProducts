@@ -90,6 +90,7 @@ const AdminDashboard: React.FC = () => {
     type: "free" as "free" | "paid",
     contentType: "link" as "link" | "text",
     content: "",
+    discordUrl: "",
     price: 0,
     lives: 1,
   });
@@ -136,6 +137,7 @@ const AdminDashboard: React.FC = () => {
       type: "free",
       contentType: "link", // Par défaut lien pour compatibilité
       content: "",
+      discordUrl: "",
       price: 0,
       lives: 1,
     });
@@ -151,6 +153,7 @@ const AdminDashboard: React.FC = () => {
       type: product.type,
       contentType: product.contentType || "link", // Par défaut lien pour compatibilité
       content: product.content || "",
+      discordUrl: product.discordUrl || "",
       price: product.price || 0,
       lives: product.lives || 1,
     });
