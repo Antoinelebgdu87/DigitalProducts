@@ -43,10 +43,10 @@ export const useComments = (productId?: string) => {
     }
 
     setLoading(true);
+    // Requête simplifiée sans orderBy pour éviter l'index composite
     const commentsQuery = query(
       collection(db, "comments"),
-      where("productId", "==", productId),
-      orderBy("createdAt", "desc")
+      where("productId", "==", productId)
     );
 
     const unsubscribe = onSnapshot(
@@ -56,7 +56,11 @@ export const useComments = (productId?: string) => {
           const commentsData = snapshot.docs.map((doc) =>
             parseComment({ id: doc.id, ...doc.data() })
           );
-          setComments(commentsData);
+          // Trier côté client pour éviter l'index composite
+          const sortedComments = commentsData.sort((a, b) =>
+            b.createdAt.getTime() - a.createdAt.getTime()
+          );
+          setComments(sortedComments);
           setLoading(false);
         } catch (error) {
           console.error("Erreur lors du chargement des commentaires:", error);
