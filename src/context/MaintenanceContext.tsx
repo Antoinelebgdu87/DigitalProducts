@@ -92,7 +92,7 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, []);
 
-  // Real-time listener for maintenance settings (only after Firebase is ready)
+  // Real-time listener for maintenance settings
   useEffect(() => {
     if (!isFirebaseReady) return;
 
@@ -111,23 +111,13 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
             "🛠️ Paramètres de maintenance Firebase mis à jour:",
             data,
           );
-
-          // Also save to localStorage as backup
-          localStorage.setItem(
-            "maintenanceMode",
-            JSON.stringify({
-              isActive: data.isActive || false,
-              message: data.message || DEFAULT_MESSAGE,
-            }),
-          );
         }
       },
       (error) => {
         console.error(
-          "Erreur lors de l'écoute des paramètres de maintenance:",
+          "❌ Erreur lors de l'écoute des paramètres de maintenance:",
           error,
         );
-        // Keep current values, don't fallback to localStorage as we already loaded it
       },
     );
 
