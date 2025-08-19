@@ -79,6 +79,7 @@ const AppContent = () => {
               </ProtectedRoute>
             }
           />
+          <Route path="/admin-limited" element={<AdminLimitedDashboard />} />
           <Route path="/shop" element={<ShopDashboard />} />
           <Route path="/partner" element={<PartnerDashboard />} />
           <Route
