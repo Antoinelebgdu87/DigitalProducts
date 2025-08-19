@@ -14,6 +14,7 @@ import {
   Globe,
   ArrowRight,
   User,
+  Package,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import SimpleStarsBackground from "./SimpleStarsBackground";
@@ -118,27 +119,65 @@ const ModernHomePage: React.FC = () => {
 
             <div className="flex items-center space-x-3">
               {currentUser && (
-                <div className="flex items-center space-x-2 px-3 py-1 bg-white/10 rounded-full border border-white/20">
-                  <User className="w-4 h-4 text-white" />
-                  <span className="text-white text-sm font-medium">
-                    {currentUser.username}
-                  </span>
+                <div className="flex items-center space-x-2">
+                  <div className="flex items-center space-x-2 px-3 py-1 bg-white/10 rounded-full border border-white/20">
+                    <User className="w-4 h-4 text-white" />
+                    <span className="text-white text-sm font-medium">
+                      {currentUser.username}
+                    </span>
+                  </div>
+                  <Badge
+                    variant="outline"
+                    className={
+                      currentUser.role === "admin"
+                        ? "border-red-500 text-red-400 bg-red-500/10"
+                        : currentUser.role === "shop_access"
+                          ? "border-purple-500 text-purple-400 bg-purple-500/10"
+                          : "border-gray-500 text-gray-400 bg-gray-500/10"
+                    }
+                  >
+                    {currentUser.role === "admin"
+                      ? "Admin"
+                      : currentUser.role === "shop_access"
+                        ? "Boutique"
+                        : "Utilisateur"}
+                  </Badge>
                 </div>
               )}
-              <Link to="/admin">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-300 hover:text-white hover:bg-white/10 border border-white/20"
+              <div className="flex items-center space-x-2">
+                {currentUser &&
+                  (currentUser.role === "shop_access" ||
+                    currentUser.role === "admin") && (
+                    <Link to="/shop">
+                      <motion.div
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-purple-300 hover:text-purple-200 hover:bg-purple-500/10 border border-purple-500/30"
+                        >
+                          <Package className="w-4 h-4" />
+                        </Button>
+                      </motion.div>
+                    </Link>
+                  )}
+                <Link to="/admin">
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <Settings className="w-4 h-4" />
-                  </Button>
-                </motion.div>
-              </Link>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-gray-300 hover:text-white hover:bg-white/10 border border-white/20"
+                    >
+                      <Settings className="w-4 h-4" />
+                    </Button>
+                  </motion.div>
+                </Link>
+              </div>
             </div>
           </div>
         </div>

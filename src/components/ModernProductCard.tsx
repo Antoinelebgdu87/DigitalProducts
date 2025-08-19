@@ -3,10 +3,21 @@ import { motion } from "framer-motion";
 import { Product } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Lock, Star, Eye, ShoppingCart, Euro } from "lucide-react";
+import {
+  Download,
+  Lock,
+  Star,
+  Eye,
+  ShoppingCart,
+  Euro,
+  MessageCircle,
+  ExternalLink,
+} from "lucide-react";
 import { useLicenses } from "@/hooks/useLicenses";
+import { useComments } from "@/hooks/useComments";
 import KeyValidator from "./KeyValidator";
 import NotepadViewer from "./NotepadViewer";
+import CommentsModal from "./CommentsModal";
 
 interface ModernProductCardProps {
   product: Product;
@@ -15,19 +26,26 @@ interface ModernProductCardProps {
 const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   const [showLicenseInput, setShowLicenseInput] = useState(false);
   const [showNotepad, setShowNotepad] = useState(false);
+  const [showComments, setShowComments] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { validateLicense } = useLicenses();
+  const { comments } = useComments(product.id);
 
   const handleLicenseValidate = async (licenseCode: string) => {
     return await validateLicense(licenseCode, product.id);
   };
 
   const handleValidatedDownload = () => {
-    // Si contentType n'est pas défini, utiliser "link" par défaut pour la compatibilité
-    if (!product.contentType || product.contentType === "link") {
-      window.open(product.downloadUrl, "_blank");
+    if (product.actionType === "discord") {
+      // Action validée = Discord
+      window.open(product.discordUrl, "_blank");
     } else {
-      setShowNotepad(true);
+      // Action validée = Download (comportement par défaut)
+      if (!product.contentType || product.contentType === "link") {
+        window.open(product.downloadUrl, "_blank");
+      } else {
+        setShowNotepad(true);
+      }
     }
   };
 
@@ -62,6 +80,18 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
             {/* Overlay on hover */}
             <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none">
               <div className="flex space-x-4">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="bg-white/20 border-white/30 text-white hover:bg-white/30 pointer-events-auto"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowComments(true);
+                  }}
+                >
+                  <MessageCircle className="w-4 h-4 mr-2" />
+                  Commentaires ({comments.length})
+                </Button>
                 <Button
                   size="sm"
                   variant="outline"
@@ -125,32 +155,60 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
               </div>
             </div>
 
-            {/* Action button */}
-            <div className="relative z-10">
+            {/* Action buttons */}
+            <div className="relative z-10 space-y-3">
+              {/* Main action button */}
               <Button
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  console.log("Button clicked!", product.type, product.title);
-                  if (product.type === "free") {
-                    // Si contentType n'est pas défini, utiliser "link" par défaut pour la compatibilité
-                    if (
-                      !product.contentType ||
-                      product.contentType === "link"
-                    ) {
-                      window.open(product.downloadUrl, "_blank");
+                  console.log(
+                    "Button clicked!",
+                    product.type,
+                    product.title,
+                    product.actionType,
+                  );
+
+                  if (product.actionType === "discord") {
+                    // Action principale = Discord
+                    if (product.type === "free") {
+                      window.open(product.discordUrl, "_blank");
                     } else {
-                      setShowNotepad(true);
+                      setShowLicenseInput(true);
                     }
                   } else {
-                    setShowLicenseInput(true);
+                    // Action principale = Download (comportement par défaut)
+                    if (product.type === "free") {
+                      if (
+                        !product.contentType ||
+                        product.contentType === "link"
+                      ) {
+                        window.open(product.downloadUrl, "_blank");
+                      } else {
+                        setShowNotepad(true);
+                      }
+                    } else {
+                      setShowLicenseInput(true);
+                    }
                   }
                 }}
                 className="w-full bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-red-500/50 cursor-pointer pointer-events-auto"
                 size="lg"
                 style={{ pointerEvents: "auto" }}
               >
-                {product.type === "free" ? (
+                {product.actionType === "discord" ? (
+                  product.type === "free" ? (
+                    <>
+                      <MessageCircle className="w-5 h-5 mr-2" />
+                      Join Discord
+                    </>
+                  ) : (
+                    <>
+                      <ShoppingCart className="w-5 h-5 mr-2" />
+                      Get Discord Access
+                    </>
+                  )
+                ) : product.type === "free" ? (
                   <>
                     <Download className="w-5 h-5 mr-2" />
                     Download Now
@@ -158,9 +216,42 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                 ) : (
                   <>
                     <ShoppingCart className="w-5 h-5 mr-2" />
-                    Get Access Download Now
+                    Get Access
                   </>
                 )}
+              </Button>
+
+              {/* Secondary button (only if main action is download and discord URL exists) */}
+              {product.actionType === "download" && product.discordUrl && (
+                <Button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.open(product.discordUrl, "_blank");
+                  }}
+                  variant="outline"
+                  className="w-full border-blue-500/50 text-blue-400 hover:bg-blue-500/10 hover:border-blue-400 transition-all duration-300"
+                  size="lg"
+                >
+                  <MessageCircle className="w-5 h-5 mr-2" />
+                  Join Discord
+                  <ExternalLink className="w-4 h-4 ml-2" />
+                </Button>
+              )}
+
+              {/* Comments button */}
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowComments(true);
+                }}
+                variant="outline"
+                className="w-full border-gray-500/50 text-gray-400 hover:bg-gray-500/10 hover:border-gray-400 transition-all duration-300"
+                size="sm"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                {comments.length} commentaire(s)
               </Button>
             </div>
           </div>
@@ -186,6 +277,15 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
           onClose={() => setShowNotepad(false)}
           title={product.title}
           content={product.content || "Aucun contenu disponible."}
+        />
+      )}
+
+      {showComments && (
+        <CommentsModal
+          isOpen={showComments}
+          onClose={() => setShowComments(false)}
+          productId={product.id}
+          productTitle={product.title}
         />
       )}
     </>

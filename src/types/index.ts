@@ -4,9 +4,12 @@ export interface Product {
   description: string;
   imageUrl: string;
   type: "free" | "paid";
+  actionType: "download" | "discord";
   downloadUrl: string;
   contentType: "link" | "text";
   content?: string;
+  discordUrl?: string;
+  createdBy?: string;
   price?: number;
   lives?: number;
   createdAt: Date;
@@ -26,6 +29,16 @@ export interface License {
 export interface MaintenanceSettings {
   isActive: boolean;
   message: string;
+}
+
+export interface Comment {
+  id: string;
+  productId: string;
+  userId: string;
+  username: string;
+  userRole: UserRole;
+  content: string;
+  createdAt: Date;
 }
 
 export interface AdminCredentials {

@@ -15,9 +15,12 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
+export type UserRole = "user" | "shop_access" | "admin";
+
 export interface User {
   id: string;
   username: string;
+  role: UserRole;
   isOnline: boolean;
   isBanned: boolean;
   banReason?: string;
@@ -48,6 +51,7 @@ interface UserContextType {
   markWarningsAsRead: (userId: string) => Promise<void>;
   checkUserStatus: () => Promise<void>;
   generateRandomUsername: () => string;
+  updateUserRole: (userId: string, role: UserRole) => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
@@ -106,6 +110,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const parseUser = (userData: any): User => {
     return {
       ...userData,
+      role: userData.role || "user", // Migration: rôle par défaut pour les anciens utilisateurs
       createdAt: userData.createdAt?.toDate() || new Date(),
       lastSeen: userData.lastSeen?.toDate() || new Date(),
       bannedAt: userData.bannedAt?.toDate() || undefined,
@@ -262,6 +267,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     const newUser: User = {
       id: userId,
       username: username,
+      role: "user",
       isOnline: true,
       isBanned: false,
       warnings: [],
@@ -286,6 +292,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
       const newUser: User = {
         id: userId,
         username: finalUsername,
+        role: "user",
         isOnline: true,
         isBanned: false,
         warnings: [],
@@ -379,6 +386,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const updateUserRole = async (
+    userId: string,
+    role: UserRole,
+  ): Promise<void> => {
+    try {
+      await updateDoc(doc(db, "users", userId), {
+        role: role,
+      });
+      console.log("👑 Rôle utilisateur Firebase mis à jour:", userId, role);
+    } catch (error) {
+      console.error("Erreur lors de la mise à jour du rôle:", error);
+      throw error;
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -390,6 +412,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         markWarningsAsRead,
         checkUserStatus,
         generateRandomUsername,
+        updateUserRole,
       }}
     >
       {children}

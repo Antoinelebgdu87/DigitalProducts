@@ -76,7 +76,7 @@ const AdminDashboard: React.FC = () => {
     getActiveLicenses,
     loading: licensesLoading,
   } = useLicenses();
-  const { users, banUser, addWarning } = useUser();
+  const { users, banUser, addWarning, updateUserRole } = useUser();
 
   // Product form state
   const [showProductDialog, setShowProductDialog] = useState(false);
@@ -88,8 +88,10 @@ const AdminDashboard: React.FC = () => {
     imageUrl: "",
     downloadUrl: "",
     type: "free" as "free" | "paid",
+    actionType: "download" as "download" | "discord",
     contentType: "link" as "link" | "text",
     content: "",
+    discordUrl: "",
     price: 0,
     lives: 1,
   });
@@ -111,7 +113,11 @@ const AdminDashboard: React.FC = () => {
   // User management states
   const [showBanDialog, setShowBanDialog] = useState(false);
   const [showWarnDialog, setShowWarnDialog] = useState(false);
+  const [showRoleDialog, setShowRoleDialog] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [selectedUserRole, setSelectedUserRole] = useState<
+    "user" | "shop_access" | "admin"
+  >("user");
   const [banReason, setBanReason] = useState("");
   const [warnReason, setWarnReason] = useState("");
 
@@ -134,8 +140,10 @@ const AdminDashboard: React.FC = () => {
       imageUrl: "",
       downloadUrl: "",
       type: "free",
+      actionType: "download",
       contentType: "link", // Par défaut lien pour compatibilité
       content: "",
+      discordUrl: "",
       price: 0,
       lives: 1,
     });
@@ -149,8 +157,10 @@ const AdminDashboard: React.FC = () => {
       imageUrl: product.imageUrl,
       downloadUrl: product.downloadUrl,
       type: product.type,
+      actionType: product.actionType || "download",
       contentType: product.contentType || "link", // Par défaut lien pour compatibilité
       content: product.content || "",
+      discordUrl: product.discordUrl || "",
       price: product.price || 0,
       lives: product.lives || 1,
     });
@@ -293,6 +303,21 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  const handleUpdateRole = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedUserId) return;
+
+    try {
+      await updateUserRole(selectedUserId, selectedUserRole);
+      toast.success(`Rôle mis à jour vers ${selectedUserRole}`);
+      setShowRoleDialog(false);
+      setSelectedUserId("");
+      setSelectedUserRole("user");
+    } catch (error) {
+      toast.error("Erreur lors de la mise à jour du rôle");
+    }
+  };
+
   const activeLicenses = getActiveLicenses();
 
   const getCategoryIcon = (category: string) => {
@@ -331,6 +356,30 @@ const AdminDashboard: React.FC = () => {
         return "bg-orange-600";
       default:
         return "bg-gray-600";
+    }
+  };
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case "admin":
+        return "Admin";
+      case "shop_access":
+        return "Boutique";
+      case "user":
+      default:
+        return "Utilisateur";
+    }
+  };
+
+  const getRoleColor = (role: string) => {
+    switch (role) {
+      case "admin":
+        return "bg-red-600 text-white";
+      case "shop_access":
+        return "bg-purple-600 text-white";
+      case "user":
+      default:
+        return "bg-gray-600 text-gray-200";
     }
   };
 
@@ -438,7 +487,7 @@ const AdminDashboard: React.FC = () => {
                       </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleProductSubmit} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-3 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="title" className="text-white">
                             Title
@@ -472,6 +521,38 @@ const AdminDashboard: React.FC = () => {
                             <SelectContent>
                               <SelectItem value="free">Free</SelectItem>
                               <SelectItem value="paid">Paid</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="actionType" className="text-white">
+                            Action principale
+                          </Label>
+                          <Select
+                            value={productForm.actionType}
+                            onValueChange={(value: "download" | "discord") =>
+                              setProductForm({
+                                ...productForm,
+                                actionType: value,
+                              })
+                            }
+                          >
+                            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="download">
+                                <div className="flex items-center space-x-2">
+                                  <Download className="w-4 h-4" />
+                                  <span>Téléchargement</span>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="discord">
+                                <div className="flex items-center space-x-2">
+                                  <LinkIcon className="w-4 h-4" />
+                                  <span>Discord</span>
+                                </div>
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -565,6 +646,23 @@ const AdminDashboard: React.FC = () => {
                         />
                       </div>
                       <div className="space-y-2">
+                        <Label htmlFor="discordUrl" className="text-white">
+                          Discord Server URL (optionnel)
+                        </Label>
+                        <Input
+                          id="discordUrl"
+                          value={productForm.discordUrl}
+                          onChange={(e) =>
+                            setProductForm({
+                              ...productForm,
+                              discordUrl: e.target.value,
+                            })
+                          }
+                          className="bg-gray-800 border-gray-700 text-white"
+                          placeholder="https://discord.gg/example"
+                        />
+                      </div>
+                      <div className="space-y-2">
                         <Label htmlFor="contentType" className="text-white">
                           Type de contenu
                         </Label>
@@ -596,43 +694,90 @@ const AdminDashboard: React.FC = () => {
                           </SelectContent>
                         </Select>
                       </div>
-                      {productForm.contentType === "link" ? (
+                      {/* Champs conditionnels selon l'action type */}
+                      {productForm.actionType === "download" &&
+                        (productForm.contentType === "link" ? (
+                          <div className="space-y-2">
+                            <Label htmlFor="downloadUrl" className="text-white">
+                              Download URL
+                            </Label>
+                            <Input
+                              id="downloadUrl"
+                              value={productForm.downloadUrl}
+                              onChange={(e) =>
+                                setProductForm({
+                                  ...productForm,
+                                  downloadUrl: e.target.value,
+                                })
+                              }
+                              className="bg-gray-800 border-gray-700 text-white"
+                              placeholder="https://example.com/download"
+                              required
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <Label htmlFor="content" className="text-white">
+                              Contenu du bloc-notes
+                            </Label>
+                            <Textarea
+                              id="content"
+                              value={productForm.content}
+                              onChange={(e) =>
+                                setProductForm({
+                                  ...productForm,
+                                  content: e.target.value,
+                                })
+                              }
+                              className="bg-gray-800 border-gray-700 text-white"
+                              rows={8}
+                              placeholder="Entrez le contenu qui sera affiché dans le bloc-notes..."
+                              required
+                            />
+                          </div>
+                        ))}
+
+                      {productForm.actionType === "discord" && (
                         <div className="space-y-2">
-                          <Label htmlFor="downloadUrl" className="text-white">
-                            Download URL
+                          <Label
+                            htmlFor="discordUrlRequired"
+                            className="text-white"
+                          >
+                            Discord Server URL{" "}
+                            <span className="text-red-400">*</span>
                           </Label>
                           <Input
-                            id="downloadUrl"
-                            value={productForm.downloadUrl}
+                            id="discordUrlRequired"
+                            value={productForm.discordUrl}
                             onChange={(e) =>
                               setProductForm({
                                 ...productForm,
-                                downloadUrl: e.target.value,
+                                discordUrl: e.target.value,
                               })
                             }
                             className="bg-gray-800 border-gray-700 text-white"
-                            placeholder="https://example.com/download"
+                            placeholder="https://discord.gg/example"
                             required
                           />
                         </div>
-                      ) : (
+                      )}
+
+                      {productForm.actionType === "download" && (
                         <div className="space-y-2">
-                          <Label htmlFor="content" className="text-white">
-                            Contenu du bloc-notes
+                          <Label htmlFor="discordUrl" className="text-white">
+                            Discord Server URL (optionnel)
                           </Label>
-                          <Textarea
-                            id="content"
-                            value={productForm.content}
+                          <Input
+                            id="discordUrl"
+                            value={productForm.discordUrl}
                             onChange={(e) =>
                               setProductForm({
                                 ...productForm,
-                                content: e.target.value,
+                                discordUrl: e.target.value,
                               })
                             }
                             className="bg-gray-800 border-gray-700 text-white"
-                            rows={8}
-                            placeholder="Entrez le contenu qui sera affiché dans le bloc-notes..."
-                            required
+                            placeholder="https://discord.gg/example"
                           />
                         </div>
                       )}
@@ -668,7 +813,7 @@ const AdminDashboard: React.FC = () => {
                       </DialogDescription>
                     </DialogHeader>
                     <form onSubmit={handleUpdateProduct} className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
+                      <div className="grid grid-cols-3 gap-4">
                         <div className="space-y-2">
                           <Label htmlFor="edit-title" className="text-white">
                             Title
@@ -702,6 +847,41 @@ const AdminDashboard: React.FC = () => {
                             <SelectContent>
                               <SelectItem value="free">Free</SelectItem>
                               <SelectItem value="paid">Paid</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="edit-actionType"
+                            className="text-white"
+                          >
+                            Action principale
+                          </Label>
+                          <Select
+                            value={productForm.actionType}
+                            onValueChange={(value: "download" | "discord") =>
+                              setProductForm({
+                                ...productForm,
+                                actionType: value,
+                              })
+                            }
+                          >
+                            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="download">
+                                <div className="flex items-center space-x-2">
+                                  <Download className="w-4 h-4" />
+                                  <span>Téléchargement</span>
+                                </div>
+                              </SelectItem>
+                              <SelectItem value="discord">
+                                <div className="flex items-center space-x-2">
+                                  <LinkIcon className="w-4 h-4" />
+                                  <span>Discord</span>
+                                </div>
+                              </SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -798,6 +978,23 @@ const AdminDashboard: React.FC = () => {
                         />
                       </div>
                       <div className="space-y-2">
+                        <Label htmlFor="edit-discordUrl" className="text-white">
+                          Discord Server URL (optionnel)
+                        </Label>
+                        <Input
+                          id="edit-discordUrl"
+                          value={productForm.discordUrl}
+                          onChange={(e) =>
+                            setProductForm({
+                              ...productForm,
+                              discordUrl: e.target.value,
+                            })
+                          }
+                          className="bg-gray-800 border-gray-700 text-white"
+                          placeholder="https://discord.gg/example"
+                        />
+                      </div>
+                      <div className="space-y-2">
                         <Label
                           htmlFor="edit-contentType"
                           className="text-white"
@@ -832,46 +1029,99 @@ const AdminDashboard: React.FC = () => {
                           </SelectContent>
                         </Select>
                       </div>
-                      {productForm.contentType === "link" ? (
+                      {/* Champs conditionnels selon l'action type */}
+                      {productForm.actionType === "download" &&
+                        (productForm.contentType === "link" ? (
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="edit-downloadUrl"
+                              className="text-white"
+                            >
+                              Download URL
+                            </Label>
+                            <Input
+                              id="edit-downloadUrl"
+                              value={productForm.downloadUrl}
+                              onChange={(e) =>
+                                setProductForm({
+                                  ...productForm,
+                                  downloadUrl: e.target.value,
+                                })
+                              }
+                              className="bg-gray-800 border-gray-700 text-white"
+                              placeholder="https://example.com/download"
+                              required
+                            />
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            <Label
+                              htmlFor="edit-content"
+                              className="text-white"
+                            >
+                              Contenu du bloc-notes
+                            </Label>
+                            <Textarea
+                              id="edit-content"
+                              value={productForm.content}
+                              onChange={(e) =>
+                                setProductForm({
+                                  ...productForm,
+                                  content: e.target.value,
+                                })
+                              }
+                              className="bg-gray-800 border-gray-700 text-white"
+                              rows={8}
+                              placeholder="Entrez le contenu qui sera affiché dans le bloc-notes..."
+                              required
+                            />
+                          </div>
+                        ))}
+
+                      {productForm.actionType === "discord" && (
                         <div className="space-y-2">
                           <Label
-                            htmlFor="edit-downloadUrl"
+                            htmlFor="edit-discordUrlRequired"
                             className="text-white"
                           >
-                            Download URL
+                            Discord Server URL{" "}
+                            <span className="text-red-400">*</span>
                           </Label>
                           <Input
-                            id="edit-downloadUrl"
-                            value={productForm.downloadUrl}
+                            id="edit-discordUrlRequired"
+                            value={productForm.discordUrl}
                             onChange={(e) =>
                               setProductForm({
                                 ...productForm,
-                                downloadUrl: e.target.value,
+                                discordUrl: e.target.value,
                               })
                             }
                             className="bg-gray-800 border-gray-700 text-white"
-                            placeholder="https://example.com/download"
+                            placeholder="https://discord.gg/example"
                             required
                           />
                         </div>
-                      ) : (
+                      )}
+
+                      {productForm.actionType === "download" && (
                         <div className="space-y-2">
-                          <Label htmlFor="edit-content" className="text-white">
-                            Contenu du bloc-notes
+                          <Label
+                            htmlFor="edit-discordUrl"
+                            className="text-white"
+                          >
+                            Discord Server URL (optionnel)
                           </Label>
-                          <Textarea
-                            id="edit-content"
-                            value={productForm.content}
+                          <Input
+                            id="edit-discordUrl"
+                            value={productForm.discordUrl}
                             onChange={(e) =>
                               setProductForm({
                                 ...productForm,
-                                content: e.target.value,
+                                discordUrl: e.target.value,
                               })
                             }
                             className="bg-gray-800 border-gray-700 text-white"
-                            rows={8}
-                            placeholder="Entrez le contenu qui sera affiché dans le bloc-notes..."
-                            required
+                            placeholder="https://discord.gg/example"
                           />
                         </div>
                       )}
@@ -960,6 +1210,36 @@ const AdminDashboard: React.FC = () => {
                                   {product.lives} vies
                                 </Badge>
                               )}
+                              <Badge
+                                variant="outline"
+                                className={
+                                  product.actionType === "discord"
+                                    ? "border-purple-500 text-purple-400"
+                                    : "border-blue-500 text-blue-400"
+                                }
+                              >
+                                {product.actionType === "discord" ? (
+                                  <>
+                                    <LinkIcon className="w-3 h-3 mr-1" />
+                                    Action: Discord
+                                  </>
+                                ) : (
+                                  <>
+                                    <Download className="w-3 h-3 mr-1" />
+                                    Action: Download
+                                  </>
+                                )}
+                              </Badge>
+                              {product.discordUrl &&
+                                product.actionType === "download" && (
+                                  <Badge
+                                    variant="outline"
+                                    className="border-blue-500 text-blue-400"
+                                  >
+                                    <LinkIcon className="w-3 h-3 mr-1" />+
+                                    Discord
+                                  </Badge>
+                                )}
                               <span className="text-gray-500 text-xs">
                                 {formatDate(product.createdAt)}
                               </span>
@@ -975,26 +1255,40 @@ const AdminDashboard: React.FC = () => {
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              if (product.contentType === "link") {
-                                window.open(product.downloadUrl, "_blank");
-                              } else {
-                                // Afficher le contenu dans une nouvelle fenêtre
-                                const newWindow = window.open("", "_blank");
-                                if (newWindow) {
-                                  newWindow.document.write(
-                                    `<pre>${product.content || "Aucun contenu"}</pre>`,
-                                  );
+                          {product.actionType === "download" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                if (product.contentType === "link") {
+                                  window.open(product.downloadUrl, "_blank");
+                                } else {
+                                  // Afficher le contenu dans une nouvelle fenêtre
+                                  const newWindow = window.open("", "_blank");
+                                  if (newWindow) {
+                                    newWindow.document.write(
+                                      `<pre>${product.content || "Aucun contenu"}</pre>`,
+                                    );
+                                  }
                                 }
+                              }}
+                              className="border-gray-700"
+                            >
+                              <Download className="w-4 h-4" />
+                            </Button>
+                          )}
+                          {product.discordUrl && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() =>
+                                window.open(product.discordUrl, "_blank")
                               }
-                            }}
-                            className="border-gray-700"
-                          >
-                            <Download className="w-4 h-4" />
-                          </Button>
+                              className="border-purple-700 text-purple-400 hover:bg-purple-500/10"
+                            >
+                              <LinkIcon className="w-4 h-4" />
+                            </Button>
+                          )}
                           <Button
                             variant="outline"
                             size="sm"
@@ -1041,6 +1335,12 @@ const AdminDashboard: React.FC = () => {
                                 {user.username}
                               </h3>
                               <Badge
+                                variant="outline"
+                                className={getRoleColor(user.role)}
+                              >
+                                {getRoleLabel(user.role)}
+                              </Badge>
+                              <Badge
                                 variant={
                                   user.isOnline ? "default" : "secondary"
                                 }
@@ -1085,6 +1385,18 @@ const AdminDashboard: React.FC = () => {
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUserId(user.id);
+                              setSelectedUserRole(user.role);
+                              setShowRoleDialog(true);
+                            }}
+                            className="border-purple-700 text-purple-400 hover:bg-purple-500/10"
+                          >
+                            Rôle
+                          </Button>
                           {!user.isBanned && (
                             <>
                               <Button
@@ -1176,6 +1488,88 @@ const AdminDashboard: React.FC = () => {
                         disabled={!banReason.trim()}
                       >
                         Bannir définitivement
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+
+              {/* Role Dialog */}
+              <Dialog open={showRoleDialog} onOpenChange={setShowRoleDialog}>
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Modifier le rôle utilisateur
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      Choisissez le nouveau rôle pour cet utilisateur.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleUpdateRole} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="userRole" className="text-white">
+                        Rôle
+                      </Label>
+                      <Select
+                        value={selectedUserRole}
+                        onValueChange={(
+                          value: "user" | "shop_access" | "admin",
+                        ) => setSelectedUserRole(value)}
+                      >
+                        <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="user">
+                            <div className="flex items-center space-x-2">
+                              <User className="w-4 h-4" />
+                              <span>Utilisateur</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="shop_access">
+                            <div className="flex items-center space-x-2">
+                              <Package className="w-4 h-4" />
+                              <span>Accès Boutique</span>
+                            </div>
+                          </SelectItem>
+                          <SelectItem value="admin">
+                            <div className="flex items-center space-x-2">
+                              <Shield className="w-4 h-4" />
+                              <span>Administrateur</span>
+                            </div>
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="bg-blue-900/50 border border-blue-700 rounded p-3">
+                      <p className="text-blue-200 text-sm">
+                        <strong>Permissions :</strong>
+                        {selectedUserRole === "user" &&
+                          " Accès utilisateur standard"}
+                        {selectedUserRole === "shop_access" &&
+                          " Peut uploader et gérer ses propres produits"}
+                        {selectedUserRole === "admin" &&
+                          " Accès total à l'administration"}
+                      </p>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowRoleDialog(false);
+                          setSelectedUserId("");
+                          setSelectedUserRole("user");
+                        }}
+                        className="border-gray-700"
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-purple-600 hover:bg-purple-700"
+                      >
+                        Mettre à jour le rôle
                       </Button>
                     </DialogFooter>
                   </form>
