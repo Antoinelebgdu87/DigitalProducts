@@ -377,7 +377,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
   // Listen to current user changes - with proper dependency management
   useEffect(() => {
-    if (!currentUser?.id || !shouldUseFirebase()) return;
+    if (!currentUser?.id) return;
 
     const unsubscribe = onSnapshot(
       doc(db, "users", currentUser.id),
