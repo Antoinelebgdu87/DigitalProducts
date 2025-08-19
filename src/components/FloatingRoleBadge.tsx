@@ -77,7 +77,7 @@ const FloatingRoleBadge: React.FC = () => {
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 1 }}
-      className="fixed bottom-6 right-6 z-40"
+      className="fixed bottom-6 left-6 z-40"
     >
       <motion.div
         className="relative"
