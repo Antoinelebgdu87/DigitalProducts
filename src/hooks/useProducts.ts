@@ -121,26 +121,19 @@ export const useProducts = () => {
         return;
       }
 
-      // Use Firebase if available - Try without orderBy first
-      console.log("🔥 Initialisation du listener Firebase...");
-
+      // Use Firebase if available
       const unsubscribe = onSnapshot(
-        collection(db, "products"), // Sans orderBy pour tester
+        collection(db, "products"),
         (snapshot) => {
           try {
-            console.log("🔥 Snapshot reçu avec", snapshot.docs.length, "documents");
-
             const productsData = [];
 
             for (const docSnap of snapshot.docs) {
               try {
                 const data = docSnap.data();
-                console.log("🔥 Document data:", docSnap.id, data);
-
                 const product = parseProduct({ id: docSnap.id, ...data });
                 productsData.push(product);
               } catch (parseError) {
-                console.error("❌ Erreur parsing document", docSnap.id, parseError);
                 // Continue avec les autres documents
               }
             }
@@ -152,33 +145,20 @@ export const useProducts = () => {
               return dateB - dateA;
             });
 
-            console.log("📦 Produits Firebase traités:", productsData.length);
-            console.log("📦 Détails produits:", productsData.map(p => ({ id: p.id, title: p.title })));
-
             setProducts(productsData);
-
-            // Also save to localStorage as backup
             localStorage.setItem("products", JSON.stringify(productsData));
           } catch (error) {
-            console.error("❌ Error parsing products:", error);
             setProducts([]);
           } finally {
             setLoading(false);
           }
         },
         (error) => {
-          console.error("❌ Error fetching products:", error);
-          console.error("❌ Firebase error details:", error.code, error.message);
-
           // Fallback to localStorage
           try {
             const stored = localStorage.getItem("products");
             if (stored) {
               const localProducts = JSON.parse(stored);
-              console.log(
-                "📦 Fallback: produits chargés depuis localStorage",
-                localProducts.length,
-              );
               setProducts(
                 localProducts.map((p: any) => ({
                   ...p,
@@ -187,7 +167,7 @@ export const useProducts = () => {
               );
             }
           } catch (localError) {
-            console.log("⚠️ Aucun produit local trouvé");
+            // Silent fail
           }
           setProducts([]);
           setLoading(false);
