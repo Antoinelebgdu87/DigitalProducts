@@ -159,6 +159,10 @@ const AdminDashboard: React.FC = () => {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [productToDelete, setProductToDelete] = useState<{id: string, title: string} | null>(null);
 
+  // License deletion states
+  const [showDeleteLicenseDialog, setShowDeleteLicenseDialog] = useState(false);
+  const [licenseToDelete, setLicenseToDelete] = useState<{id: string, code: string} | null>(null);
+
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -1433,7 +1437,7 @@ const AdminDashboard: React.FC = () => {
                   {productToDelete && (
                     <div className="bg-red-900/50 border border-red-700 rounded p-3">
                       <p className="text-red-200 text-sm">
-                        <strong>Produit à supprimer :</strong> {productToDelete.title}
+                        <strong>Produit �� supprimer :</strong> {productToDelete.title}
                       </p>
                     </div>
                   )}
