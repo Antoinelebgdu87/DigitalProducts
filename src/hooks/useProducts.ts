@@ -176,10 +176,10 @@ export const useProducts = () => {
   };
 
   // Filter products based on admin mode
-  const filteredProducts = adminMode.isActive
+  const filteredProducts = adminMode?.isActive
     ? products
-    : products.filter((product) => 
-        adminMode.timerSettings.allowedProductTypes.includes(product.type)
+    : products.filter((product) =>
+        adminMode?.timerSettings?.allowedProductTypes?.includes(product.type) ?? true
       );
 
   console.log(
