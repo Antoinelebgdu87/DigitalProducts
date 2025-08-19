@@ -1359,6 +1359,18 @@ const AdminDashboard: React.FC = () => {
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedUserId(user.id);
+                              setSelectedUserRole(user.role);
+                              setShowRoleDialog(true);
+                            }}
+                            className="border-purple-700 text-purple-400 hover:bg-purple-500/10"
+                          >
+                            Rôle
+                          </Button>
                           {!user.isBanned && (
                             <>
                               <Button
