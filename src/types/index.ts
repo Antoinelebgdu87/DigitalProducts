@@ -7,6 +7,7 @@ export interface Product {
   downloadUrl: string;
   contentType: "link" | "text";
   content?: string;
+  discordUrl?: string;
   price?: number;
   lives?: number;
   createdAt: Date;
