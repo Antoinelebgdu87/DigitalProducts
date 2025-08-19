@@ -47,6 +47,7 @@ interface UserContextType {
   users: User[] | null;
   createUsername: (username?: string) => Promise<User>;
   banUser: (userId: string, reason: string) => Promise<void>;
+  unbanUser: (userId: string) => Promise<void>;
   addWarning: (userId: string, reason: string) => Promise<void>;
   markWarningsAsRead: (userId: string) => Promise<void>;
   checkUserStatus: () => Promise<void>;
