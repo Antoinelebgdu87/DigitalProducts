@@ -9,6 +9,7 @@ export interface Product {
   contentType: "link" | "text";
   content?: string;
   discordUrl?: string;
+  createdBy?: string;
   price?: number;
   lives?: number;
   createdAt: Date;
