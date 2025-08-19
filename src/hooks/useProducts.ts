@@ -274,79 +274,24 @@ export const useProducts = () => {
 
   const deleteProduct = async (productId: string): Promise<void> => {
     try {
-      console.log("🔄 deleteProduct appelé avec ID:", productId);
-      console.log("📋 Produits actuels:", products.length);
-      console.log("🔥 shouldUseFirebase():", shouldUseFirebase());
-
       // Validation de l'ID
       if (!productId || typeof productId !== 'string' || productId.trim() === '') {
         throw new Error(`ID de produit invalide: "${productId}"`);
       }
 
-      // Vérifier que le produit existe dans la liste actuelle
-      const productExists = products.find(p => p.id === productId);
-      if (!productExists) {
-        console.warn("⚠️ Produit non trouvé dans la liste locale:", productId);
-        console.log("📋 IDs des produits actuels:", products.map(p => p.id));
-      }
-
       if (shouldUseFirebase()) {
-        console.log("🔥 Suppression Firebase...");
-        console.log("🔥 Firebase DB object:", !!db);
-        console.log("🔥 Product ID à supprimer:", `"${productId}"`);
-        console.log("🔥 Type de l'ID:", typeof productId);
-
         if (!db) {
           throw new Error("Firebase DB non initialisé");
         }
 
-        try {
-          const docRef = doc(db, "products", productId);
-          console.log("🔥 Document reference créé:", docRef);
-          console.log("🔥 Document path:", docRef.path);
-
-          await deleteDoc(docRef);
-          console.log("🗑️ Produit Firebase supprimé avec succès:", productId);
-        } catch (firebaseError: any) {
-          console.error("❌ Erreur Firebase spécifique:", firebaseError);
-          console.error("❌ Firebase error message:", firebaseError?.message);
-          console.error("❌ Firebase error code:", firebaseError?.code);
-          console.error("❌ Firebase error stack:", firebaseError?.stack);
-          throw new Error(`Erreur Firebase: ${firebaseError?.message || firebaseError}`);
-        }
+        const docRef = doc(db, "products", productId);
+        await deleteDoc(docRef);
       } else {
-        console.log("💾 Mode localStorage - suppression locale...");
         const currentProducts = products.filter((p) => p.id !== productId);
-        console.log(
-          "📋 Produits après filtrage:",
-          currentProducts.length,
-          "produits restants",
-        );
-
-        // Force immediate update
         setProducts([...currentProducts]);
         localStorage.setItem("products", JSON.stringify(currentProducts));
-
-        console.log("🗑️ Produit supprimé en mode offline:", productId);
-        console.log(
-          "💾 localStorage mis à jour avec",
-          currentProducts.length,
-          "produits",
-        );
-
-        // Double check localStorage was updated
-        const stored = localStorage.getItem("products");
-        if (stored) {
-          const parsedStored = JSON.parse(stored);
-          console.log(
-            "✅ Vérification localStorage:",
-            parsedStored.length,
-            "produits stockés",
-          );
-        }
       }
     } catch (error) {
-      console.error("❌ Error deleting product:", error);
       throw error;
     }
   };
