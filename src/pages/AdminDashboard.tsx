@@ -1492,6 +1492,9 @@ const AdminDashboard: React.FC = () => {
                             {action.type === "ban_user" && (
                               <User className="w-4 h-4 text-white" />
                             )}
+                            {action.type === "unban_user" && (
+                              <UserCheck className="w-4 h-4 text-white" />
+                            )}
                             {action.type === "warn_user" && (
                               <AlertTriangle className="w-4 h-4 text-white" />
                             )}
