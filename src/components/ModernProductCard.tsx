@@ -33,17 +33,7 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
   const [showComments, setShowComments] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const { validateLicense } = useLicenses();
-  const { comments, addComment } = useComments(product.id);
-
-  // Test function to add a sample comment
-  const addTestComment = async () => {
-    try {
-      await addComment(product.id, "Commentaire de test pour voir s'ils s'affichent correctement.");
-      console.log("✅ Commentaire de test ajouté");
-    } catch (error) {
-      console.error("❌ Erreur ajout commentaire test:", error);
-    }
-  };
+  const { comments } = useComments(product.id);
 
   const handleLicenseValidate = async (licenseCode: string) => {
     return await validateLicense(licenseCode, product.id);
