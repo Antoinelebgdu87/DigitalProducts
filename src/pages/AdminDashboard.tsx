@@ -423,25 +423,37 @@ const AdminDashboard: React.FC = () => {
 
   // Product deletion handler
   const handleDeleteProduct = async () => {
-    if (!productToDelete) return;
+    console.log("🎯 handleDeleteProduct appelé");
+    console.log("📝 productToDelete:", productToDelete);
+
+    if (!productToDelete) {
+      console.log("❌ Aucun produit sélectionné pour suppression");
+      return;
+    }
 
     console.log("🔄 Tentative de suppression du produit:", productToDelete);
 
     try {
       console.log("📋 Produits avant suppression:", products.length);
+      console.log("🔥 Appel de deleteProduct avec ID:", productToDelete.id);
+
       await deleteProduct(productToDelete.id);
-      console.log("✅ Produit supprimé avec succès:", productToDelete.id);
+      console.log("✅ deleteProduct terminé avec succès");
 
       // Force refresh des produits pour s'assurer de la mise à jour UI
+      console.log("🔄 Appel de refetchProducts...");
       await refetchProducts();
-      console.log("🔄 Produits rechargés après suppression");
+      console.log("🔄 refetchProducts terminé");
 
       toast.success(`Produit "${productToDelete.title}" supprimé avec succès`);
       setShowDeleteDialog(false);
       setProductToDelete(null);
+
+      console.log("✅ Interface mise à jour après suppression");
     } catch (error) {
       console.error("❌ Erreur lors de la suppression:", error);
-      toast.error("Erreur lors de la suppression du produit");
+      console.error("❌ Stack trace:", error.stack);
+      toast.error(`Erreur lors de la suppression: ${error.message}`);
     }
   };
 
@@ -1025,7 +1037,7 @@ const AdminDashboard: React.FC = () => {
                               <SelectItem value="download">
                                 <div className="flex items-center space-x-2">
                                   <Download className="w-4 h-4" />
-                                  <span>Téléchargement</span>
+                                  <span>T��léchargement</span>
                                 </div>
                               </SelectItem>
                               <SelectItem value="discord">
