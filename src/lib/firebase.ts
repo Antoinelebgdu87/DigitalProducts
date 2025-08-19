@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 import {
   collection as fsCollection,
   doc as fsDoc,
@@ -16,25 +17,23 @@ import {
   orderBy as fsOrderBy,
 } from "firebase/firestore";
 
-// Check if Firebase environment variables are available
-const hasFirebaseConfig = !!(
-  import.meta.env.VITE_FIREBASE_API_KEY &&
-  import.meta.env.VITE_FIREBASE_PROJECT_ID
-);
-
-// Firebase configuration using environment variables
+// Firebase configuration - utilisation de la nouvelle configuration fournie
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-api-key",
-  authDomain:
-    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "demo.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "demo-project",
-  storageBucket:
-    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "demo.appspot.com",
-  messagingSenderId:
-    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "demo-app-id",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-XXXXXXXXXX",
+  apiKey: "AIzaSyDMsFeXMVm61NlmN8QBk7UmH1ngPFW8TWo",
+  authDomain: "keysystem-d0b86.firebaseapp.com",
+  projectId: "keysystem-d0b86",
+  storageBucket: "keysystem-d0b86.firebasestorage.app",
+  messagingSenderId: "1012783086146",
+  appId: "1:1012783086146:web:25b791444539804f2a4bdb",
+  measurementId: "G-LWKWR0VQKM"
 };
+
+// Vérification de la disponibilité de la configuration Firebase
+const hasFirebaseConfig = !!(
+  firebaseConfig.apiKey &&
+  firebaseConfig.projectId &&
+  firebaseConfig.apiKey !== "demo-api-key"
+);
 
 let app: any = null;
 let db: any = null;
