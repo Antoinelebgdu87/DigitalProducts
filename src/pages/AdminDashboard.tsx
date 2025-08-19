@@ -420,7 +420,10 @@ const AdminDashboard: React.FC = () => {
       console.log("📋 Produits avant suppression:", products.length);
       await deleteProduct(productToDelete.id);
       console.log("✅ Produit supprimé avec succès:", productToDelete.id);
-      console.log("📋 Produits après suppression:", products.filter(p => p.id !== productToDelete.id).length);
+
+      // Force refresh des produits pour s'assurer de la mise à jour UI
+      await refetchProducts();
+      console.log("🔄 Produits rechargés après suppression");
 
       toast.success(`Produit "${productToDelete.title}" supprimé avec succès`);
       setShowDeleteDialog(false);
