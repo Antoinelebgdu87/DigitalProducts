@@ -1809,6 +1809,19 @@ const AdminDashboard: React.FC = () => {
                               </Button>
                             </>
                           )}
+                          {user.isBanned && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setSelectedUserId(user.id);
+                                setShowUnbanDialog(true);
+                              }}
+                              className="border-green-700 text-green-400 hover:bg-green-500/10"
+                            >
+                              Unban
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </CardContent>
