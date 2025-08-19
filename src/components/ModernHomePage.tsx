@@ -143,20 +143,38 @@ const ModernHomePage: React.FC = () => {
                   </Badge>
                 </div>
               )}
-              <Link to="/admin">
-                <motion.div
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-gray-300 hover:text-white hover:bg-white/10 border border-white/20"
+              <div className="flex items-center space-x-2">
+                {currentUser && (currentUser.role === "shop_access" || currentUser.role === "admin") && (
+                  <Link to="/shop">
+                    <motion.div
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-purple-300 hover:text-purple-200 hover:bg-purple-500/10 border border-purple-500/30"
+                      >
+                        <Package className="w-4 h-4" />
+                      </Button>
+                    </motion.div>
+                  </Link>
+                )}
+                <Link to="/admin">
+                  <motion.div
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
                   >
-                    <Settings className="w-4 h-4" />
-                  </Button>
-                </motion.div>
-              </Link>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-gray-300 hover:text-white hover:bg-white/10 border border-white/20"
+                    >
+                      <Settings className="w-4 h-4" />
+                    </Button>
+                  </motion.div>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
