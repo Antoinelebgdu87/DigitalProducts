@@ -332,14 +332,23 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const banUser = async (userId: string, reason: string): Promise<void> => {
+  const banUser = async (
+    userId: string,
+    reason: string,
+    expiresAt?: Date | null
+  ): Promise<void> => {
     try {
-      await updateDoc(doc(db, "users", userId), {
+      const updateData: any = {
         isBanned: true,
         banReason: reason,
         bannedAt: Timestamp.now(),
-      });
-      console.log("🚫 Utilisateur Firebase banni:", userId);
+        banExpiresAt: expiresAt ? Timestamp.fromDate(expiresAt) : null,
+      };
+
+      await updateDoc(doc(db, "users", userId), updateData);
+
+      const banType = expiresAt ? "temporaire" : "permanent";
+      console.log(`🚫 Utilisateur Firebase banni (${banType}):`, userId);
     } catch (error) {
       console.error("Erreur lors du bannissement:", error);
       throw error;
