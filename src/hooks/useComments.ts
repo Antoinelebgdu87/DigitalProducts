@@ -133,29 +133,37 @@ export const useComments = (productId?: string) => {
       throw new Error("Utilisateur non connecté ou commentaire vide");
     }
 
+    const newComment: Omit<Comment, "id"> = {
+      productId,
+      userId: currentUser.id,
+      username: currentUser.username,
+      userRole: currentUser.role,
+      content: content.trim(),
+      createdAt: new Date(),
+    };
+
+    // Si on est en mode offline ou si Firebase a échoué récemment
+    if (isOfflineMode || shouldUseOfflineMode()) {
+      console.log("💬 Ajout de commentaire en mode offline");
+      localCommentsService.addComment(newComment);
+      return;
+    }
+
+    // Essayer Firebase d'abord
     try {
-      const newComment: Omit<Comment, "id"> = {
-        productId,
-        userId: currentUser.id,
-        username: currentUser.username,
-        userRole: currentUser.role,
-        content: content.trim(),
-        createdAt: new Date(),
-      };
-
       await addDoc(collection(db, "comments"), commentToFirestore(newComment));
-      console.log("💬 Commentaire ajouté avec succès");
+      console.log("💬 Commentaire ajouté avec succès via Firebase");
+      markFirebaseWorking();
     } catch (error: any) {
-      console.error("Erreur lors de l'ajout du commentaire:", error);
+      console.error("Erreur lors de l'ajout du commentaire via Firebase:", error);
+      markFirebaseError();
 
-      // Gestion spécifique des erreurs réseau
-      if (error.code === 'unavailable' || error.message?.includes('Failed to fetch')) {
-        throw new Error("Problème de connexion réseau. Vérifiez votre connexion internet et réessayez.");
-      } else if (error.code === 'permission-denied') {
-        throw new Error("Permissions insuffisantes pour ajouter un commentaire.");
-      } else {
-        throw new Error("Erreur lors de l'ajout du commentaire. Veuillez réessayer.");
-      }
+      // Fallback vers le stockage local
+      console.log("💬 Fallback: ajout de commentaire en mode local");
+      localCommentsService.addComment(newComment);
+
+      // Informer l'utilisateur que le commentaire a été sauvé localement
+      throw new Error("Commentaire sauvé localement. Il sera synchronisé quand la connexion reviendra.");
     }
   };
 
