@@ -1343,7 +1343,7 @@ const AdminDashboard: React.FC = () => {
                           type="submit"
                           className="bg-blue-600 hover:bg-blue-700"
                         >
-                          Mettre à jour
+                          Mettre �� jour
                         </Button>
                       </DialogFooter>
                     </form>
@@ -1872,14 +1872,50 @@ const AdminDashboard: React.FC = () => {
 
             {/* Users Tab */}
             <TabsContent value="users" className="space-y-6">
-              <div>
-                <h2 className="text-lg font-semibold text-white">
-                  Users Management
-                </h2>
-                <p className="text-gray-400 text-sm">
-                  {users?.length || 0} user(s) total •{" "}
-                  {users?.filter((u) => u.isOnline).length || 0} online
-                </p>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-white">
+                    Users Management
+                  </h2>
+                  <p className="text-gray-400 text-sm">
+                    {users?.length || 0} user(s) total •{" "}
+                    {users?.filter((u) => u.isOnline).length || 0} online
+                    {userSearchQuery && ` • ${users?.filter(user =>
+                      user.username.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
+                      user.id.toLowerCase().includes(userSearchQuery.toLowerCase())
+                    ).length || 0} trouvé(s)`}
+                  </p>
+                </div>
+              </div>
+
+              {/* Barre de recherche */}
+              <div className="flex items-center space-x-4">
+                <div className="flex-1 max-w-md">
+                  <Label htmlFor="userSearch" className="text-white sr-only">
+                    Rechercher un utilisateur
+                  </Label>
+                  <div className="relative">
+                    <Input
+                      id="userSearch"
+                      type="text"
+                      placeholder="Rechercher par nom d'utilisateur ou ID..."
+                      value={userSearchQuery}
+                      onChange={(e) => setUserSearchQuery(e.target.value)}
+                      className="bg-gray-800 border-gray-700 text-white pl-10"
+                    />
+                    <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  </div>
+                </div>
+                {userSearchQuery && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setUserSearchQuery("")}
+                    className="border-gray-700 text-gray-400 hover:bg-gray-700"
+                  >
+                    Effacer
+                  </Button>
+                )}
               </div>
 
               <div className="grid gap-4">
@@ -2261,7 +2297,7 @@ const AdminDashboard: React.FC = () => {
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleWarnUser} className="space-y-4">
-                    {/* Messages prédéfinis */}
+                    {/* Messages pr��définis */}
                     <div className="space-y-2">
                       <Label className="text-white">Messages d'avertissement prédéfinis</Label>
                       <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
