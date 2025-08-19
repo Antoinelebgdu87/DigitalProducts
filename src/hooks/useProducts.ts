@@ -26,58 +26,73 @@ export const useProducts = () => {
   // Load products from Firebase with real-time updates
   useEffect(() => {
     console.log("🚀 Initialisation du hook useProducts...");
-    
+
     let isMounted = true;
-    
-    const productsQuery = query(
-      collection(db, "products"),
-      orderBy("createdAt", "desc")
-    );
+    let unsubscribe: (() => void) | null = null;
 
-    const unsubscribe = onSnapshot(
-      productsQuery,
-      (snapshot) => {
-        if (!isMounted) return;
+    const initializeProducts = async () => {
+      try {
+        const productsQuery = query(
+          collection(db, "products"),
+          orderBy("createdAt", "desc")
+        );
 
-        try {
-          const productsData = snapshot.docs.map((doc) => {
-            const data = doc.data();
-            return {
-              id: doc.id,
-              title: data.title,
-              description: data.description,
-              imageUrl: data.imageUrl,
-              downloadUrl: data.downloadUrl,
-              type: data.type || "free",
-              actionType: data.actionType || "download",
-              contentType: data.contentType || "link",
-              content: data.content || "",
-              discordUrl: data.discordUrl || "",
-              price: data.price || 0,
-              lives: data.lives || 1,
-              createdAt: data.createdAt || Timestamp.now(),
-            } as Product;
-          });
+        unsubscribe = onSnapshot(
+          productsQuery,
+          (snapshot) => {
+            if (!isMounted) return;
 
-          setProducts(productsData);
-          console.log("📦 Produits chargés depuis Firebase:", productsData.length);
-        } catch (error) {
-          console.error("❌ Erreur lors du traitement des produits:", error);
-          setProducts([]);
-        } finally {
-          setLoading(false);
-        }
-      },
-      (error) => {
-        console.error("❌ Erreur lors de l'écoute des produits:", error);
+            try {
+              const productsData = snapshot.docs.map((doc) => {
+                const data = doc.data();
+                return {
+                  id: doc.id,
+                  title: data.title,
+                  description: data.description,
+                  imageUrl: data.imageUrl,
+                  downloadUrl: data.downloadUrl,
+                  type: data.type || "free",
+                  actionType: data.actionType || "download",
+                  contentType: data.contentType || "link",
+                  content: data.content || "",
+                  discordUrl: data.discordUrl || "",
+                  price: data.price || 0,
+                  lives: data.lives || 1,
+                  createdAt: data.createdAt || Timestamp.now(),
+                } as Product;
+              });
+
+              setProducts(productsData);
+              console.log("📦 Produits chargés depuis Firebase:", productsData.length);
+            } catch (error) {
+              console.error("❌ Erreur lors du traitement des produits:", error);
+              setProducts([]);
+            } finally {
+              setLoading(false);
+            }
+          },
+          (error) => {
+            console.error("❌ Erreur lors de l'écoute des produits:", error);
+            console.warn("🔄 Firebase non accessible - mode dégradé");
+            setProducts([]);
+            setLoading(false);
+          }
+        );
+      } catch (error) {
+        console.error("❌ Erreur d'initialisation Firebase:", error);
+        console.warn("🔄 Impossible de se connecter à Firebase - mode dégradé");
         setProducts([]);
         setLoading(false);
       }
-    );
+    };
+
+    initializeProducts();
 
     return () => {
       isMounted = false;
-      unsubscribe();
+      if (unsubscribe) {
+        unsubscribe();
+      }
     };
   }, []);
 
