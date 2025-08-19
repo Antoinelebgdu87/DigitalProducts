@@ -226,6 +226,21 @@ const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
                   <ExternalLink className="w-4 h-4 ml-2" />
                 </Button>
               )}
+
+              {/* Comments button */}
+              <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setShowComments(true);
+                }}
+                variant="outline"
+                className="w-full border-gray-500/50 text-gray-400 hover:bg-gray-500/10 hover:border-gray-400 transition-all duration-300"
+                size="sm"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                {comments.length} commentaire(s)
+              </Button>
             </div>
           </div>
 
