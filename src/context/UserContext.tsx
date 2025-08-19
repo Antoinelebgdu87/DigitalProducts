@@ -165,10 +165,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
           // Check if user was supposed to have been created
           const hasEverCreatedUser = localStorage.getItem("hasCreatedUser");
           if (hasEverCreatedUser === "true") {
-            // Recreate with new ID
-            const username = generateRandomUsername();
+            // Try to get the last saved username to maintain consistency
+            const lastUsername = localStorage.getItem("lastUsername") || generateRandomUsername();
             const userId = Date.now().toString();
-            await recreateUser(userId, username);
+
+            // Save the username for consistency
+            localStorage.setItem("lastUsername", lastUsername);
+            await recreateUser(userId, lastUsername);
           } else {
             console.log("🟡 Aucun utilisateur trouvé - modal va s'afficher");
           }
@@ -220,16 +223,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => unsubscribe();
   }, []);
 
-  // Listen to current user changes
+  // Listen to current user changes - with proper dependency management
   useEffect(() => {
-    if (!currentUser?.id) return;
+    if (!currentUser?.id || !shouldUseFirebase()) return;
 
     const unsubscribe = onSnapshot(
       doc(db, "users", currentUser.id),
       (doc) => {
         if (doc.exists()) {
           const userData = parseUser({ id: doc.id, ...doc.data() });
-          setCurrentUser(userData);
+          // Force update even if the reference is the same
+          setCurrentUser(prevUser => {
+            const newUser = userData;
+            console.log("🔄 Mise à jour utilisateur:", newUser.username, "|", newUser.role);
+            return newUser;
+          });
         }
       },
       (error) => {
@@ -262,6 +270,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
   const recreateUser = async (userId: string, username: string) => {
     localStorage.setItem("userId", userId);
     localStorage.setItem("username", username);
+    localStorage.setItem("lastUsername", username);
     localStorage.setItem("hasCreatedUser", "true");
 
     const newUser: User = {
@@ -287,6 +296,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
       localStorage.setItem("userId", userId);
       localStorage.setItem("username", finalUsername);
+      localStorage.setItem("lastUsername", finalUsername);
       localStorage.setItem("hasCreatedUser", "true");
 
       const newUser: User = {
@@ -391,9 +401,29 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
     role: UserRole,
   ): Promise<void> => {
     try {
+      if (!shouldUseFirebase()) {
+        // Update locally if Firebase is not available
+        if (currentUser?.id === userId) {
+          setCurrentUser(prev => prev ? { ...prev, role } : null);
+        }
+        setUsers(prevUsers =>
+          prevUsers?.map(user =>
+            user.id === userId ? { ...user, role } : user
+          ) || null
+        );
+        console.log("👑 Rôle utilisateur mis à jour localement:", userId, role);
+        return;
+      }
+
       await updateDoc(doc(db, "users", userId), {
         role: role,
       });
+
+      // Force immediate update for better UX
+      if (currentUser?.id === userId) {
+        setCurrentUser(prev => prev ? { ...prev, role } : null);
+      }
+
       console.log("👑 Rôle utilisateur Firebase mis à jour:", userId, role);
     } catch (error) {
       console.error("Erreur lors de la mise à jour du rôle:", error);
