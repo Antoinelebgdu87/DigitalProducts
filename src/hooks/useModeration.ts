@@ -177,6 +177,7 @@ export const useModeration = () => {
       if (shouldUseFirebase()) {
         // Delete the product
         await deleteDoc(doc(db, "products", productId));
+        console.log("🗑️ Produit supprimé de Firebase par modération:", productId);
       }
 
       // Log the moderation action
@@ -202,6 +203,7 @@ export const useModeration = () => {
       if (shouldUseFirebase()) {
         // Delete the comment
         await deleteDoc(doc(db, "comments", commentId));
+        console.log("🗑️ Commentaire supprimé de Firebase par modération:", commentId);
       }
 
       // Log the moderation action
