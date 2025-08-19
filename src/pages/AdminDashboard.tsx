@@ -311,7 +311,7 @@ const AdminDashboard: React.FC = () => {
 
     try {
       await banUser(selectedUserId, banReason);
-      toast.success("Utilisateur banni avec succès");
+      toast.success("Utilisateur banni avec succ��s");
       setShowBanDialog(false);
       setBanReason("");
       setSelectedUserId("");
@@ -1377,6 +1377,236 @@ const AdminDashboard: React.FC = () => {
                   </Card>
                 ))}
               </div>
+            </TabsContent>
+
+            {/* Moderation Tab */}
+            <TabsContent value="moderation" className="space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg font-semibold text-white">
+                    Modération & Contrôle
+                  </h2>
+                  <p className="text-gray-400 text-sm">
+                    {getModerationStats().totalActions} action(s) au total • {getModerationStats().todayActions} aujourd'hui
+                  </p>
+                </div>
+              </div>
+
+              {/* Moderation Stats */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-red-400">{getModerationStats().deletedProducts}</div>
+                    <div className="text-sm text-gray-400">Produits supprimés</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-orange-400">{getModerationStats().deletedComments}</div>
+                    <div className="text-sm text-gray-400">Commentaires supprimés</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-purple-400">{getModerationStats().bannedUsers}</div>
+                    <div className="text-sm text-gray-400">Utilisateurs bannis</div>
+                  </CardContent>
+                </Card>
+                <Card className="border-gray-800 bg-gray-900/50">
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold text-yellow-400">{getModerationStats().warnedUsers}</div>
+                    <div className="text-sm text-gray-400">Avertissements</div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Recent Moderation Actions */}
+              <Card className="border-gray-800 bg-gray-900/50">
+                <CardHeader>
+                  <CardTitle className="text-white">Actions récentes</CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Historique des actions de modération
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    {moderationActions.slice(0, 10).map((action) => (
+                      <div key={action.id} className="flex items-center justify-between p-3 bg-gray-800/50 rounded-lg">
+                        <div className="flex items-center space-x-3">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            action.type === 'delete_product' ? 'bg-red-600' :
+                            action.type === 'delete_comment' ? 'bg-orange-600' :
+                            action.type === 'ban_user' ? 'bg-purple-600' : 'bg-yellow-600'
+                          }`}>
+                            {action.type === 'delete_product' && <Package className="w-4 h-4 text-white" />}
+                            {action.type === 'delete_comment' && <MessageSquare className="w-4 h-4 text-white" />}
+                            {action.type === 'ban_user' && <User className="w-4 h-4 text-white" />}
+                            {action.type === 'warn_user' && <AlertTriangle className="w-4 h-4 text-white" />}
+                          </div>
+                          <div>
+                            <p className="text-white text-sm font-medium">
+                              {action.type === 'delete_product' && 'Produit supprimé'}
+                              {action.type === 'delete_comment' && 'Commentaire supprimé'}
+                              {action.type === 'ban_user' && 'Utilisateur banni'}
+                              {action.type === 'warn_user' && 'Avertissement envoyé'}
+                            </p>
+                            <p className="text-gray-400 text-xs">
+                              Par {action.moderatorUsername} • {formatDate(action.createdAt)}
+                            </p>
+                            <p className="text-gray-400 text-xs">
+                              Raison: {action.reason}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    {moderationActions.length === 0 && (
+                      <div className="text-center py-8">
+                        <Shield className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                        <p className="text-gray-400">Aucune action de modération récente</p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Quick Actions */}
+              <Card className="border-gray-800 bg-gray-900/50">
+                <CardHeader>
+                  <CardTitle className="text-white">Actions rapides</CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Suppression rapide de contenu inapproprié
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Recent Products for Quick Moderation */}
+                    <div>
+                      <h4 className="text-white font-medium mb-3">Produits récents</h4>
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {products.slice(0, 5).map((product) => (
+                          <div key={product.id} className="flex items-center justify-between p-2 bg-gray-800/30 rounded">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-white text-sm font-medium truncate">{product.title}</p>
+                              <p className="text-gray-400 text-xs">
+                                Par {product.createdByUsername || 'Inconnu'} • {formatDate(product.createdAt)}
+                              </p>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setModerationTarget({
+                                  id: product.id,
+                                  type: 'product',
+                                  title: product.title
+                                });
+                                setShowModerationDialog(true);
+                              }}
+                              className="border-red-700 text-red-400 hover:bg-red-500/10 ml-2"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Recent Comments for Quick Moderation */}
+                    <div>
+                      <h4 className="text-white font-medium mb-3">Commentaires récents</h4>
+                      <div className="space-y-2 max-h-60 overflow-y-auto">
+                        {allComments?.slice(0, 5).map((comment) => (
+                          <div key={comment.id} className="flex items-center justify-between p-2 bg-gray-800/30 rounded">
+                            <div className="flex-1 min-w-0">
+                              <p className="text-white text-sm truncate">{comment.content}</p>
+                              <p className="text-gray-400 text-xs">
+                                Par {comment.username} • {formatDate(comment.createdAt)}
+                              </p>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                setModerationTarget({
+                                  id: comment.id,
+                                  type: 'comment',
+                                  title: comment.content.slice(0, 50) + '...'
+                                });
+                                setShowModerationDialog(true);
+                              }}
+                              className="border-red-700 text-red-400 hover:bg-red-500/10 ml-2"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        ))}
+                        {(!allComments || allComments.length === 0) && (
+                          <div className="text-center py-4">
+                            <p className="text-gray-400 text-sm">Aucun commentaire récent</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Moderation Dialog */}
+              <Dialog open={showModerationDialog} onOpenChange={setShowModerationDialog}>
+                <DialogContent className="bg-gray-900 border-gray-800">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">
+                      Supprimer {moderationTarget?.type === 'product' ? 'le produit' : 'le commentaire'}
+                    </DialogTitle>
+                    <DialogDescription className="text-gray-400">
+                      "{moderationTarget?.title}"
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleModerateDelete} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="moderationReason" className="text-white">
+                        Raison de la suppression
+                      </Label>
+                      <Textarea
+                        id="moderationReason"
+                        value={moderationReason}
+                        onChange={(e) => setModerationReason(e.target.value)}
+                        className="bg-gray-800 border-gray-700 text-white"
+                        placeholder="Expliquez pourquoi ce contenu est supprimé..."
+                        required
+                        rows={3}
+                      />
+                    </div>
+                    <div className="bg-red-900/50 border border-red-700 rounded p-3">
+                      <p className="text-red-200 text-sm">
+                        <strong>Attention:</strong> Cette action est irréversible et sera enregistrée dans l'historique de modération.
+                      </p>
+                    </div>
+                    <DialogFooter>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setShowModerationDialog(false);
+                          setModerationTarget(null);
+                          setModerationReason("");
+                        }}
+                        className="border-gray-700"
+                      >
+                        Annuler
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-red-600 hover:bg-red-700"
+                        disabled={!moderationReason.trim()}
+                      >
+                        Supprimer définitivement
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
             </TabsContent>
 
             {/* Users Tab */}
