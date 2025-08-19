@@ -78,6 +78,7 @@ const AdminDashboard: React.FC = () => {
     addProduct,
     deleteProduct,
     updateProduct,
+    refetch: refetchProducts,
     loading: productsLoading,
   } = useProducts();
   const {
