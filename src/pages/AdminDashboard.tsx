@@ -424,6 +424,21 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
+  // License deletion handler
+  const handleDeleteLicense = async () => {
+    if (!licenseToDelete) return;
+
+    try {
+      await deleteLicense(licenseToDelete.id);
+      toast.success(`License "${licenseToDelete.code}" supprimée avec succès`);
+      setShowDeleteLicenseDialog(false);
+      setLicenseToDelete(null);
+    } catch (error) {
+      console.error("Erreur lors de la suppression de la license:", error);
+      toast.error("Erreur lors de la suppression de la license");
+    }
+  };
+
   const activeLicenses = getActiveLicenses();
 
   const getCategoryIcon = (category: string) => {
@@ -1437,7 +1452,7 @@ const AdminDashboard: React.FC = () => {
                   {productToDelete && (
                     <div className="bg-red-900/50 border border-red-700 rounded p-3">
                       <p className="text-red-200 text-sm">
-                        <strong>Produit �� supprimer :</strong> {productToDelete.title}
+                        <strong>Produit à supprimer :</strong> {productToDelete.title}
                       </p>
                     </div>
                   )}
