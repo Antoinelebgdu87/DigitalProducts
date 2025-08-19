@@ -29,6 +29,18 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
   // Initialize maintenance settings on first load
   useEffect(() => {
     let isMounted = true;
+    let timeoutId: NodeJS.Timeout;
+
+    // Timeout de sécurité pour éviter le chargement infini
+    const safetyTimeout = setTimeout(() => {
+      if (isMounted && isLoading) {
+        console.warn("⚠️ Timeout de chargement atteint - fallback vers les valeurs par défaut");
+        setIsMaintenanceMode(false);
+        setMaintenanceMessage(DEFAULT_MESSAGE);
+        setIsFirebaseReady(false);
+        setIsLoading(false);
+      }
+    }, 5000); // 5 secondes maximum
 
     const initializeMaintenanceSettings = async () => {
       try {
