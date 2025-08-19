@@ -58,8 +58,9 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
       await addComment(productId, newComment);
       setNewComment("");
       toast.success("Commentaire ajouté avec succès!");
-    } catch (error) {
-      toast.error("Erreur lors de l'ajout du commentaire");
+    } catch (error: any) {
+      const errorMessage = error.message || "Erreur lors de l'ajout du commentaire";
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
