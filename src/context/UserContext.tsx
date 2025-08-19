@@ -408,6 +408,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         markWarningsAsRead,
         checkUserStatus,
         generateRandomUsername,
+        updateUserRole,
       }}
     >
       {children}
