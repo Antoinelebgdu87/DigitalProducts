@@ -126,6 +126,8 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
         return <Shield className="w-4 h-4 text-red-400" />;
       case "shop_access":
         return <Package className="w-4 h-4 text-purple-400" />;
+      case "partner":
+        return <User className="w-4 h-4 text-yellow-400" />;
       default:
         return <User className="w-4 h-4 text-gray-400" />;
     }
@@ -137,6 +139,8 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
         return "Admin";
       case "shop_access":
         return "Boutique";
+      case "partner":
+        return "Partenaire";
       default:
         return "Utilisateur";
     }
@@ -148,6 +152,8 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
         return "bg-red-600 text-white";
       case "shop_access":
         return "bg-purple-600 text-white";
+      case "partner":
+        return "bg-yellow-600 text-white";
       default:
         return "bg-gray-600 text-gray-200";
     }
