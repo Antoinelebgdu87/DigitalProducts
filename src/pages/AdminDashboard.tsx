@@ -145,6 +145,41 @@ const AdminDashboard: React.FC = () => {
   const [banDuration, setBanDuration] = useState<string>("permanent");
   const [customBanHours, setCustomBanHours] = useState<number>(24);
 
+  // Messages prédéfinis pour ban/warn
+  const predefinedBanReasons = [
+    "Comportement toxique et harcèlement",
+    "Spam répété dans les commentaires",
+    "Violation des règles de la communauté",
+    "Contenu inapproprié ou offensant",
+    "Tentative de contournement des systèmes",
+    "Utilisation abusive des fonctionnalités",
+    "Partage de contenu illégal",
+    "Tentative de phishing/arnaque"
+  ];
+
+  const predefinedWarnReasons = [
+    "Attention au langage utilisé",
+    "Merci de respecter les autres utilisateurs",
+    "Évitez le spam dans les commentaires",
+    "Contenu non approprié pour cette section",
+    "Respectez les règles de la communauté",
+    "Message hors-sujet supprimé",
+    "Avertissement pour comportement limite",
+    "Rappel des règles d'utilisation"
+  ];
+
+  const banDurationOptions = [
+    { value: "1h", label: "1 heure", hours: 1 },
+    { value: "6h", label: "6 heures", hours: 6 },
+    { value: "12h", label: "12 heures", hours: 12 },
+    { value: "24h", label: "24 heures", hours: 24 },
+    { value: "3d", label: "3 jours", hours: 72 },
+    { value: "7d", label: "7 jours", hours: 168 },
+    { value: "30d", label: "30 jours", hours: 720 },
+    { value: "custom", label: "Personnalisé", hours: 0 },
+    { value: "permanent", label: "Permanent", hours: 0 }
+  ];
+
   // Moderation states
   const [showModerationDialog, setShowModerationDialog] = useState(false);
   const [moderationTarget, setModerationTarget] = useState<{
@@ -2275,7 +2310,7 @@ const AdminDashboard: React.FC = () => {
                     <div className="mt-4 p-3 bg-orange-900/20 border border-orange-700/30 rounded">
                       <p className="text-orange-200 text-xs">
                         Tous les utilisateurs doivent attendre ce délai entre
-                        chaque commentaire. Aide �� prévenir le spam de
+                        chaque commentaire. Aide à prévenir le spam de
                         commentaires.
                       </p>
                     </div>
