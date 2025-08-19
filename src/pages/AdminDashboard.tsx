@@ -1190,26 +1190,28 @@ const AdminDashboard: React.FC = () => {
                           >
                             <Edit className="w-4 h-4" />
                           </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                              if (product.contentType === "link") {
-                                window.open(product.downloadUrl, "_blank");
-                              } else {
-                                // Afficher le contenu dans une nouvelle fenêtre
-                                const newWindow = window.open("", "_blank");
-                                if (newWindow) {
-                                  newWindow.document.write(
-                                    `<pre>${product.content || "Aucun contenu"}</pre>`,
-                                  );
+                          {product.actionType === "download" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                if (product.contentType === "link") {
+                                  window.open(product.downloadUrl, "_blank");
+                                } else {
+                                  // Afficher le contenu dans une nouvelle fenêtre
+                                  const newWindow = window.open("", "_blank");
+                                  if (newWindow) {
+                                    newWindow.document.write(
+                                      `<pre>${product.content || "Aucun contenu"}</pre>`,
+                                    );
+                                  }
                                 }
-                              }
-                            }}
-                            className="border-gray-700"
-                          >
-                            <Download className="w-4 h-4" />
-                          </Button>
+                              }}
+                              className="border-gray-700"
+                            >
+                              <Download className="w-4 h-4" />
+                            </Button>
+                          )}
                           {product.discordUrl && (
                             <Button
                               variant="outline"
