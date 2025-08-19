@@ -26,28 +26,21 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [isFirebaseReady, setIsFirebaseReady] = useState(false);
 
-  // Initialize maintenance settings on first load
+  // Initialize maintenance settings from Firebase only
   useEffect(() => {
     let isMounted = true;
 
     const initializeMaintenanceSettings = async () => {
       try {
-        // First load from localStorage for immediate availability
-        const stored = localStorage.getItem("maintenanceMode");
-        if (stored && isMounted) {
-          try {
-            const data = JSON.parse(stored);
-            setIsMaintenanceMode(data.isActive || false);
-            setMaintenanceMessage(data.message || DEFAULT_MESSAGE);
-            console.log(
-              "🛠️ Paramètres de maintenance chargés depuis localStorage",
-            );
-          } catch (error) {
-            console.warn("Erreur lors du parsing localStorage:", error);
-          }
-        }
+        console.log(
+          "🛠️ Chargement des paramètres de maintenance depuis Firebase...",
+        );
 
-        // Then try Firebase
+        // Valeurs par défaut temporaires
+        setIsMaintenanceMode(false);
+        setMaintenanceMessage(DEFAULT_MESSAGE);
+
+        // Charger depuis Firebase
         const maintenanceDoc = await getDoc(
           doc(db, "settings", MAINTENANCE_DOC_ID),
         );
@@ -55,7 +48,7 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
         if (!isMounted) return;
 
         if (!maintenanceDoc.exists()) {
-          // Create default settings if they don't exist
+          // Créer les paramètres par défaut s'ils n'existent pas
           const defaultSettings = {
             isActive: false,
             message: DEFAULT_MESSAGE,
@@ -67,35 +60,28 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
           );
           console.log("🛠️ Paramètres de maintenance Firebase initialisés");
         } else {
-          // Load from Firebase
+          // Charger depuis Firebase
           const data = maintenanceDoc.data();
           setIsMaintenanceMode(data.isActive || false);
           setMaintenanceMessage(data.message || DEFAULT_MESSAGE);
-          console.log("🛠️ Paramètres de maintenance Firebase chargés");
+          console.log("🛠️ Paramètres de maintenance Firebase chargés:", data);
         }
 
         setIsFirebaseReady(true);
+        console.log("✅ Firebase connecté avec succès");
       } catch (error) {
         console.error(
-          "Erreur lors de l'initialisation des paramètres de maintenance:",
+          "❌ Erreur lors de l'initialisation des paramètres de maintenance:",
           error,
         );
-        // Keep localStorage values or defaults
-        // If permissions error, use default values
-        if (
-          error instanceof Error &&
-          (error.message.includes("permissions") ||
-            error.message.includes("Missing or insufficient"))
-        ) {
-          console.log(
-            "⚠️ Permissions Firebase manquantes - utilisation des valeurs par défaut",
-          );
-          setIsMaintenanceMode(false);
-          setMaintenanceMessage(DEFAULT_MESSAGE);
-          setIsFirebaseReady(false); // Désactiver les listeners Firebase
-        }
+
+        // Utiliser les valeurs par défaut en cas d'erreur
+        setIsMaintenanceMode(false);
+        setMaintenanceMessage(DEFAULT_MESSAGE);
+        setIsFirebaseReady(false);
       } finally {
         if (isMounted) {
+          console.log("🏁 Chargement des paramètres terminé");
           setIsLoading(false);
         }
       }
@@ -108,7 +94,7 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, []);
 
-  // Real-time listener for maintenance settings (only after Firebase is ready)
+  // Real-time listener for maintenance settings
   useEffect(() => {
     if (!isFirebaseReady) return;
 
@@ -127,23 +113,13 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
             "🛠️ Paramètres de maintenance Firebase mis à jour:",
             data,
           );
-
-          // Also save to localStorage as backup
-          localStorage.setItem(
-            "maintenanceMode",
-            JSON.stringify({
-              isActive: data.isActive || false,
-              message: data.message || DEFAULT_MESSAGE,
-            }),
-          );
         }
       },
       (error) => {
         console.error(
-          "Erreur lors de l'écoute des paramètres de maintenance:",
+          "❌ Erreur lors de l'écoute des paramètres de maintenance:",
           error,
         );
-        // Keep current values, don't fallback to localStorage as we already loaded it
       },
     );
 
@@ -163,17 +139,15 @@ export const MaintenanceProvider: React.FC<{ children: React.ReactNode }> = ({
       // Update locally first for immediate feedback
       setIsMaintenanceMode(isActive);
       setMaintenanceMessage(message);
-      localStorage.setItem("maintenanceMode", JSON.stringify(data));
 
-      // Then update Firebase
+      // Update Firebase
       await setDoc(doc(db, "settings", MAINTENANCE_DOC_ID), data);
       console.log("🛠️ Mode maintenance Firebase mis à jour:", data);
     } catch (error) {
       console.error(
-        "Erreur lors de la mise à jour du mode maintenance:",
+        "❌ Erreur lors de la mise à jour du mode maintenance:",
         error,
       );
-      // Local values are already updated, so UI stays responsive
       throw error;
     }
   };

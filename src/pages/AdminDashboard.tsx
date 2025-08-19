@@ -6,6 +6,7 @@ import { useLicenses } from "@/hooks/useLicenses";
 import { useModeration } from "@/hooks/useModeration";
 import { useComments } from "@/hooks/useComments";
 import { useAdminMode } from "@/context/AdminModeContext";
+// Firebase toujours utilisé
 import HeaderLogo from "@/components/HeaderLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -214,6 +215,11 @@ const AdminDashboard: React.FC = () => {
     id: string;
     code: string;
   } | null>(null);
+
+  // États pour le suivi des suppressions
+  const [isDeletingProduct, setIsDeletingProduct] = useState(false);
+  const [isDeletingLicense, setIsDeletingLicense] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
 
   const handleProductSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -511,35 +517,89 @@ const AdminDashboard: React.FC = () => {
     }
   };
 
-  // Product deletion handler
+  // Product deletion handler amélioré avec états
   const handleDeleteProduct = async () => {
-    if (!productToDelete) return;
+    if (!productToDelete || isDeletingProduct) return;
+
+    setIsDeletingProduct(true);
 
     try {
+      console.log(
+        `🚀 Début de suppression du produit: "${productToDelete.title}"`,
+      );
+
+      // Toast informatif de début
+      toast.info(`Suppression en cours de "${productToDelete.title}"...`);
+
       await deleteProduct(productToDelete.id);
-      toast.success(`Produit "${productToDelete.title}" supprimé avec succès`);
+
+      // Mettre à jour l'heure de sauvegarde
+      setLastSavedAt(new Date());
+
+      // Toast de succès avec plus de détails
+      toast.success(
+        `✅ Produit "${productToDelete.title}" supprimé définitivement de Firebase et du système local`,
+      );
+
+      // Log de l'action de modération pour traçabilité
+      await logModerationAction(
+        "delete_product",
+        productToDelete.id,
+        "product",
+        `Produit "${productToDelete.title}" supprimé définitivement via panel admin`,
+      );
 
       setTimeout(() => {
         setShowDeleteDialog(false);
         setProductToDelete(null);
       }, 500);
-    } catch (error) {
-      toast.error(`Erreur lors de la suppression: ${error.message}`);
+    } catch (error: any) {
+      console.error("❌ Erreur de suppression:", error);
+      const errorMessage =
+        error?.message || "Erreur inconnue lors de la suppression";
+      toast.error(`❌ Erreur: ${errorMessage}`);
+    } finally {
+      setIsDeletingProduct(false);
     }
   };
 
-  // License deletion handler
+  // License deletion handler amélioré
   const handleDeleteLicense = async () => {
-    if (!licenseToDelete) return;
+    if (!licenseToDelete || isDeletingLicense) return;
+
+    setIsDeletingLicense(true);
 
     try {
+      toast.info(
+        `Suppression en cours de la license "${licenseToDelete.code}"...`,
+      );
+
       await deleteLicense(licenseToDelete.id);
-      toast.success(`License "${licenseToDelete.code}" supprimée avec succès`);
+
+      // Mettre à jour l'heure de sauvegarde
+      setLastSavedAt(new Date());
+
+      toast.success(
+        `✅ License "${licenseToDelete.code}" supprimée avec succès de Firebase et du système local`,
+      );
+
+      // Log de l'action de modération
+      await logModerationAction(
+        "delete_license",
+        licenseToDelete.id,
+        "license",
+        `License "${licenseToDelete.code}" supprimée via panel admin`,
+      );
+
       setShowDeleteLicenseDialog(false);
       setLicenseToDelete(null);
-    } catch (error) {
-      console.error("Erreur lors de la suppression de la license:", error);
-      toast.error("Erreur lors de la suppression de la license");
+    } catch (error: any) {
+      console.error("❌ Erreur lors de la suppression de la license:", error);
+      const errorMessage =
+        error?.message || "Erreur inconnue lors de la suppression";
+      toast.error(`❌ Erreur: ${errorMessage}`);
+    } finally {
+      setIsDeletingLicense(false);
     }
   };
 
@@ -623,6 +683,18 @@ const AdminDashboard: React.FC = () => {
             <div className="flex items-center justify-between">
               <HeaderLogo />
               <div className="flex items-center space-x-4">
+                <div />
+
+                {/* Last Saved Indicator */}
+                {lastSavedAt && (
+                  <div className="flex items-center space-x-2 text-xs text-gray-500">
+                    <Clock className="w-3 h-3" />
+                    <span>
+                      Sauvé à {lastSavedAt.toLocaleTimeString("fr-FR")}
+                    </span>
+                  </div>
+                )}
+
                 {/* Moderation stats */}
                 <div className="flex items-center space-x-2 text-sm text-gray-400">
                   <Shield className="w-4 h-4" />
@@ -630,6 +702,7 @@ const AdminDashboard: React.FC = () => {
                     {getModerationStats().todayActions} actions aujourd'hui
                   </span>
                 </div>
+
                 <Button
                   onClick={logout}
                   variant="outline"
@@ -1552,22 +1625,67 @@ const AdminDashboard: React.FC = () => {
               >
                 <DialogContent className="bg-gray-900 border-gray-800">
                   <DialogHeader>
-                    <DialogTitle className="text-white">
+                    <DialogTitle className="text-white flex items-center">
+                      <Trash2 className="w-5 h-5 mr-2 text-red-400" />
                       Supprimer le produit
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
-                      Cette action est irréversible. Le produit sera
-                      définitivement supprimé.
+                      ⚠️ Cette action est irréversible. Le produit sera supprimé
+                      de Firebase ET du système local.
                     </DialogDescription>
                   </DialogHeader>
+
                   {productToDelete && (
-                    <div className="bg-red-900/50 border border-red-700 rounded p-3">
-                      <p className="text-red-200 text-sm">
-                        <strong>Produit à supprimer :</strong>{" "}
-                        {productToDelete.title}
-                      </p>
+                    <div className="space-y-4">
+                      {/* Product Info */}
+                      <div className="bg-red-900/50 border border-red-700 rounded p-3">
+                        <p className="text-red-200 text-sm">
+                          <strong>Produit à supprimer :</strong>{" "}
+                          {productToDelete.title}
+                        </p>
+                      </div>
+
+                      {/* Firebase Status Info */}
+                      <div
+                        className={`border rounded p-3 ${
+                          isFirebaseAvailable
+                            ? "bg-green-900/30 border-green-700"
+                            : "bg-yellow-900/30 border-yellow-700"
+                        }`}
+                      >
+                        <div className="flex items-center space-x-2 text-sm">
+                          {isFirebaseAvailable ? (
+                            <>
+                              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                              <span className="text-green-200">
+                                ✅ Le produit sera supprimé de Firebase et
+                                localement
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                              <span className="text-yellow-200">
+                                ⚠️ Suppression locale uniquement (Firebase non
+                                connecté)
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Warning */}
+                      <div className="bg-gray-800 border border-gray-700 rounded p-3">
+                        <p className="text-gray-300 text-xs">
+                          💡 <strong>Note :</strong> Cette suppression sera
+                          définitive et ne pourra pas être annulée.
+                          {isFirebaseAvailable &&
+                            " Les données seront effacées de votre base Firebase."}
+                        </p>
+                      </div>
                     </div>
                   )}
+
                   <DialogFooter>
                     <Button
                       type="button"
@@ -1577,6 +1695,7 @@ const AdminDashboard: React.FC = () => {
                         setProductToDelete(null);
                       }}
                       className="border-gray-700"
+                      disabled={isDeletingProduct}
                     >
                       Annuler
                     </Button>
@@ -1584,8 +1703,19 @@ const AdminDashboard: React.FC = () => {
                       type="button"
                       onClick={handleDeleteProduct}
                       className="bg-red-600 hover:bg-red-700"
+                      disabled={isDeletingProduct}
                     >
-                      Supprimer définitivement
+                      {isDeletingProduct ? (
+                        <>
+                          <div className="w-4 h-4 mr-2 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                          Suppression...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Supprimer définitivement
+                        </>
+                      )}
                     </Button>
                   </DialogFooter>
                 </DialogContent>

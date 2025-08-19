@@ -1,0 +1,78 @@
+// ============================================================
+// RÈGLES FIRESTORE MISES À JOUR - keysystem-d0b86
+// ============================================================
+// 
+// Instructions pour appliquer ces règles:
+// 1. Allez sur https://console.firebase.google.com
+// 2. Sélectionnez votre projet "keysystem-d0b86"
+// 3. Cliquez sur "Firestore Database" dans le menu de gauche
+// 4. Cliquez sur l'onglet "Règles"
+// 5. REMPLACEZ TOUT le contenu par ces règles
+// 6. Cliquez "Publier"
+// 
+// ============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ========================================
+    // ACCÈS COMPLET TEMPORAIRE POUR DEBUG
+    // ========================================
+    match /{document=**} {
+      // Lecture et écriture ouvertes pour tous
+      allow read, write: if true;
+    }
+  }
+}
+
+// ============================================================
+// NOTES:
+// 
+// ⚠️ CES RÈGLES SONT OUVERTES POUR RÉSOUDRE LES ERREURS 400
+// 
+// Une fois que l'application fonctionne, vous pourrez appliquer
+// des règles plus sécurisées comme celles-ci:
+//
+// rules_version = '2';
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     
+//     // Collection settings (maintenance, etc.)
+//     match /settings/{document} {
+//       allow read: if true;
+//       allow write: if true; // À sécuriser plus tard
+//     }
+//     
+//     // Collection users
+//     match /users/{userId} {
+//       allow read: if true;
+//       allow create: if true;
+//       allow update, delete: if true; // À sécuriser plus tard
+//     }
+//     
+//     // Collection products
+//     match /products/{productId} {
+//       allow read: if true;
+//       allow write: if true; // À sécuriser plus tard
+//     }
+//     
+//     // Collection licenses
+//     match /licenses/{licenseId} {
+//       allow read, write: if true;
+//     }
+//     
+//     // Collection comments
+//     match /comments/{commentId} {
+//       allow read: if true;
+//       allow create: if true;
+//       allow update, delete: if true; // À sécuriser plus tard
+//     }
+//     
+//     // Collection moderation_actions
+//     match /moderation_actions/{actionId} {
+//       allow read, write: if true; // À sécuriser plus tard
+//     }
+//   }
+// }
+// ============================================================

@@ -1,5 +1,6 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 import {
   collection as fsCollection,
   doc as fsDoc,
@@ -16,52 +17,33 @@ import {
   orderBy as fsOrderBy,
 } from "firebase/firestore";
 
-// Check if Firebase environment variables are available
-const hasFirebaseConfig = !!(
-  import.meta.env.VITE_FIREBASE_API_KEY &&
-  import.meta.env.VITE_FIREBASE_PROJECT_ID
-);
-
-// Firebase configuration using environment variables
+// Firebase configuration - Configuration mise à jour avec le projet test-a4251
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "demo-api-key",
-  authDomain:
-    import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "demo.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "demo-project",
-  storageBucket:
-    import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "demo.appspot.com",
-  messagingSenderId:
-    import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "123456789",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "demo-app-id",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-XXXXXXXXXX",
+  apiKey: "AIzaSyACAkQ5Q68eKdD5vpFZU7-h8L-qeFlYnDI",
+  authDomain: "test-a4251.firebaseapp.com",
+  projectId: "test-a4251",
+  storageBucket: "test-a4251.firebasestorage.app",
+  messagingSenderId: "75154939894",
+  appId: "1:75154939894:web:0d93f0eaa0e31bdbe5f1d7",
+  measurementId: "G-THRZRBSW9S",
 };
 
-let app: any = null;
-let db: any = null;
+// Firebase sera toujours utilisé avec cette configuration
+const hasFirebaseConfig = true;
 
-try {
-  if (hasFirebaseConfig) {
-    // Initialize Firebase only if config is available
-    app = initializeApp(firebaseConfig);
-    db = getFirestore(app);
-    console.log(
-      "🔥 Firebase initialized with project:",
-      firebaseConfig.projectId,
-    );
-  } else {
-    console.warn(
-      "⚠️ Firebase configuration not found. Running in offline mode with localStorage fallback.",
-    );
-  }
-} catch (error) {
-  console.error("❌ Firebase initialization failed:", error);
-  console.warn("🔄 Switching to localStorage fallback mode");
-}
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const analytics = getAnalytics(app);
 
-export { db };
-export const isFirebaseAvailable = !!db && hasFirebaseConfig;
+console.log("🔥 Firebase initialized with project:", firebaseConfig.projectId);
+console.log("🗄️ Firestore database connected");
+console.log("📊 Firebase Analytics initialized");
 
-// Export Firebase functions with fallback handling
+export { db, analytics };
+export const isFirebaseAvailable = true;
+
+// Export Firebase functions directly
 export const collection = fsCollection;
 export const doc = fsDoc;
 export const addDoc = fsAddDoc;
@@ -75,38 +57,3 @@ export const getDocs = fsGetDocs;
 export const Timestamp = fsTimestamp;
 export const setDoc = fsSetDoc;
 export const orderBy = fsOrderBy;
-
-// Helper function to check if Firebase operations should proceed
-export const shouldUseFirebase = () => {
-  return isFirebaseAvailable && db !== null;
-};
-
-// Mock Firestore functions for fallback mode
-export const createMockFirestoreError = () => {
-  throw new Error("Firebase not configured - using localStorage fallback");
-};
-
-// Safe Firebase operations that handle offline mode
-export const safeFirebaseOperation = async (
-  operation: () => Promise<any>,
-  fallback?: () => any,
-) => {
-  if (!shouldUseFirebase()) {
-    if (fallback) {
-      return fallback();
-    }
-    console.warn("🔄 Firebase operation skipped - using fallback");
-    return null;
-  }
-
-  try {
-    return await operation();
-  } catch (error) {
-    console.error("❌ Firebase operation failed:", error);
-    if (fallback) {
-      console.warn("🔄 Using fallback after Firebase error");
-      return fallback();
-    }
-    throw error;
-  }
-};

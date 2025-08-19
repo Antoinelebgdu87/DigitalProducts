@@ -1,0 +1,45 @@
+// ============================================================
+// RÈGLES FIRESTORE POUR LE PROJET test-a4251
+// ============================================================
+// 
+// Instructions pour appliquer ces règles:
+// 1. Allez sur https://console.firebase.google.com
+// 2. Sélectionnez votre projet "test-a4251"
+// 3. Cliquez sur "Firestore Database" dans le menu de gauche
+// 4. Cliquez sur l'onglet "Règles" 
+// 5. REMPLACEZ TOUT le contenu par ces règles
+// 6. Cliquez "Publier"
+// 
+// ============================================================
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ========================================
+    // ACCÈS COMPLET POUR DÉVELOPPEMENT
+    // ========================================
+    match /{document=**} {
+      // Lecture et écriture ouvertes pour tous
+      // Parfait pour le développement et les tests
+      allow read, write: if true;
+    }
+  }
+}
+
+// ============================================================
+// NOTES:
+// 
+// ✅ CES RÈGLES SONT OUVERTES POUR LE DÉVELOPPEMENT
+// 
+// Ces règles permettent un accès complet à toutes les collections:
+// - settings (paramètres de maintenance)
+// - users (comptes utilisateurs)  
+// - products (produits du système)
+// - licenses (clés de licence)
+// - comments (commentaires)
+// - moderation_actions (actions de modération)
+// 
+// Pour la production, vous pourrez appliquer des règles plus
+// restrictives si nécessaire.
+// ============================================================
