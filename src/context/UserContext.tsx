@@ -156,7 +156,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const q = query(
         collection(db, "users"),
-        where("username", "==", username)
+        where("username", "==", username),
       );
       const querySnapshot = await getDocs(q);
 
@@ -187,12 +187,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
             if (existingUser.isBanned && existingUser.banExpiresAt) {
               const now = new Date();
               if (now > existingUser.banExpiresAt) {
-                console.log("���� Ban temporaire expiré au chargement, débannissement automatique");
+                console.log(
+                  "���� Ban temporaire expiré au chargement, débannissement automatique",
+                );
                 await unbanUser(existingUser.id);
                 // Re-charger l'utilisateur après débannissement
-                const updatedUserDoc = await getDoc(doc(db, "users", existingUser.id));
+                const updatedUserDoc = await getDoc(
+                  doc(db, "users", existingUser.id),
+                );
                 if (updatedUserDoc.exists()) {
-                  const updatedUser = parseUser({ id: updatedUserDoc.id, ...updatedUserDoc.data() });
+                  const updatedUser = parseUser({
+                    id: updatedUserDoc.id,
+                    ...updatedUserDoc.data(),
+                  });
                   localStorage.setItem("userId", updatedUser.id);
                   localStorage.setItem("username", updatedUser.username);
                   setCurrentUser(updatedUser);
@@ -220,7 +227,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
               });
             }
 
-            console.log("🔵 Utilisateur existant trouvé par nom:", existingUser.username);
+            console.log(
+              "🔵 Utilisateur existant trouvé par nom:",
+              existingUser.username,
+            );
             return;
           }
 
@@ -235,12 +245,19 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
               if (userData.isBanned && userData.banExpiresAt) {
                 const now = new Date();
                 if (now > userData.banExpiresAt) {
-                  console.log("🔓 Ban temporaire expiré au chargement par ID, débannissement automatique");
+                  console.log(
+                    "🔓 Ban temporaire expiré au chargement par ID, débannissement automatique",
+                  );
                   await unbanUser(userData.id);
                   // Re-charger l'utilisateur après débannissement
-                  const updatedUserDoc = await getDoc(doc(db, "users", userData.id));
+                  const updatedUserDoc = await getDoc(
+                    doc(db, "users", userData.id),
+                  );
                   if (updatedUserDoc.exists()) {
-                    const updatedUser = parseUser({ id: updatedUserDoc.id, ...updatedUserDoc.data() });
+                    const updatedUser = parseUser({
+                      id: updatedUserDoc.id,
+                      ...updatedUserDoc.data(),
+                    });
                     setCurrentUser(updatedUser);
                   } else {
                     setCurrentUser(userData);
@@ -258,7 +275,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
                 lastSeen: Timestamp.now(),
               });
 
-              console.log("🔵 Utilisateur Firebase chargé par ID:", storedUsername);
+              console.log(
+                "🔵 Utilisateur Firebase chargé par ID:",
+                storedUsername,
+              );
               return;
             }
           }
@@ -280,7 +300,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
               if (existingUser.isBanned && existingUser.banExpiresAt) {
                 const now = new Date();
                 if (now > existingUser.banExpiresAt) {
-                  console.log("🔓 Ban temporaire expiré lors de la récupération, débannissement automatique");
+                  console.log(
+                    "🔓 Ban temporaire expiré lors de la récupération, débannissement automatique",
+                  );
                   await unbanUser(existingUser.id);
                 }
               }
@@ -297,7 +319,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
                 });
               }
 
-              console.log("🔵 Utilisateur existant retrouvé:", existingUser.username);
+              console.log(
+                "🔵 Utilisateur existant retrouvé:",
+                existingUser.username,
+              );
             } else {
               const userId = Date.now().toString();
               localStorage.setItem("lastUsername", lastUsername);
@@ -459,7 +484,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
         }
 
         setCurrentUser(existingUser);
-        console.log("🔄 Utilisateur existant réutilisé:", existingUser.username);
+        console.log(
+          "🔄 Utilisateur existant réutilisé:",
+          existingUser.username,
+        );
         return existingUser;
       }
 
