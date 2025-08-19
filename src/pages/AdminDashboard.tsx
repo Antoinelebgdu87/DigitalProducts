@@ -1343,7 +1343,7 @@ const AdminDashboard: React.FC = () => {
                           type="submit"
                           className="bg-blue-600 hover:bg-blue-700"
                         >
-                          Mettre �� jour
+                          Mettre à jour
                         </Button>
                       </DialogFooter>
                     </form>
@@ -1919,7 +1919,11 @@ const AdminDashboard: React.FC = () => {
               </div>
 
               <div className="grid gap-4">
-                {users?.map((user) => (
+                {users?.filter(user =>
+                  !userSearchQuery ||
+                  user.username.toLowerCase().includes(userSearchQuery.toLowerCase()) ||
+                  user.id.toLowerCase().includes(userSearchQuery.toLowerCase())
+                ).map((user) => (
                   <Card
                     key={user.id}
                     className="border-gray-800 bg-gray-900/50"
@@ -2297,7 +2301,7 @@ const AdminDashboard: React.FC = () => {
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={handleWarnUser} className="space-y-4">
-                    {/* Messages pr��définis */}
+                    {/* Messages prédéfinis */}
                     <div className="space-y-2">
                       <Label className="text-white">Messages d'avertissement prédéfinis</Label>
                       <div className="grid grid-cols-2 gap-2 max-h-40 overflow-y-auto">
