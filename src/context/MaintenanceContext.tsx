@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { doc, onSnapshot, setDoc, getDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, shouldUseFirebase } from "@/lib/firebase";
 import { FirebaseService } from "@/lib/firebase-service";
 import { MaintenanceSettings } from "@/types";
 
