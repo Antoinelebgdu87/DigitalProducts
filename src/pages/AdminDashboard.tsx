@@ -1626,22 +1626,60 @@ const AdminDashboard: React.FC = () => {
               >
                 <DialogContent className="bg-gray-900 border-gray-800">
                   <DialogHeader>
-                    <DialogTitle className="text-white">
+                    <DialogTitle className="text-white flex items-center">
+                      <Trash2 className="w-5 h-5 mr-2 text-red-400" />
                       Supprimer le produit
                     </DialogTitle>
                     <DialogDescription className="text-gray-400">
-                      Cette action est irréversible. Le produit sera
-                      définitivement supprimé.
+                      ⚠️ Cette action est irréversible. Le produit sera supprimé de Firebase ET du système local.
                     </DialogDescription>
                   </DialogHeader>
+
                   {productToDelete && (
-                    <div className="bg-red-900/50 border border-red-700 rounded p-3">
-                      <p className="text-red-200 text-sm">
-                        <strong>Produit à supprimer :</strong>{" "}
-                        {productToDelete.title}
-                      </p>
+                    <div className="space-y-4">
+                      {/* Product Info */}
+                      <div className="bg-red-900/50 border border-red-700 rounded p-3">
+                        <p className="text-red-200 text-sm">
+                          <strong>Produit à supprimer :</strong>{" "}
+                          {productToDelete.title}
+                        </p>
+                      </div>
+
+                      {/* Firebase Status Info */}
+                      <div className={`border rounded p-3 ${
+                        isFirebaseAvailable
+                          ? "bg-green-900/30 border-green-700"
+                          : "bg-yellow-900/30 border-yellow-700"
+                      }`}>
+                        <div className="flex items-center space-x-2 text-sm">
+                          {isFirebaseAvailable ? (
+                            <>
+                              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                              <span className="text-green-200">
+                                ✅ Le produit sera supprimé de Firebase et localement
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                              <span className="text-yellow-200">
+                                ⚠️ Suppression locale uniquement (Firebase non connecté)
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Warning */}
+                      <div className="bg-gray-800 border border-gray-700 rounded p-3">
+                        <p className="text-gray-300 text-xs">
+                          💡 <strong>Note :</strong> Cette suppression sera définitive et ne pourra pas être annulée.
+                          {isFirebaseAvailable && " Les données seront effacées de votre base Firebase."}
+                        </p>
+                      </div>
                     </div>
                   )}
+
                   <DialogFooter>
                     <Button
                       type="button"
@@ -1651,6 +1689,7 @@ const AdminDashboard: React.FC = () => {
                         setProductToDelete(null);
                       }}
                       className="border-gray-700"
+                      disabled={isDeletingProduct}
                     >
                       Annuler
                     </Button>
@@ -1658,8 +1697,19 @@ const AdminDashboard: React.FC = () => {
                       type="button"
                       onClick={handleDeleteProduct}
                       className="bg-red-600 hover:bg-red-700"
+                      disabled={isDeletingProduct}
                     >
-                      Supprimer définitivement
+                      {isDeletingProduct ? (
+                        <>
+                          <div className="w-4 h-4 mr-2 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                          Suppression...
+                        </>
+                      ) : (
+                        <>
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Supprimer définitivement
+                        </>
+                      )}
                     </Button>
                   </DialogFooter>
                 </DialogContent>
@@ -2555,7 +2605,7 @@ const AdminDashboard: React.FC = () => {
                   <form onSubmit={handleUnbanUser} className="space-y-4">
                     <div className="bg-green-900/50 border border-green-700 rounded p-3">
                       <p className="text-green-200 text-sm">
-                        <strong>Confirmation:</strong> Cette action débannira
+                        <strong>Confirmation:</strong> Cette action d��bannira
                         définitivement l'utilisateur.
                       </p>
                     </div>
@@ -3271,7 +3321,7 @@ const AdminDashboard: React.FC = () => {
                       }
                       className="bg-gray-800 border-gray-700 text-white"
                       rows={3}
-                      placeholder="Update in progress, come back later ���️"
+                      placeholder="Update in progress, come back later ����️"
                     />
                   </div>
 
