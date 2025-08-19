@@ -14,6 +14,7 @@ import {
   Globe,
   ArrowRight,
   User,
+  Package,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import SimpleStarsBackground from "./SimpleStarsBackground";
