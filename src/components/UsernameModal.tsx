@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { RefreshCw, User, Camera, Upload, Link, Skip, UserPlus } from "lucide-react";
+import { RefreshCw, User, Camera, Upload, Link, SkipForward, UserPlus } from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
 
