@@ -226,7 +226,7 @@ const ModernHomePage: React.FC = () => {
                 }}
                 className="px-8 py-4 text-lg bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-2xl shadow-2xl hover:shadow-red-500/50 transition-all duration-300"
               >
-                Explorer les produits
+                <AutoTranslate>Explorer les produits</AutoTranslate>
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </motion.div>
@@ -248,7 +248,7 @@ const ModernHomePage: React.FC = () => {
                 }}
                 className="px-8 py-4 text-lg border-white/30 text-white hover:bg-white/10 rounded-2xl backdrop-blur-sm"
               >
-                En savoir plus
+                <AutoTranslate>En savoir plus</AutoTranslate>
               </Button>
             </motion.div>
           </motion.div>
