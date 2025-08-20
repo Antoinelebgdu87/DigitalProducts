@@ -225,36 +225,44 @@ const ShopDashboard: React.FC = () => {
 
       <div className="relative z-10">
         {/* Header */}
-        <header className="border-b border-gray-800/50 bg-black/20 backdrop-blur-sm">
+        <header className="border-b border-gray-800/50 bg-black/20 backdrop-blur-sm sticky top-0 z-50">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Store className="w-8 h-8 text-purple-500" />
+                <div className="p-2 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-lg border border-purple-500/30">
+                  <Store className="w-6 h-6 text-purple-400" />
+                </div>
                 <div>
-                  <h1 className="text-xl font-semibold text-white">
-                    Ma Boutique
+                  <h1 className="text-xl font-bold text-white flex items-center space-x-2">
+                    <span>Ma Boutique</span>
+                    {currentUser.role === "partner" && (
+                      <Crown className="w-4 h-4 text-yellow-400" />
+                    )}
                   </h1>
-                  <p className="text-gray-400 text-xs">
-                    Gérez vos produits et suivez vos ventes
+                  <p className="text-sm text-gray-400">
+                    Gérez vos produits et suivez vos ventes • {currentUser.username}
                   </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
+                {/* Sélecteur de langue */}
+                <LanguageSelector />
+
                 {/* Badge de rôle */}
                 {currentUser.role === "shop_access" && (
-                  <Badge className="bg-purple-600 text-white">
+                  <Badge className="bg-purple-600/20 text-purple-400 border-purple-500/30">
                     <Store className="w-3 h-3 mr-1" />
                     Boutique
                   </Badge>
                 )}
                 {currentUser.role === "partner" && (
-                  <Badge className="bg-yellow-600 text-white">
+                  <Badge className="bg-yellow-600/20 text-yellow-400 border-yellow-500/30">
                     <Crown className="w-3 h-3 mr-1" />
                     Partenaire
                   </Badge>
                 )}
                 {currentUser.role === "admin" && (
-                  <Badge className="bg-red-600 text-white">
+                  <Badge className="bg-red-600/20 text-red-400 border-red-500/30">
                     <Shield className="w-3 h-3 mr-1" />
                     Admin
                   </Badge>
@@ -262,14 +270,15 @@ const ShopDashboard: React.FC = () => {
 
                 <Badge
                   variant="outline"
-                  className="border-purple-500 text-purple-400"
+                  className="border-purple-500/30 text-purple-400 bg-purple-500/10"
                 >
-                  {userProducts.length} produit(s)
+                  {userProducts.length} produit{userProducts.length !== 1 ? "s" : ""}
                 </Badge>
                 <Link to="/">
                   <Button
                     variant="outline"
-                    className="border-gray-500 text-gray-400 hover:bg-gray-500/10"
+                    size="sm"
+                    className="border-gray-600/50 text-gray-300 hover:bg-gray-700/50 transition-all"
                   >
                     <ArrowLeft className="w-4 h-4 mr-2" />
                     Retour
