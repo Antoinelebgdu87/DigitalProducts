@@ -61,6 +61,17 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "admin.users": "Utilisateurs",
     "admin.settings": "Paramètres admin",
     "admin.maintenance": "Maintenance",
+
+    // Homepage
+    "home.title": "DigitalHub",
+    "home.subtitle": "Votre plateforme numérique",
+    "home.description": "Découvrez notre collection de produits numériques premium",
+    "home.featured": "Produits en vedette",
+    "home.shop": "Boutique",
+    "home.all_products": "Tous les produits",
+    "home.no_products": "Aucun produit disponible",
+    "home.loading": "Chargement des produits...",
+    "home.footer": "Tous droits réservés",
   },
   en: {
     // Navigation & UI
