@@ -12,6 +12,7 @@ import {
   Query,
   FirestoreError,
 } from "firebase/firestore";
+import FirebaseFallback from "./firebase-fallback";
 
 // Firebase service avec retry logic et gestion d'erreur
 export class FirebaseService {
