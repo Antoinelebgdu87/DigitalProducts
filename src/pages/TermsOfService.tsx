@@ -161,50 +161,64 @@ const TermsOfService = () => {
           </motion.div>
 
           {/* Section 4: User Responsibilities */}
-          <Card>
-            <CardHeader>
-              <CardTitle>4. Responsabilités de l'Utilisateur</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>En utilisant nos services, vous vous engagez à :</p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Fournir des informations exactes et à jour</li>
-                <li>Maintenir la sécurité de votre compte</li>
-                <li>Ne pas partager vos identifiants</li>
-                <li>Ne pas redistribuer nos produits sans autorisation</li>
-                <li>Respecter les droits de propriété intellectuelle</li>
-                <li>Ne pas utiliser nos services à des fins illégales</li>
-                <li>Ne pas spammer ou harceler d'autres utilisateurs</li>
-                <li>Garder votre sang-froid même si vous n'aimez pas ces conditions</li>
-              </ul>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+          >
+            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">4. User Responsibilities</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-gray-300">
+                <p>By using our services, you agree to:</p>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>Provide accurate and current information</li>
+                  <li>Maintain the security of your account</li>
+                  <li>Not share your credentials</li>
+                  <li>Not redistribute our products without authorization</li>
+                  <li>Respect intellectual property rights</li>
+                  <li>Not use our services for illegal purposes</li>
+                  <li>Not spam or harass other users</li>
+                  <li>Comply with all applicable laws and regulations</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Section 5: Intellectual Property */}
-          <Card>
-            <CardHeader>
-              <CardTitle>5. Propriété Intellectuelle</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
-                Tout le contenu de ce site (textes, images, logos, code, designs) est protégé par 
-                les droits d'auteur et appartient à DigitalHub ou à ses partenaires licenciés.
-              </p>
-              <p>
-                L'achat d'un produit vous donne une licence d'utilisation personnelle et non-exclusive. 
-                Vous ne pouvez pas :
-              </p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>Revendre ou redistribuer nos produits</li>
-                <li>Modifier et revendre comme votre propre travail</li>
-                <li>Partager sur des plateformes de piratage</li>
-                <li>Faire du reverse engineering pour créer des concurrents</li>
-              </ul>
-              <p className="font-bold">
-                Violation = poursuites judiciaires. On rigole pas avec ça ! ⚖️
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.7 }}
+          >
+            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">5. Intellectual Property</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-gray-300">
+                <p>
+                  All site content (text, images, logos, code, designs) is protected by copyright
+                  and belongs to DigitalHub or its licensed partners.
+                </p>
+                <p>
+                  Purchasing a product grants you a personal, non-exclusive license. You may not:
+                </p>
+                <ul className="list-disc pl-6 space-y-1">
+                  <li>Resell or redistribute our products</li>
+                  <li>Modify and resell as your own work</li>
+                  <li>Share on piracy platforms</li>
+                  <li>Reverse engineer to create competitors</li>
+                  <li>Use for commercial redistribution</li>
+                </ul>
+                <div className="bg-red-950/20 p-4 rounded-lg border border-red-500/30">
+                  <p className="font-bold text-red-400">
+                    Violation will result in legal action. We enforce our rights.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Section 6: Disclaimers */}
           <Card>
