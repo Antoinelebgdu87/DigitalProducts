@@ -145,7 +145,7 @@ const ModernHomePage: React.FC = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent pl-4">
-              <TranslatedText>DigitalHub</TranslatedText>
+              <AutoTranslate>DigitalHub</AutoTranslate>
             </div>
 
             <div className="flex items-center space-x-3">
