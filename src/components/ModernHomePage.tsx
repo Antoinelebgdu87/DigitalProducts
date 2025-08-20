@@ -201,9 +201,9 @@ const ModernHomePage: React.FC = () => {
             variants={itemVariants}
             className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
           >
-            Découvrez notre collection de produits numériques premium
+            <AutoTranslate>Découvrez notre collection de produits numériques premium</AutoTranslate>
             <br />
-            <span className="text-red-400">Aucun compte requis, aucune complication.</span> Juste de l'excellence numérique pure.
+            <span className="text-red-400"><AutoTranslate>Aucun compte requis, aucune complication.</AutoTranslate></span> <AutoTranslate>Juste de l'excellence numérique pure.</AutoTranslate>
           </motion.p>
 
           <motion.div
