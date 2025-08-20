@@ -263,32 +263,32 @@ class HybridTranslationService {
 
   async translateMultipleTexts(texts: string[], targetLanguage: Language): Promise<Record<string, string>> {
     const results: Record<string, string> = {};
-    
+
     // Traiter par batch pour éviter de surcharger l'API
-    const batchSize = 5;
+    const batchSize = 3;
     for (let i = 0; i < texts.length; i += batchSize) {
       const batch = texts.slice(i, i + batchSize);
       const promises = batch.map(async (text) => {
         const translated = await this.translateText(text, targetLanguage);
         return { original: text, translated };
       });
-      
+
       const batchResults = await Promise.all(promises);
       batchResults.forEach(({ original, translated }) => {
         results[original] = translated;
       });
-      
-      // Petite pause entre les batches
+
+      // Pause plus longue entre les batches pour l'API gratuite
       if (i + batchSize < texts.length) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise(resolve => setTimeout(resolve, 500));
       }
     }
-    
+
     return results;
   }
 }
 
-const translationService = new OpenRouterTranslationService();
+const translationService = new HybridTranslationService();
 
 export const TranslationProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [currentLanguage, setCurrentLanguage] = useState<Language>('fr');
