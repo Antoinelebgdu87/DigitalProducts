@@ -2,459 +2,329 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { AlertTriangle, Shield, FileText, Eye, ArrowLeft } from "lucide-react";
+import { FileText, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
 
 const TermsOfService = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-black relative">
-      {/* Background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-br from-red-950/10 via-black to-red-950/5" />
-
-      <div className="relative z-10 container mx-auto px-6 py-12 max-w-5xl">
+    <div className="min-h-screen bg-black">
+      <div className="container mx-auto px-6 py-12 max-w-4xl">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-12"
-        >
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <FileText className="h-10 w-10 text-red-500" />
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-white via-red-200 to-red-400 bg-clip-text text-transparent">
+        <div className="mb-12">
+          <Button
+            variant="ghost"
+            onClick={() => navigate('/')}
+            className="mb-6 text-gray-400 hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Button>
+          
+          <div className="flex items-center gap-3 mb-6">
+            <FileText className="h-8 w-8 text-white" />
+            <h1 className="text-4xl font-bold text-white">
               Terms of Service
             </h1>
           </div>
-          <p className="text-gray-300 text-xl max-w-3xl mx-auto">
-            Legal framework and usage guidelines for DigitalHub platform
+          <p className="text-gray-400 text-lg">
+            Effective Date: {new Date().toLocaleDateString('en-US', { 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            })}
           </p>
-          <div className="flex items-center justify-center gap-2 mt-4 text-sm text-red-400">
-            <AlertTriangle className="h-4 w-4" />
-            <span>Last updated: {new Date().toLocaleDateString('en-US')}</span>
-          </div>
-        </motion.div>
+        </div>
 
-        {/* Critical Notice */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <Card className="mb-8 border-red-500/30 bg-red-950/20 backdrop-blur-sm">
+        <div className="space-y-8">
+          {/* Introduction */}
+          <Card className="bg-gray-900/50 border-gray-700">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-red-400">
-                <Eye className="h-5 w-5" />
-                MANDATORY READING
-              </CardTitle>
+              <CardTitle className="text-white">Agreement to Terms</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-red-200">
-                By accessing or using this website, you automatically agree to these terms.
-                If you disagree with any part, discontinue use immediately.
+            <CardContent className="text-gray-300 space-y-4">
+              <p>
+                These Terms of Service ("Terms") govern your use of the DigitalHub website 
+                and services operated by DigitalHub ("we," "us," or "our"). By accessing 
+                or using our Service, you agree to be bound by these Terms.
+              </p>
+              <p>
+                If you disagree with any part of these terms, then you may not access the Service.
               </p>
             </CardContent>
           </Card>
-        </motion.div>
 
-        <div className="space-y-8">
-          {/* Section 1: Acceptance */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-          >
-            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-white">
-                  <Shield className="h-5 w-5 text-red-400" />
-                  1. Acceptance of Terms
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-gray-300">
-                <p>
-                  Welcome to <strong className="text-red-400">DigitalHub</strong>. By accessing this website,
-                  creating an account, downloading, purchasing, or using our services, you automatically accept
-                  these terms of use without reservation.
-                </p>
-                <p>
-                  If you do not accept these terms, you must immediately cease using our services.
-                  This is non-negotiable.
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Section 2: Services */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-          >
-            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">2. Service Description</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-gray-300">
-                <p>
-                  DigitalHub provides a platform for digital product sales including but not limited to:
-                </p>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li>Development scripts and tools</li>
-                  <li>Templates and designs</li>
-                  <li>Digital resources</li>
-                  <li>Consultation services</li>
-                  <li>Online training</li>
-                  <li>Any other digital products we choose to offer</li>
-                </ul>
-                <p>
-                  We reserve the right to modify, suspend, or discontinue any service at any time without notice.
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Section 3: No Refunds */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-          >
-            <Card className="border-red-500/40 bg-red-950/30 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-red-400 text-xl">
-                  3. NO REFUND POLICY - ABSOLUTE
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="bg-red-900/40 p-6 rounded-xl border border-red-500/30">
-                  <p className="font-bold text-red-300 text-xl mb-3">
-                    ZERO REFUNDS - FINAL SALES ONLY
-                  </p>
-                  <p className="text-red-200">
-                    All sales are <strong>FINAL</strong> and <strong>NON-REFUNDABLE</strong>.
-                    Once purchased, the transaction is complete and irreversible.
-                  </p>
-                </div>
-                <p className="text-gray-300">
-                  This policy applies in ALL circumstances including but not limited to:
-                </p>
-                <ul className="list-disc pl-6 space-y-1 text-gray-400">
-                  <li>Change of mind</li>
-                  <li>Technical incompatibility</li>
-                  <li>Unmet expectations</li>
-                  <li>Purchase errors</li>
-                  <li>User-side issues</li>
-                  <li>Dissatisfaction with quality</li>
-                  <li>Changed requirements</li>
-                  <li>Any other reason whatsoever</li>
-                </ul>
-                <div className="bg-black/50 p-4 rounded-lg border border-red-500/20">
-                  <p className="font-bold text-red-400">
-                    Bottom line: You buy it, you own it. No exceptions.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Section 4: User Responsibilities */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-          >
-            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">4. User Responsibilities</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-gray-300">
-                <p>By using our services, you agree to:</p>
-                <ul className="list-disc pl-6 space-y-2">
-                  <li>Provide accurate and current information</li>
-                  <li>Maintain the security of your account</li>
-                  <li>Not share your credentials</li>
-                  <li>Not redistribute our products without authorization</li>
-                  <li>Respect intellectual property rights</li>
-                  <li>Not use our services for illegal purposes</li>
-                  <li>Not spam or harass other users</li>
-                  <li>Comply with all applicable laws and regulations</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Section 5: Intellectual Property */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.7 }}
-          >
-            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">5. Intellectual Property</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-gray-300">
-                <p>
-                  All site content (text, images, logos, code, designs) is protected by copyright
-                  and belongs to DigitalHub or its licensed partners.
-                </p>
-                <p>
-                  Purchasing a product grants you a personal, non-exclusive license. You may not:
-                </p>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>Resell or redistribute our products</li>
-                  <li>Modify and resell as your own work</li>
-                  <li>Share on piracy platforms</li>
-                  <li>Reverse engineer to create competitors</li>
-                  <li>Use for commercial redistribution</li>
-                </ul>
-                <div className="bg-red-950/20 p-4 rounded-lg border border-red-500/30">
-                  <p className="font-bold text-red-400">
-                    Violation will result in legal action. We enforce our rights.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Section 6: Disclaimers */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-          >
-            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">6. Disclaimers and Limitations</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-gray-300">
-                <p>
-                  Our products are provided "as is" without any warranty. We do not guarantee:
-                </p>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>Perfect functionality on your system</li>
-                  <li>Compatibility with your specific requirements</li>
-                  <li>Bug-free operation</li>
-                  <li>Specific performance outcomes</li>
-                  <li>Fitness for particular purposes</li>
-                </ul>
-                <div className="bg-gray-900/50 p-4 rounded-lg border border-gray-700/50">
-                  <p>
-                    <strong className="text-red-400">Liability Limitation:</strong> Our liability
-                    cannot exceed the amount paid for the specific product. This is the maximum
-                    extent of our responsibility.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Section 7: Account Management */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.9 }}
-          >
-            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">7. Account Management</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-gray-300">
-                <p>
-                  We reserve the right to suspend or terminate your account at any time,
-                  for any reason, without notice or refund if:
-                </p>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>You violate these terms of use</li>
-                  <li>You attempt to hack or damage our services</li>
-                  <li>You engage in abusive behavior toward our team</li>
-                  <li>You make refund demands despite clear no-refund policy</li>
-                  <li>You cause legal issues for our platform</li>
-                  <li>You engage in fraudulent activities</li>
-                  <li>At our sole discretion for platform protection</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Section 8: Privacy */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.0 }}
-          >
-            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">8. Privacy and Data</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-gray-300">
-                <p>
-                  We collect and use your data in accordance with our privacy policy:
-                </p>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>Personal information remains private and secure</li>
-                  <li>No data sales to third parties</li>
-                  <li>Necessary cookies for functionality</li>
-                  <li>Optional marketing communications (with opt-out)</li>
-                  <li>GDPR compliance maintained</li>
-                  <li>Data encryption and security measures</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Section 9: Modifications */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.1 }}
-          >
-            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">9. Terms Modifications</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-gray-300">
-                <p>
-                  We may modify these terms at any time. New terms take effect
-                  immediately upon publication on the site.
-                </p>
-                <p>
-                  It is your responsibility to regularly check these terms.
-                  Continued use after modifications constitutes automatic acceptance.
-                </p>
-                <div className="bg-yellow-950/20 p-3 rounded-lg border border-yellow-500/30">
-                  <p className="text-yellow-400">
-                    Recommendation: Bookmark this page and check periodically for updates.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Section 10: Legal */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.2 }}
-          >
-            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">10. Legal Framework</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-gray-300">
-                <p>
-                  <strong className="text-red-400">Governing Law:</strong> These terms are governed by French law.
-                </p>
-                <p>
-                  <strong className="text-red-400">Jurisdiction:</strong> All disputes will be subject to the exclusive
-                  jurisdiction of competent French courts.
-                </p>
-                <p>
-                  <strong className="text-red-400">Severability:</strong> If any part of these terms is deemed invalid,
-                  the remainder remains in effect.
-                </p>
-                <p>
-                  <strong className="text-red-400">Force Majeure:</strong> We are not responsible for delays or
-                  failures due to causes beyond our control (war, pandemic, natural disasters, etc.).
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Section 11: Contact */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.3 }}
-          >
-            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="text-white">11. Contact and Support</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4 text-gray-300">
-                <p>
-                  For questions regarding these terms of use, you may contact us. However:
-                </p>
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="bg-red-950/20 p-4 rounded-lg border border-red-500/30">
-                    <h4 className="text-red-400 font-semibold mb-2">DO NOT Contact Us For:</h4>
-                    <ul className="space-y-1 text-red-200">
-                      <li>• Refund requests</li>
-                      <li>• Disputing these terms</li>
-                      <li>• Complaints about fairness</li>
-                      <li>• Emotional arguments</li>
-                    </ul>
-                  </div>
-                  <div className="bg-green-950/20 p-4 rounded-lg border border-green-500/30">
-                    <h4 className="text-green-400 font-semibold mb-2">Acceptable Inquiries:</h4>
-                    <ul className="space-y-1 text-green-200">
-                      <li>• Legitimate technical questions</li>
-                      <li>• Verified bugs</li>
-                      <li>• Terms clarification</li>
-                      <li>• Product support</li>
-                    </ul>
-                  </div>
-                </div>
-                <p className="text-green-400">
-                  Professional communication yields professional responses.
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          {/* Final Warning */}
-          <Card className="border-purple-500/50 bg-purple-950/30">
+          {/* Section 1 */}
+          <Card className="bg-gray-900/50 border-gray-700">
             <CardHeader>
-              <CardTitle className="text-purple-400">
-                🎯 Récapitulatif pour les Pressés
-              </CardTitle>
+              <CardTitle className="text-white">1. Description of Service</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-2">
-                <p className="font-bold">En résumé :</p>
-                <ul className="list-disc pl-6 space-y-1">
-                  <li>Vous utilisez nos services = vous acceptez ces conditions</li>
-                  <li>Aucun remboursement, jamais, pour aucune raison</li>
-                  <li>Respectez nos droits et ceux des autres</li>
-                  <li>On peut modifier ces conditions quand on veut</li>
-                  <li>Droit français applicable</li>
-                  <li>Soyez cool, on sera cool aussi</li>
-                </ul>
-                <p className="text-purple-300 font-medium mt-4">
-                  Maintenant que vous savez tout, bienvenue sur DigitalHub ! 🚀
+            <CardContent className="text-gray-300 space-y-4">
+              <p>
+                DigitalHub operates a digital marketplace platform that allows users to 
+                purchase and download digital products, including but not limited to:
+              </p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li>Software applications and scripts</li>
+                <li>Digital templates and designs</li>
+                <li>Educational content and courses</li>
+                <li>Digital assets and resources</li>
+                <li>Consulting and professional services</li>
+              </ul>
+              <p>
+                We reserve the right to modify, suspend, or discontinue any aspect 
+                of the Service at any time without prior notice.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Section 2 - No Refunds */}
+          <Card className="bg-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">2. No Refund Policy</CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-300 space-y-4">
+              <div className="bg-gray-800/80 p-4 rounded-lg border border-gray-600">
+                <p className="font-semibold text-white mb-2">
+                  ALL SALES ARE FINAL - NO REFUNDS
+                </p>
+                <p>
+                  Due to the nature of digital products, all purchases are final 
+                  and non-refundable. This policy applies without exception.
+                </p>
+              </div>
+              <p>This no-refund policy applies in all circumstances, including but not limited to:</p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li>Change of mind after purchase</li>
+                <li>Technical incompatibility with user systems</li>
+                <li>User error in product selection</li>
+                <li>Failure to meet user expectations</li>
+                <li>User's inability to use the product</li>
+                <li>Duplicate purchases</li>
+                <li>Any other reason whatsoever</li>
+              </ul>
+              <p className="font-medium">
+                By completing a purchase, you acknowledge and accept this no-refund policy.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Section 3 */}
+          <Card className="bg-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">3. User Accounts and Responsibilities</CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-300 space-y-4">
+              <p>When using our Service, you agree to:</p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li>Provide accurate, current, and complete information</li>
+                <li>Maintain the security of your account credentials</li>
+                <li>Accept responsibility for all activities under your account</li>
+                <li>Notify us immediately of any unauthorized use</li>
+                <li>Comply with all applicable laws and regulations</li>
+                <li>Not engage in fraudulent or deceptive practices</li>
+                <li>Not interfere with or disrupt the Service</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          {/* Section 4 */}
+          <Card className="bg-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">4. Intellectual Property Rights</CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-300 space-y-4">
+              <p>
+                The Service and its original content, features, and functionality are owned 
+                by DigitalHub and are protected by international copyright, trademark, 
+                patent, trade secret, and other intellectual property laws.
+              </p>
+              <p>
+                Upon purchase of digital products, you receive a limited, non-exclusive, 
+                non-transferable license to use the product for personal or business purposes 
+                as specified in the product description.
+              </p>
+              <p className="font-medium">You may NOT:</p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li>Resell, redistribute, or share purchased products</li>
+                <li>Modify products and claim them as your own work</li>
+                <li>Use products in violation of applicable laws</li>
+                <li>Reverse engineer or attempt to extract source code</li>
+                <li>Remove or alter any proprietary notices</li>
+              </ul>
+            </CardContent>
+          </Card>
+
+          {/* Section 5 */}
+          <Card className="bg-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">5. Disclaimers and Limitation of Liability</CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-300 space-y-4">
+              <p>
+                The Service is provided on an "AS IS" and "AS AVAILABLE" basis without 
+                warranties of any kind, either express or implied.
+              </p>
+              <p>We do not warrant that:</p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li>The Service will meet your specific requirements</li>
+                <li>The Service will be uninterrupted, timely, secure, or error-free</li>
+                <li>Results obtained from the Service will be accurate or reliable</li>
+                <li>Defects will be corrected</li>
+              </ul>
+              <div className="bg-gray-800/80 p-4 rounded-lg border border-gray-600">
+                <p className="font-semibold text-white mb-2">LIMITATION OF LIABILITY</p>
+                <p>
+                  In no event shall DigitalHub, its directors, employees, partners, agents, 
+                  suppliers, or affiliates be liable for any indirect, incidental, special, 
+                  consequential, or punitive damages, including without limitation, loss of 
+                  profits, data, use, goodwill, or other intangible losses, resulting from 
+                  your use of the Service.
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Section 6 */}
+          <Card className="bg-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">6. Account Termination</CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-300 space-y-4">
+              <p>
+                We may terminate or suspend your account and access to the Service 
+                immediately, without prior notice or liability, for any reason, including:
+              </p>
+              <ul className="list-disc pl-6 space-y-1">
+                <li>Breach of these Terms</li>
+                <li>Fraudulent or illegal activity</li>
+                <li>Violation of intellectual property rights</li>
+                <li>Abusive behavior toward other users or our team</li>
+                <li>Any conduct that we deem harmful to the Service or other users</li>
+              </ul>
+              <p>
+                Upon termination, your right to use the Service will cease immediately, 
+                but downloaded products may continue to be used according to their license terms.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Section 7 */}
+          <Card className="bg-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">7. Privacy Policy</CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-300 space-y-4">
+              <p>
+                Your privacy is important to us. Our Privacy Policy explains how we collect, 
+                use, and protect your information when you use our Service.
+              </p>
+              <p>By using our Service, you agree to the collection and use of information 
+                in accordance with our Privacy Policy.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Section 8 */}
+          <Card className="bg-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">8. Changes to Terms</CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-300 space-y-4">
+              <p>
+                We reserve the right to modify or replace these Terms at any time at our 
+                sole discretion. If a revision is material, we will try to provide at least 
+                30 days' notice prior to any new terms taking effect.
+              </p>
+              <p>
+                What constitutes a material change will be determined at our sole discretion. 
+                By continuing to access or use our Service after those revisions become 
+                effective, you agree to be bound by the revised terms.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Section 9 */}
+          <Card className="bg-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">9. Governing Law and Jurisdiction</CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-300 space-y-4">
+              <p>
+                These Terms shall be interpreted and governed by the laws of France, 
+                without regard to its conflict of law provisions.
+              </p>
+              <p>
+                Any disputes arising out of or relating to these Terms or the Service 
+                shall be subject to the exclusive jurisdiction of the courts of France.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Section 10 */}
+          <Card className="bg-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">10. Severability</CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-300 space-y-4">
+              <p>
+                If any provision of these Terms is held to be invalid, illegal, or 
+                unenforceable by a court of competent jurisdiction, the validity, legality, 
+                and enforceability of the remaining provisions shall not in any way be 
+                affected or impaired thereby.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Section 11 */}
+          <Card className="bg-gray-900/50 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">11. Contact Information</CardTitle>
+            </CardHeader>
+            <CardContent className="text-gray-300 space-y-4">
+              <p>
+                If you have any questions about these Terms of Service, please contact us 
+                through the appropriate channels provided on our website.
+              </p>
+              <div className="bg-gray-800/80 p-4 rounded-lg border border-gray-600">
+                <p className="font-semibold text-white mb-2">Important Notice</p>
+                <p>
+                  Please do not contact us regarding refund requests, as all sales are 
+                  final. Contact us only for legitimate technical support, billing 
+                  inquiries, or legal matters.
                 </p>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        <Separator className="my-8" />
+        <Separator className="my-8 bg-gray-700" />
 
         {/* Footer */}
         <div className="text-center space-y-4">
-          <p className="text-muted-foreground">
-            Ces conditions d'utilisation constituent l'accord complet entre vous et DigitalHub.
+          <p className="text-gray-400">
+            By using DigitalHub, you acknowledge that you have read, understood, 
+            and agree to be bound by these Terms of Service.
           </p>
           <div className="flex gap-4 justify-center">
             <Button 
               onClick={() => navigate('/')}
               variant="outline"
+              className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
             >
-              Retour à l'accueil
+              Return to Home
             </Button>
             <Button 
               onClick={() => window.print()}
               variant="ghost"
+              className="text-gray-400 hover:text-white"
             >
-              Imprimer ces conditions
+              Print Terms
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} DigitalHub. Tous droits réservés. 
-            Ces conditions sont protégées par le droit d'auteur aussi ! 📝
+          <p className="text-xs text-gray-500">
+            © {new Date().getFullYear()} DigitalHub. All rights reserved.
           </p>
         </div>
       </div>
