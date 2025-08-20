@@ -66,6 +66,7 @@ const AppContent = () => {
     return (
       <>
         <DevToolsProtection />
+        <FirebaseConnectionStatus />
         <Routes>
           <Route
             path="/"
