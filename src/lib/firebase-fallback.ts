@@ -18,15 +18,15 @@ const getFirebaseConfig = () => {
     };
   }
 
-  // Configuration pour le nouveau projet keysystem-d0b86 (sécurisé)
+  // Configuration test-a4251 qui fonctionne
   return {
-    apiKey: "AIzaSyBhF-NXo7NnGx8X_8QHOx0n9X8Q0n9X8QH",  // À remplacer par la vraie clé
-    authDomain: "keysystem-d0b86.firebaseapp.com",
-    projectId: "keysystem-d0b86",
-    storageBucket: "keysystem-d0b86.firebasestorage.app",
-    messagingSenderId: "123456789012",  // À remplacer par la vraie valeur
-    appId: "1:123456789012:web:abcdef123456789",  // À remplacer par la vraie valeur
-    measurementId: "G-XXXXXXXXXX",  // À remplacer par la vraie valeur
+    apiKey: "AIzaSyACAkQ5Q68eKdD5vpFZU7-h8L-qeFlYnDI",
+    authDomain: "test-a4251.firebaseapp.com",
+    projectId: "test-a4251",
+    storageBucket: "test-a4251.firebasestorage.app",
+    messagingSenderId: "75154939894",
+    appId: "1:75154939894:web:0d93f0eaa0e31bdbe5f1d7",
+    measurementId: "G-THRZRBSW9S"
   };
 };
 
@@ -138,7 +138,7 @@ import {
 // Fonctions wrapper qui gèrent le mode dégradé
 export const collection = (...args: any[]) => {
   if (!isFirebaseConnected || !db) {
-    throw new Error("Firebase non connecté - Mode dégrad��");
+    throw new Error("Firebase non connecté - Mode dégradé");
   }
   return fsCollection(db, ...args);
 };
