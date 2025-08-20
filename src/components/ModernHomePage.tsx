@@ -28,13 +28,12 @@ import RoleUpdateNotification from "./RoleUpdateNotification";
 import FloatingRoleBadge from "./FloatingRoleBadge";
 import SecureAdminAccess from "./SecureAdminAccess";
 import { useUser } from "@/context/UserContext";
-import { useLanguage } from "@/context/LanguageContext";
+import { TranslatedText } from "@/hooks/useTranslation";
 import SettingsButton from "./SettingsButton";
 
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
   const { currentUser, checkUserStatus, markWarningsAsRead } = useUser();
-  const { t } = useLanguage();
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [showTosModal, setShowTosModal] = useState(false);
@@ -108,23 +107,23 @@ const ModernHomePage: React.FC = () => {
   const features = [
     {
       icon: Shield,
-      title: t("product.no_account_required"),
-      description: "Aucune inscription requise",
+      title: "100% Anonymous",
+      description: "No registration required",
     },
     {
       icon: Zap,
-      title: t("feature.instant_access"),
-      description: t("product.instant_download"),
+      title: "Instant Access",
+      description: "Download immediately",
     },
     {
       icon: Globe,
-      title: t("feature.high_quality"),
-      description: "Produits numériques sélectionnés",
+      title: "Premium Quality",
+      description: "Curated digital products",
     },
     {
       icon: Star,
-      title: t("feature.secure_payment"),
-      description: "Téléchargements sûrs et fiables",
+      title: "Secure Delivery",
+      description: "Safe & reliable downloads",
     },
   ];
 
@@ -145,7 +144,7 @@ const ModernHomePage: React.FC = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent pl-4">
-              {t("home.title")}
+              <TranslatedText>DigitalHub</TranslatedText>
             </div>
 
             <div className="flex items-center space-x-3">
