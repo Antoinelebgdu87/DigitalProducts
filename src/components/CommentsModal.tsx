@@ -262,7 +262,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
             <span className="text-xs text-gray-500">
               {comments.filter(c => c.avatarUrl).length} with avatars
             </span>
-            {currentUser?.avatarUrl && (
+            {userAvatar && (
               <span className="text-xs text-green-400">✓ Your avatar ready</span>
             )}
           </DialogDescription>
