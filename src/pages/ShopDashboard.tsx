@@ -240,7 +240,9 @@ const ShopDashboard: React.FC = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
+                <LanguageSelector variant="compact" />
+
                 {/* Badge de rôle */}
                 {currentUser.role === "shop_access" && (
                   <Badge className="bg-purple-600 text-white">
