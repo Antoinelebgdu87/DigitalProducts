@@ -11,7 +11,7 @@ import {
 } from "@/context/MaintenanceContext";
 import { UserProvider } from "@/context/UserContext";
 import { AdminModeProvider } from "@/context/AdminModeContext";
-import { LanguageProvider } from "@/context/AILanguageContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 // Firebase toujours utilisé
 import ModernHomePage from "./components/ModernHomePage";
