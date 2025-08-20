@@ -643,6 +643,11 @@ class HybridTranslationService {
 
   private async tryLibreTranslate(text: string, targetLanguage: Language): Promise<string | null> {
     try {
+      // Incrémenter le compteur d'appels API
+      const callCount = parseInt(localStorage.getItem('apiCallCount') || '0');
+      localStorage.setItem('apiCallCount', (callCount + 1).toString());
+      localStorage.setItem('lastApiCall', Date.now().toString());
+
       const langCodes: Record<Language, string> = {
         fr: 'fr',
         en: 'en',
@@ -667,6 +672,10 @@ class HybridTranslationService {
       });
 
       if (!response.ok) {
+        if (response.status === 429) {
+          console.warn('LibreTranslate rate limit exceeded');
+          return null;
+        }
         throw new Error(`LibreTranslate API error: ${response.status}`);
       }
 
