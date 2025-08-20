@@ -281,44 +281,58 @@ const TermsOfService = () => {
           </motion.div>
 
           {/* Section 8: Privacy */}
-          <Card>
-            <CardHeader>
-              <CardTitle>8. Confidentialité et Données</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
-                Nous collectons et utilisons vos données conformément à notre politique de confidentialité. 
-                En gros :
-              </p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>On garde vos infos personnelles privées</li>
-                <li>On ne vend pas vos données à des tiers louches</li>
-                <li>On utilise des cookies (les numériques, pas les gourmands)</li>
-                <li>On peut vous envoyer des emails marketing (avec opt-out)</li>
-                <li>On se conforme au RGPD parce qu'on est des gens bien</li>
-              </ul>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.0 }}
+          >
+            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">8. Privacy and Data</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-gray-300">
+                <p>
+                  We collect and use your data in accordance with our privacy policy:
+                </p>
+                <ul className="list-disc pl-6 space-y-1">
+                  <li>Personal information remains private and secure</li>
+                  <li>No data sales to third parties</li>
+                  <li>Necessary cookies for functionality</li>
+                  <li>Optional marketing communications (with opt-out)</li>
+                  <li>GDPR compliance maintained</li>
+                  <li>Data encryption and security measures</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Section 9: Modifications */}
-          <Card>
-            <CardHeader>
-              <CardTitle>9. Modifications des Conditions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
-                Nous pouvons modifier ces conditions à tout moment. Les nouvelles conditions prendront 
-                effet immédiatement après publication sur le site.
-              </p>
-              <p>
-                C'est votre responsabilité de vérifier régulièrement ces conditions. 
-                Continuer à utiliser nos services après modification = acceptation automatique.
-              </p>
-              <p className="text-amber-400">
-                💡 Pro tip : Ajoutez cette page à vos favoris et revenez de temps en temps !
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.1 }}
+          >
+            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">9. Terms Modifications</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-gray-300">
+                <p>
+                  We may modify these terms at any time. New terms take effect
+                  immediately upon publication on the site.
+                </p>
+                <p>
+                  It is your responsibility to regularly check these terms.
+                  Continued use after modifications constitutes automatic acceptance.
+                </p>
+                <div className="bg-yellow-950/20 p-3 rounded-lg border border-yellow-500/30">
+                  <p className="text-yellow-400">
+                    Recommendation: Bookmark this page and check periodically for updates.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Section 10: Legal */}
           <Card>
