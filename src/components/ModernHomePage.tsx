@@ -28,11 +28,13 @@ import RoleUpdateNotification from "./RoleUpdateNotification";
 import FloatingRoleBadge from "./FloatingRoleBadge";
 import SecureAdminAccess from "./SecureAdminAccess";
 import { useUser } from "@/context/UserContext";
+import { useLanguage } from "@/context/LanguageContext";
 import SettingsButton from "./SettingsButton";
 
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
   const { currentUser, checkUserStatus, markWarningsAsRead } = useUser();
+  const { t } = useLanguage();
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [showTosModal, setShowTosModal] = useState(false);
@@ -143,7 +145,7 @@ const ModernHomePage: React.FC = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent pl-4">
-              DigitalHub
+              {t("home.title")}
             </div>
 
             <div className="flex items-center space-x-3">
@@ -377,10 +379,10 @@ const ModernHomePage: React.FC = () => {
         <div className="container mx-auto px-6 py-12">
           <div className="text-center">
             <div className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-6 pl-4">
-              DigitalHub
+              {t("home.title")}
             </div>
             <p className="text-gray-400 mb-4">
-              © 2025 DigitalHub • All rights reserved
+              © 2025 {t("home.title")} • {t("home.footer")}
             </p>
           </div>
         </div>
