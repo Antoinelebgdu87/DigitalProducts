@@ -24,6 +24,7 @@ import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import DevToolsProtection from "./components/DevToolsProtection";
 import { useAutoTranslate } from "./hooks/useAutoTranslate";
+import FirebaseConnectionStatus from "./components/FirebaseConnectionStatus";
 
 const queryClient = new QueryClient();
 
