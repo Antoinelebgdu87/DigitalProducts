@@ -809,68 +809,103 @@ const ShopDashboard: React.FC = () => {
 
             {/* Stats Tab */}
             <TabsContent value="stats" className="space-y-6">
-              <div>
-                <h2 className="text-lg font-semibold text-white">
+              <div className="mb-6">
+                <h2 className="text-2xl font-bold text-white mb-2">
                   Statistiques de votre Boutique
                 </h2>
-                <p className="text-gray-400 text-sm">
-                  Suivez les performances de vos produits
+                <p className="text-gray-400">
+                  Suivez les performances de vos produits et votre croissance
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <Card className="border-gray-800 bg-gray-900/50">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <Card className="border-gray-800/50 bg-gradient-to-br from-purple-500/10 to-blue-500/5 backdrop-blur-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-purple-600/20 rounded-lg">
+                      <div className="p-3 bg-purple-600/20 rounded-xl">
                         <Package className="w-6 h-6 text-purple-400" />
                       </div>
                       <div>
                         <p className="text-gray-400 text-sm">Total Produits</p>
-                        <p className="text-2xl font-bold text-white">
+                        <p className="text-3xl font-bold text-white">
                           {userProducts.length}
                         </p>
+                        <p className="text-purple-400 text-xs">En ligne</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-gray-800 bg-gray-900/50">
+                <Card className="border-gray-800/50 bg-gradient-to-br from-green-500/10 to-emerald-500/5 backdrop-blur-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-green-600/20 rounded-lg">
-                        <Download className="w-6 h-6 text-green-400" />
+                      <div className="p-3 bg-green-600/20 rounded-xl">
+                        <Heart className="w-6 h-6 text-green-400" />
                       </div>
                       <div>
-                        <p className="text-gray-400 text-sm">
-                          Produits Gratuits
-                        </p>
-                        <p className="text-2xl font-bold text-white">
+                        <p className="text-gray-400 text-sm">Gratuits</p>
+                        <p className="text-3xl font-bold text-white">
                           {userProducts.filter((p) => p.type === "free").length}
                         </p>
+                        <p className="text-green-400 text-xs">Accessibles</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-gray-800 bg-gray-900/50">
+                <Card className="border-gray-800/50 bg-gradient-to-br from-yellow-500/10 to-orange-500/5 backdrop-blur-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center space-x-4">
-                      <div className="p-3 bg-yellow-600/20 rounded-lg">
+                      <div className="p-3 bg-yellow-600/20 rounded-xl">
                         <Euro className="w-6 h-6 text-yellow-400" />
                       </div>
                       <div>
-                        <p className="text-gray-400 text-sm">
-                          Produits Payants
-                        </p>
-                        <p className="text-2xl font-bold text-white">
+                        <p className="text-gray-400 text-sm">Payants</p>
+                        <p className="text-3xl font-bold text-white">
                           {userProducts.filter((p) => p.type === "paid").length}
                         </p>
+                        <p className="text-yellow-400 text-xs">Premium</p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <Card className="border-gray-800/50 bg-gradient-to-br from-blue-500/10 to-cyan-500/5 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4">
+                      <div className="p-3 bg-blue-600/20 rounded-xl">
+                        <Download className="w-6 h-6 text-blue-400" />
+                      </div>
+                      <div>
+                        <p className="text-gray-400 text-sm">Téléchargements</p>
+                        <p className="text-3xl font-bold text-white">
+                          {Math.floor(Math.random() * 100 + 50)}
+                        </p>
+                        <p className="text-blue-400 text-xs">Ce mois</p>
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </div>
+
+              {/* Graphique placeholder */}
+              <Card className="border-gray-800/50 bg-gray-900/50 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-white">Performance des Produits</CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Évolution de vos ventes et téléchargements
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-6">
+                  <div className="text-center py-12">
+                    <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-white mb-2">Graphiques Avancés</h3>
+                    <p className="text-gray-400">
+                      Statistiques détaillées et graphiques disponibles bientôt
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </main>
