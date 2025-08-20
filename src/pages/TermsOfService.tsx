@@ -221,48 +221,64 @@ const TermsOfService = () => {
           </motion.div>
 
           {/* Section 6: Disclaimers */}
-          <Card>
-            <CardHeader>
-              <CardTitle>6. Avertissements et Limitations</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
-                Nos produits sont fournis "en l'état" sans aucune garantie. Nous ne garantissons pas :
-              </p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>Que nos produits fonctionneront parfaitement sur votre système</li>
-                <li>Qu'ils répondront à vos attentes spécifiques</li>
-                <li>Qu'ils seront exempts de bugs (c'est de l'informatique, les bugs font partie du jeu !)</li>
-                <li>Qu'ils vous rendront riche et célèbre</li>
-                <li>Qu'ils résoudront tous vos problèmes de vie</li>
-              </ul>
-              <p>
-                <strong>Limitation de responsabilité :</strong> Notre responsabilité ne peut en aucun cas 
-                dépasser le montant que vous avez payé pour le produit concerné. Et encore, on sera généreux !
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.8 }}
+          >
+            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">6. Disclaimers and Limitations</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-gray-300">
+                <p>
+                  Our products are provided "as is" without any warranty. We do not guarantee:
+                </p>
+                <ul className="list-disc pl-6 space-y-1">
+                  <li>Perfect functionality on your system</li>
+                  <li>Compatibility with your specific requirements</li>
+                  <li>Bug-free operation</li>
+                  <li>Specific performance outcomes</li>
+                  <li>Fitness for particular purposes</li>
+                </ul>
+                <div className="bg-gray-900/50 p-4 rounded-lg border border-gray-700/50">
+                  <p>
+                    <strong className="text-red-400">Liability Limitation:</strong> Our liability
+                    cannot exceed the amount paid for the specific product. This is the maximum
+                    extent of our responsibility.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Section 7: Account Management */}
-          <Card>
-            <CardHeader>
-              <CardTitle>7. Gestion des Comptes</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
-                Nous nous réservons le droit de suspendre ou de supprimer votre compte à tout moment, 
-                pour toute raison, sans préavis ni remboursement si :
-              </p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>Vous violez ces conditions d'utilisation</li>
-                <li>Vous tentez de pirater ou d'endommager nos services</li>
-                <li>Vous êtes désagréable avec notre équipe</li>
-                <li>Vous réclamez des remboursements alors que c'est écrit partout qu'il n'y en a pas</li>
-                <li>Vous nous causez des problèmes légaux</li>
-                <li>On n'aime pas votre attitude (oui, c'est subjectif)</li>
-              </ul>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.9 }}
+          >
+            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">7. Account Management</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-gray-300">
+                <p>
+                  We reserve the right to suspend or terminate your account at any time,
+                  for any reason, without notice or refund if:
+                </p>
+                <ul className="list-disc pl-6 space-y-1">
+                  <li>You violate these terms of use</li>
+                  <li>You attempt to hack or damage our services</li>
+                  <li>You engage in abusive behavior toward our team</li>
+                  <li>You make refund demands despite clear no-refund policy</li>
+                  <li>You cause legal issues for our platform</li>
+                  <li>You engage in fraudulent activities</li>
+                  <li>At our sole discretion for platform protection</li>
+                </ul>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Section 8: Privacy */}
           <Card>
