@@ -71,15 +71,6 @@ const NavbarLanguageButton: React.FC = () => {
                 </div>
               )}
               
-              {/* Badge de statut AI */}
-              {isTranslationEnabled && (
-                <Badge 
-                  variant="default" 
-                  className="absolute -top-2 -right-2 h-5 w-5 rounded-full p-0 bg-green-500 text-white border-2 border-background"
-                >
-                  <Sparkles className="h-2 w-2" />
-                </Badge>
-              )}
             </Button>
           </motion.div>
         </DropdownMenuTrigger>
