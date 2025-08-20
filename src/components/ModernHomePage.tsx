@@ -71,6 +71,15 @@ const ModernHomePage: React.FC = () => {
     }
   };
 
+  const handleTosAccept = () => {
+    setShowTosModal(false);
+  };
+
+  const handleTosDecline = () => {
+    setShowTosModal(false);
+    // Optionally, you could log out the user or show a message
+  };
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
