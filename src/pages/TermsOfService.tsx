@@ -2,47 +2,62 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { AlertTriangle, Shield, FileText, Eye } from "lucide-react";
+import { AlertTriangle, Shield, FileText, Eye, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const TermsOfService = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-indigo-900/20">
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="min-h-screen bg-black relative">
+      {/* Background gradient */}
+      <div className="absolute inset-0 bg-gradient-to-br from-red-950/10 via-black to-red-950/5" />
+
+      <div className="relative z-10 container mx-auto px-6 py-12 max-w-5xl">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <FileText className="h-8 w-8 text-primary" />
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-              Conditions d'Utilisation
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-12"
+        >
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <FileText className="h-10 w-10 text-red-500" />
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-white via-red-200 to-red-400 bg-clip-text text-transparent">
+              Terms of Service
             </h1>
           </div>
-          <p className="text-muted-foreground text-lg">
-            Les règles du jeu pour utiliser DigitalHub - Lisez bien, c'est important ! 📜
+          <p className="text-gray-300 text-xl max-w-3xl mx-auto">
+            Legal framework and usage guidelines for DigitalHub platform
           </p>
-          <div className="flex items-center justify-center gap-2 mt-2 text-sm text-amber-400">
+          <div className="flex items-center justify-center gap-2 mt-4 text-sm text-red-400">
             <AlertTriangle className="h-4 w-4" />
-            <span>Dernière mise à jour : {new Date().toLocaleDateString('fr-FR')}</span>
+            <span>Last updated: {new Date().toLocaleDateString('en-US')}</span>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Warning Card */}
-        <Card className="mb-8 border-amber-500/50 bg-amber-950/30">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-amber-400">
-              <Eye className="h-5 w-5" />
-              ⚠️ ATTENTION - À LIRE ABSOLUMENT
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-amber-200">
-              En utilisant ce site, vous acceptez ces conditions. Si vous n'êtes pas d'accord, 
-              veuillez fermer cette page immédiatement. Pas de drama, pas de problème ! 🚪
-            </p>
-          </CardContent>
-        </Card>
+        {/* Critical Notice */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          <Card className="mb-8 border-red-500/30 bg-red-950/20 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-red-400">
+                <Eye className="h-5 w-5" />
+                MANDATORY READING
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-red-200">
+                By accessing or using this website, you automatically agree to these terms.
+                If you disagree with any part, discontinue use immediately.
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         <div className="space-y-8">
           {/* Section 1: Acceptance */}
