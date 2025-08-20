@@ -195,17 +195,31 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-black/95 border-gray-800 max-w-3xl max-h-[85vh] backdrop-blur-lg">
         <DialogHeader className="border-b border-gray-800 pb-4">
-          <DialogTitle className="text-white flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
-              <MessageCircle className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <span className="text-xl font-semibold">Comments</span>
-              <p className="text-sm text-gray-400 font-normal mt-1">
-                {productTitle}
-              </p>
-            </div>
-          </DialogTitle>
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-white flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+                <MessageCircle className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <span className="text-xl font-semibold">Comments</span>
+                <p className="text-sm text-gray-400 font-normal mt-1">
+                  {productTitle}
+                </p>
+              </div>
+            </DialogTitle>
+
+            {/* DEBUG: Repair button */}
+            {currentUser?.role === "admin" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRepairComments}
+                className="border-yellow-600 text-yellow-400 hover:bg-yellow-600 hover:text-white"
+              >
+                🔧 Repair Avatars
+              </Button>
+            )}
+          </div>
           <DialogDescription className="text-purple-400 font-medium">
             {comments.length} comment{comments.length !== 1 ? "s" : ""}
           </DialogDescription>
