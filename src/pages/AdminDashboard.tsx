@@ -73,6 +73,9 @@ import { Product } from "@/types";
 import { useUser } from "@/context/UserContext";
 
 const AdminDashboard: React.FC = () => {
+  // Activer la traduction automatique
+  useAutoTranslate();
+
   const { logout } = useAuth();
   const { isMaintenanceMode, maintenanceMessage, setMaintenanceMode } =
     useMaintenance();
@@ -516,7 +519,7 @@ const AdminDashboard: React.FC = () => {
         toast.success("Produit supprimé avec succès");
       } else if (moderationTarget.type === "comment") {
         await moderateDeleteComment(moderationTarget.id, moderationReason);
-        toast.success("Commentaire supprimé avec succès");
+        toast.success("Commentaire supprimé avec succ��s");
       }
 
       setShowModerationDialog(false);
