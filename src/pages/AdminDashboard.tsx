@@ -9,6 +9,7 @@ import { useAdminMode } from "@/context/AdminModeContext";
 import { isFirebaseAvailable } from "@/lib/firebase";
 // Firebase toujours utilisé
 import HeaderLogo from "@/components/HeaderLogo";
+import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -242,7 +243,7 @@ const AdminDashboard: React.FC = () => {
       downloadUrl: "",
       type: "free",
       actionType: "download",
-      contentType: "link", // Par défaut lien pour compatibilité
+      contentType: "link", // Par défaut lien pour compatibilit��
       content: "",
       discordUrl: "",
       price: 0,
