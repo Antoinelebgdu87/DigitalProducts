@@ -28,10 +28,13 @@ import RoleUpdateNotification from "./RoleUpdateNotification";
 import FloatingRoleBadge from "./FloatingRoleBadge";
 import SecureAdminAccess from "./SecureAdminAccess";
 import { useUser } from "@/context/UserContext";
+import { useLanguage } from "@/context/LanguageContext";
+import AutoTranslate from './AutoTranslate";\nimport SettingsButton from "./SettingsButton';
 
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
   const { currentUser, checkUserStatus, markWarningsAsRead } = useUser();
+  const { t } = useLanguage();
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [showTosModal, setShowTosModal] = useState(false);
@@ -142,11 +145,12 @@ const ModernHomePage: React.FC = () => {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent pl-4">
-              DigitalHub
+              <AutoTranslate>DigitalHub</AutoTranslate>
             </div>
 
             <div className="flex items-center space-x-3">
               {currentUser && <UserRoleBadge />}
+              <SettingsButton variant="inline" className="ml-2" />
               <div className="flex items-center space-x-2">
                 {currentUser &&
                   (currentUser.role === "shop_access" ||
@@ -197,10 +201,16 @@ const ModernHomePage: React.FC = () => {
             variants={itemVariants}
             className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
           >
-            Discover exceptional digital products with instant access.
+            <AutoTranslate>
+              Découvrez notre collection de produits numériques premium
+            </AutoTranslate>
             <br />
-            <span className="text-red-400">No accounts, no hassle.</span> Just
-            pure digital excellence.
+            <span className="text-red-400">
+              <AutoTranslate>
+                Aucun compte requis, aucune complication.
+              </AutoTranslate>
+            </span>{" "}
+            <AutoTranslate>Juste de l'excellence numérique pure.</AutoTranslate>
           </motion.p>
 
           <motion.div
@@ -223,7 +233,7 @@ const ModernHomePage: React.FC = () => {
                 }}
                 className="px-8 py-4 text-lg bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-2xl shadow-2xl hover:shadow-red-500/50 transition-all duration-300"
               >
-                Explore Products
+                <AutoTranslate>Explorer les produits</AutoTranslate>
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </motion.div>
@@ -245,7 +255,7 @@ const ModernHomePage: React.FC = () => {
                 }}
                 className="px-8 py-4 text-lg border-white/30 text-white hover:bg-white/10 rounded-2xl backdrop-blur-sm"
               >
-                Learn More
+                <AutoTranslate>En savoir plus</AutoTranslate>
               </Button>
             </motion.div>
           </motion.div>
@@ -375,10 +385,10 @@ const ModernHomePage: React.FC = () => {
         <div className="container mx-auto px-6 py-12">
           <div className="text-center">
             <div className="text-2xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent mb-6 pl-4">
-              DigitalHub
+              {t("home.title")}
             </div>
             <p className="text-gray-400 mb-4">
-              © 2025 DigitalHub • All rights reserved
+              © 2025 {t("home.title")} • {t("home.footer")}
             </p>
           </div>
         </div>
