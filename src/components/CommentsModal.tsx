@@ -49,6 +49,16 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   const { comments, loading, addComment, deleteComment, canDeleteComment } =
     useComments(productId);
 
+  // Debug comments data
+  React.useEffect(() => {
+    console.log("📋 Comments in modal:", comments.map(c => ({
+      id: c.id,
+      username: c.username,
+      avatarUrl: c.avatarUrl,
+      hasAvatar: !!c.avatarUrl
+    })));
+  }, [comments]);
+
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
