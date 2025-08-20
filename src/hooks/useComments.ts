@@ -21,6 +21,13 @@ export const useComments = (productId?: string) => {
 
   // Helper function to convert Firestore data to Comment objects
   const parseComment = (commentData: any): Comment => {
+    console.log("🔍 Parse comment data:", {
+      id: commentData.id,
+      username: commentData.username,
+      avatarUrl: commentData.avatarUrl,
+      hasAvatar: !!commentData.avatarUrl
+    });
+
     return {
       id: commentData.id,
       productId: commentData.productId,
