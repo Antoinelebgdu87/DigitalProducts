@@ -132,7 +132,6 @@ const ModernHomePage: React.FC = () => {
       <RoleUpdateNotification />
       <FloatingRoleBadge />
       <SecureAdminAccess />
-      <SettingsButton />
 
       {/* Navigation */}
       <motion.nav
@@ -149,6 +148,7 @@ const ModernHomePage: React.FC = () => {
 
             <div className="flex items-center space-x-3">
               {currentUser && <UserRoleBadge />}
+              <SettingsButton variant="inline" className="ml-2" />
               <div className="flex items-center space-x-2">
                 {currentUser &&
                   (currentUser.role === "shop_access" ||
