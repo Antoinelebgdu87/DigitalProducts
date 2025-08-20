@@ -60,6 +60,7 @@ export interface User {
   }>;
   lastProductCreation?: Date; // Pour le système de cooldown
   customTitle?: string; // Titre custom pour les partners
+  avatarUrl?: string; // URL de la photo de profil
 }
 
 export interface TimerSettings {
