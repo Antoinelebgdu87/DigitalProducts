@@ -168,6 +168,7 @@ const ModernHomePage: React.FC = () => {
                       </motion.div>
                     </Link>
                   )}
+                <NavbarLanguageButton />
               </div>
             </div>
           </div>
