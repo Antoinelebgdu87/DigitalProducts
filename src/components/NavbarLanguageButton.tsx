@@ -85,7 +85,7 @@ const NavbarLanguageButton: React.FC = () => {
             className="flex items-center justify-between cursor-pointer hover:bg-white/10"
           >
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-yellow-400" />
+              <Languages className="h-4 w-4" />
               <span className="text-sm">Traduction IA</span>
             </div>
             {isTranslationEnabled && (
