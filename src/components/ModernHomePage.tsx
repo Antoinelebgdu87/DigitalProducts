@@ -22,6 +22,7 @@ import ModernProductCard from "./ModernProductCard";
 import UsernameModal from "./UsernameModal";
 import BanModal from "./BanModal";
 import WarningModal from "./WarningModal";
+import TosModal from "./TosModal";
 import UserRoleBadge from "./UserRoleBadge";
 import RoleUpdateNotification from "./RoleUpdateNotification";
 import FloatingRoleBadge from "./FloatingRoleBadge";
