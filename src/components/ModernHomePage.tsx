@@ -201,9 +201,9 @@ const ModernHomePage: React.FC = () => {
             variants={itemVariants}
             className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
           >
-            {t("home.description")}
+            Découvrez notre collection de produits numériques premium
             <br />
-            <span className="text-red-400">{t("product.no_account_required")}</span>
+            <span className="text-red-400">Aucun compte requis, aucune complication.</span> Juste de l'excellence numérique pure.
           </motion.p>
 
           <motion.div
@@ -226,7 +226,7 @@ const ModernHomePage: React.FC = () => {
                 }}
                 className="px-8 py-4 text-lg bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-2xl shadow-2xl hover:shadow-red-500/50 transition-all duration-300"
               >
-                {t("btn.explore_products")}
+                Explorer les produits
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </motion.div>
@@ -248,7 +248,7 @@ const ModernHomePage: React.FC = () => {
                 }}
                 className="px-8 py-4 text-lg border-white/30 text-white hover:bg-white/10 rounded-2xl backdrop-blur-sm"
               >
-                {t("btn.learn_more")}
+                En savoir plus
               </Button>
             </motion.div>
           </motion.div>
