@@ -104,75 +104,46 @@ import {
   orderBy as fsOrderBy,
 } from "firebase/firestore";
 
-// Fonctions wrapper qui gèrent le mode dégradé
+// Fonctions wrapper qui utilisent DIRECTEMENT Firebase (pas de vérification)
 export const collection = (...args: any[]) => {
-  if (!isFirebaseConnected || !db) {
-    throw new Error("Firebase non connecté - Mode dégradé");
-  }
   return fsCollection(db, ...args);
 };
 
 export const doc = (...args: any[]) => {
-  if (!isFirebaseConnected || !db) {
-    throw new Error("Firebase non connecté - Mode dégradé");
-  }
   return fsDoc(db, ...args);
 };
 
 export const addDoc = (...args: any[]) => {
-  if (!isFirebaseConnected || !db) {
-    throw new Error("Firebase non connecté - Mode dégradé");
-  }
   return fsAddDoc(...args);
 };
 
 export const getDoc = (...args: any[]) => {
-  if (!isFirebaseConnected || !db) {
-    throw new Error("Firebase non connecté - Mode dégradé");
-  }
   return fsGetDoc(...args);
 };
 
 export const updateDoc = (...args: any[]) => {
-  if (!isFirebaseConnected || !db) {
-    throw new Error("Firebase non connecté - Mode dégradé");
-  }
   return fsUpdateDoc(...args);
 };
 
 export const deleteDoc = (...args: any[]) => {
-  if (!isFirebaseConnected || !db) {
-    throw new Error("Firebase non connecté - Mode dégradé");
-  }
   return fsDeleteDoc(...args);
 };
 
 export const onSnapshot = (...args: any[]) => {
-  if (!isFirebaseConnected || !db) {
-    throw new Error("Firebase non connecté - Mode dégradé");
-  }
   return fsOnSnapshot(...args);
 };
 
 export const query = (...args: any[]) => {
-  if (!isFirebaseConnected || !db) {
-    throw new Error("Firebase non connecté - Mode dégradé");
-  }
   return fsQuery(...args);
 };
 
 export const where = fsWhere;
+
 export const getDocs = (...args: any[]) => {
-  if (!isFirebaseConnected || !db) {
-    throw new Error("Firebase non connecté - Mode dégradé");
-  }
   return fsGetDocs(...args);
 };
 
 export const setDoc = (...args: any[]) => {
-  if (!isFirebaseConnected || !db) {
-    throw new Error("Firebase non connecté - Mode dégradé");
-  }
   return fsSetDoc(...args);
 };
 
