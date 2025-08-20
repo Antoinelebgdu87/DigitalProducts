@@ -124,6 +124,17 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "admin.users": "Users",
     "admin.settings": "Admin Settings",
     "admin.maintenance": "Maintenance",
+
+    // Homepage
+    "home.title": "DigitalHub",
+    "home.subtitle": "Your digital platform",
+    "home.description": "Discover our premium digital products collection",
+    "home.featured": "Featured Products",
+    "home.shop": "Shop",
+    "home.all_products": "All Products",
+    "home.no_products": "No products available",
+    "home.loading": "Loading products...",
+    "home.footer": "All rights reserved",
   },
   pt: {
     // Navigation & UI
@@ -179,7 +190,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
   },
   ja: {
     // Navigation & UI
-    "nav.home": "ホーム",
+    "nav.home": "ホ��ム",
     "nav.admin": "管理",
     "nav.settings": "設定",
     "nav.logout": "ログアウト",
@@ -218,7 +229,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "common.edit": "編集",
     "common.delete": "削除",
     "common.save": "保存",
-    "common.cancel": "キャンセル",
+    "common.cancel": "キ��ンセル",
     "common.loading": "読み込み中...",
     "common.error": "エラー",
     "common.success": "成功",
