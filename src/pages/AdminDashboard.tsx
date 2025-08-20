@@ -9,6 +9,7 @@ import { useAdminMode } from "@/context/AdminModeContext";
 import { isFirebaseAvailable } from "@/lib/firebase";
 // Firebase toujours utilisé
 import HeaderLogo from "@/components/HeaderLogo";
+import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,6 +73,9 @@ import { Product } from "@/types";
 import { useUser } from "@/context/UserContext";
 
 const AdminDashboard: React.FC = () => {
+  // Activer la traduction automatique
+  useAutoTranslate();
+
   const { logout } = useAuth();
   const { isMaintenanceMode, maintenanceMessage, setMaintenanceMode } =
     useMaintenance();
@@ -242,7 +246,7 @@ const AdminDashboard: React.FC = () => {
       downloadUrl: "",
       type: "free",
       actionType: "download",
-      contentType: "link", // Par défaut lien pour compatibilité
+      contentType: "link", // Par défaut lien pour compatibilit��
       content: "",
       discordUrl: "",
       price: 0,
@@ -515,7 +519,7 @@ const AdminDashboard: React.FC = () => {
         toast.success("Produit supprimé avec succès");
       } else if (moderationTarget.type === "comment") {
         await moderateDeleteComment(moderationTarget.id, moderationReason);
-        toast.success("Commentaire supprimé avec succès");
+        toast.success("Commentaire supprimé avec succ��s");
       }
 
       setShowModerationDialog(false);

@@ -16,6 +16,8 @@ import { db } from "@/lib/firebase";
 import { Product } from "@/types";
 import { useAuth } from "@/context/AuthContext";
 import { useAdminMode } from "@/context/AdminModeContext";
+import { FirebaseService } from "@/lib/firebase-service";
+import FirebaseFallback from "@/lib/firebase-fallback";
 
 export const useProducts = () => {
   const [products, setProducts] = useState<Product[]>([]);

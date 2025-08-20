@@ -11,6 +11,7 @@ import {
 } from "@/context/MaintenanceContext";
 import { UserProvider } from "@/context/UserContext";
 import { AdminModeProvider } from "@/context/AdminModeContext";
+import { TranslationProvider } from "@/context/TranslationContext";
 // Firebase toujours utilisé
 import ModernHomePage from "./components/ModernHomePage";
 import AdminLogin from "./pages/AdminLogin";
@@ -22,6 +23,8 @@ import MaintenancePage from "./pages/MaintenancePage";
 import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import DevToolsProtection from "./components/DevToolsProtection";
+import { useAutoTranslate } from "./hooks/useAutoTranslate";
+import FirebaseConnectionStatus from "./components/FirebaseConnectionStatus";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +40,9 @@ const AppContent = () => {
     const { isMaintenanceMode, maintenanceMessage, isLoading } =
       useMaintenance();
     const { isAuthenticated } = useAuth();
+
+    // Activer la traduction automatique
+    useAutoTranslate();
 
     // Show Firebase status
     React.useEffect(() => {
@@ -60,6 +66,7 @@ const AppContent = () => {
     return (
       <>
         <DevToolsProtection />
+        <FirebaseConnectionStatus />
         <Routes>
           <Route
             path="/"
@@ -137,9 +144,11 @@ const App = () => (
           <AdminModeProvider>
             <MaintenanceProvider>
               <UserProvider>
-                <div className="dark min-h-screen bg-background text-foreground">
-                  <AppContent />
-                </div>
+                <TranslationProvider>
+                  <div className="dark min-h-screen bg-background text-foreground">
+                    <AppContent />
+                  </div>
+                </TranslationProvider>
               </UserProvider>
             </MaintenanceProvider>
           </AdminModeProvider>

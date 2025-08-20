@@ -5,8 +5,12 @@ import BackgroundAnimation from "@/components/BackgroundAnimation";
 import { Button } from "@/components/ui/button";
 import { Settings, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 
 const HomePage: React.FC = () => {
+  // Activer la traduction automatique
+  useAutoTranslate();
+
   const { products, loading } = useProducts();
 
   return (

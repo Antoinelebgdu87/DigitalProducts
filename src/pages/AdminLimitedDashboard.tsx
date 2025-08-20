@@ -5,6 +5,7 @@ import { useModeration } from "@/hooks/useModeration";
 import { useComments } from "@/hooks/useComments";
 // Firebase toujours utilisé
 import HeaderLogo from "@/components/HeaderLogo";
+import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -50,6 +51,9 @@ import { Product } from "@/types";
 import { useUser } from "@/context/UserContext";
 
 const AdminLimitedDashboard: React.FC = () => {
+  // Activer la traduction automatique
+  useAutoTranslate();
+
   const { logout } = useAuth();
   const {
     products,

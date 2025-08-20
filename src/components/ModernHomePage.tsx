@@ -27,6 +27,7 @@ import UserRoleBadge from "./UserRoleBadge";
 import RoleUpdateNotification from "./RoleUpdateNotification";
 import FloatingRoleBadge from "./FloatingRoleBadge";
 import SecureAdminAccess from "./SecureAdminAccess";
+import NavbarLanguageButton from "./NavbarLanguageButton";
 import { useUser } from "@/context/UserContext";
 
 const ModernHomePage: React.FC = () => {
@@ -167,6 +168,7 @@ const ModernHomePage: React.FC = () => {
                       </motion.div>
                     </Link>
                   )}
+                <NavbarLanguageButton />
               </div>
             </div>
           </div>

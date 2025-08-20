@@ -4,8 +4,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Home, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackgroundAnimation from "@/components/BackgroundAnimation";
+import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 
 const NotFound: React.FC = () => {
+  // Activer la traduction automatique
+  useAutoTranslate();
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative">
       <BackgroundAnimation />

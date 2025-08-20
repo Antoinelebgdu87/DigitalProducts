@@ -12,6 +12,7 @@ import {
   Query,
   FirestoreError,
 } from "firebase/firestore";
+import FirebaseFallback from "./firebase-fallback";
 
 // Firebase service avec retry logic et gestion d'erreur
 export class FirebaseService {
@@ -46,6 +47,25 @@ export class FirebaseService {
       error?.message?.includes("network") ||
       error?.name === "TypeError"
     );
+  }
+
+  // Méthode sécurisée pour obtenir des données avec fallback
+  static async safeGet<T>(
+    operation: () => Promise<T>,
+    fallbackKey: string,
+    defaultValue: T,
+  ): Promise<T> {
+    return FirebaseFallback.safeOperation(operation, fallbackKey, defaultValue);
+  }
+
+  // Méthode pour vérifier la connectivité Firebase
+  static async checkConnection(): Promise<boolean> {
+    return FirebaseFallback.checkFirebaseConnection();
+  }
+
+  // Méthode pour vérifier si on est en mode offline
+  static isOffline(): boolean {
+    return FirebaseFallback.isFirebaseOffline();
   }
 
   private static delay(ms: number): Promise<void> {
