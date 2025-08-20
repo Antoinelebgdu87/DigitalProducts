@@ -28,7 +28,7 @@ import RoleUpdateNotification from "./RoleUpdateNotification";
 import FloatingRoleBadge from "./FloatingRoleBadge";
 import SecureAdminAccess from "./SecureAdminAccess";
 import { useUser } from "@/context/UserContext";
-import { TranslatedText } from "@/hooks/useTranslation";
+import { useLanguage } from "@/context/LanguageContext";
 import SettingsButton from "./SettingsButton";
 
 const ModernHomePage: React.FC = () => {
