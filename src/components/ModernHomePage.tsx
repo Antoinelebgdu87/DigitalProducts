@@ -34,6 +34,7 @@ import SettingsButton from "./SettingsButton";
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
   const { currentUser, checkUserStatus, markWarningsAsRead } = useUser();
+  const { t } = useLanguage();
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
   const [showTosModal, setShowTosModal] = useState(false);
