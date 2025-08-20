@@ -23,6 +23,7 @@ import MaintenancePage from "./pages/MaintenancePage";
 import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import DevToolsProtection from "./components/DevToolsProtection";
+import LanguageSettingsButton from "./components/LanguageSettingsButton";
 
 const queryClient = new QueryClient();
 
