@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useLicenses } from "@/hooks/useLicenses";
 import { useSimpleComments } from "@/hooks/useSimpleComments";
+import { useLanguage } from "@/context/LanguageContext";
 import KeyValidator from "./KeyValidator";
 import NotepadViewer from "./NotepadViewer";
 import SimpleCommentsModal from "./SimpleCommentsModal";
@@ -28,6 +29,7 @@ interface ModernProductCardProps {
 }
 
 const ModernProductCard: React.FC<ModernProductCardProps> = ({ product }) => {
+  const { t } = useLanguage();
   const [showLicenseInput, setShowLicenseInput] = useState(false);
   const [showNotepad, setShowNotepad] = useState(false);
   const [showComments, setShowComments] = useState(false);
