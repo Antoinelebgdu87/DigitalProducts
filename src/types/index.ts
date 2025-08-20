@@ -40,6 +40,7 @@ export interface Comment {
   userRole: UserRole;
   content: string;
   createdAt: Date;
+  avatarUrl?: string;
 }
 
 export type UserRole = "user" | "shop_access" | "partner" | "admin";
