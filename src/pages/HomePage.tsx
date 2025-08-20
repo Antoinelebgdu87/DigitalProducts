@@ -8,6 +8,9 @@ import { Link } from "react-router-dom";
 import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 
 const HomePage: React.FC = () => {
+  // Activer la traduction automatique
+  useAutoTranslate();
+
   const { products, loading } = useProducts();
 
   return (
