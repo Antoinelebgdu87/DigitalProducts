@@ -29,6 +29,7 @@ export const useComments = (productId?: string) => {
       userRole: commentData.userRole || "user", // Ajout du rôle utilisateur avec valeur par défaut
       content: commentData.content,
       createdAt: commentData.createdAt || Timestamp.now(),
+      avatarUrl: commentData.avatarUrl, // Inclure l'avatar
     };
   };
 
@@ -188,6 +189,7 @@ export const useComments = (productId?: string) => {
         userRole: currentUser.role, // Inclure le rôle utilisateur
         content,
         createdAt: Timestamp.now(),
+        avatarUrl: currentUser.avatarUrl, // Inclure l'avatar
       };
 
       await addDoc(collection(db, "comments"), commentData);
