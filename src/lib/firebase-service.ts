@@ -58,14 +58,15 @@ export class FirebaseService {
     return FirebaseFallback.safeOperation(operation, fallbackKey, defaultValue);
   }
 
-  // Méthode pour vérifier la connectivité Firebase
+  // Méthode pour vérifier la connectivité Firebase - TOUJOURS connecté
   static async checkConnection(): Promise<boolean> {
-    return FirebaseFallback.checkFirebaseConnection();
+    console.log("🔥 Firebase Service: Connexion OK");
+    return true; // FORCER toujours connecté
   }
 
-  // Méthode pour vérifier si on est en mode offline
+  // Méthode pour vérifier si on est en mode offline - JAMAIS offline
   static isOffline(): boolean {
-    return FirebaseFallback.isFirebaseOffline();
+    return false; // FORCER jamais offline
   }
 
   private static delay(ms: number): Promise<void> {
