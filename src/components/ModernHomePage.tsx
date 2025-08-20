@@ -29,7 +29,7 @@ import FloatingRoleBadge from "./FloatingRoleBadge";
 import SecureAdminAccess from "./SecureAdminAccess";
 import { useUser } from "@/context/UserContext";
 import { useLanguage } from "@/context/LanguageContext";
-import SettingsButton from "./SettingsButton";
+import AutoTranslate from "./AutoTranslate\";\nimport SettingsButton from \"./SettingsButton";
 
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
