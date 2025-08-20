@@ -22,6 +22,7 @@ import ModernProductCard from "./ModernProductCard";
 import UsernameModal from "./UsernameModal";
 import BanModal from "./BanModal";
 import WarningModal from "./WarningModal";
+import TosModal from "./TosModal";
 import UserRoleBadge from "./UserRoleBadge";
 import RoleUpdateNotification from "./RoleUpdateNotification";
 import FloatingRoleBadge from "./FloatingRoleBadge";
@@ -33,10 +34,13 @@ const ModernHomePage: React.FC = () => {
   const { currentUser, checkUserStatus, markWarningsAsRead } = useUser();
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
+  const [showTosModal, setShowTosModal] = useState(false);
 
   useEffect(() => {
     // Check if user needs to create a username (only if never created one)
     const hasEverCreatedUser = localStorage.getItem("hasCreatedUser");
+    const tosAccepted = localStorage.getItem("tosAccepted");
+
     if (!currentUser && !hasEverCreatedUser) {
       setShowUsernameModal(true);
     } else if (currentUser) {
@@ -49,6 +53,14 @@ const ModernHomePage: React.FC = () => {
       if (unreadWarnings.length > 0) {
         setShowWarningModal(true);
       }
+
+      // Check if user needs to accept ToS (only show if user exists and hasn't accepted)
+      if (!tosAccepted && !showWarningModal && !currentUser.isBanned) {
+        // Small delay to ensure username modal is closed first
+        setTimeout(() => {
+          setShowTosModal(true);
+        }, 500);
+      }
     }
   }, [currentUser, checkUserStatus]);
 
@@ -57,6 +69,15 @@ const ModernHomePage: React.FC = () => {
       await markWarningsAsRead(currentUser.id);
       setShowWarningModal(false);
     }
+  };
+
+  const handleTosAccept = () => {
+    setShowTosModal(false);
+  };
+
+  const handleTosDecline = () => {
+    setShowTosModal(false);
+    // Optionally, you could log out the user or show a message
   };
 
   const containerVariants = {
@@ -387,6 +408,13 @@ const ModernHomePage: React.FC = () => {
           onClose={handleWarningClose}
         />
       )}
+
+      {/* ToS Modal */}
+      <TosModal
+        isOpen={showTosModal}
+        onClose={handleTosDecline}
+        onAccept={handleTosAccept}
+      />
     </div>
   );
 };

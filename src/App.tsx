@@ -19,6 +19,7 @@ import AdminLimitedDashboard from "./pages/AdminLimitedDashboard";
 import ShopDashboard from "./pages/ShopDashboard";
 import PartnerDashboard from "./pages/PartnerDashboard";
 import MaintenancePage from "./pages/MaintenancePage";
+import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import DevToolsProtection from "./components/DevToolsProtection";
 
@@ -82,6 +83,7 @@ const AppContent = () => {
           <Route path="/admin-limited" element={<AdminLimitedDashboard />} />
           <Route path="/shop" element={<ShopDashboard />} />
           <Route path="/partner" element={<PartnerDashboard />} />
+          <Route path="/terms" element={<TermsOfService />} />
           <Route
             path="*"
             element={
