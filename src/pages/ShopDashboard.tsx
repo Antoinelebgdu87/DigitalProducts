@@ -51,6 +51,7 @@ import SimpleStarsBackground from "@/components/SimpleStarsBackground";
 import { toast } from "sonner";
 import { Product } from "@/types";
 import { Link, Navigate } from "react-router-dom";
+import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 
 const ShopDashboard: React.FC = () => {
   const { currentUser } = useUser();
