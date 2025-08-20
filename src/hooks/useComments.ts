@@ -188,6 +188,13 @@ export const useComments = (productId?: string) => {
 
     try {
       console.log("➕ Ajout d'un commentaire pour le produit:", productId);
+      console.log("👤 Current user data:", {
+        id: currentUser.id,
+        username: currentUser.username,
+        role: currentUser.role,
+        avatarUrl: currentUser.avatarUrl,
+        hasAvatar: !!currentUser.avatarUrl
+      });
 
       const commentData = {
         productId,
@@ -198,6 +205,8 @@ export const useComments = (productId?: string) => {
         createdAt: Timestamp.now(),
         avatarUrl: currentUser.avatarUrl, // Inclure l'avatar
       };
+
+      console.log("💾 Comment data to save:", commentData);
 
       await addDoc(collection(db, "comments"), commentData);
       console.log("✅ Commentaire ajouté avec succès");
