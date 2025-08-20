@@ -52,6 +52,9 @@ import { Link, Navigate } from "react-router-dom";
 import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 
 const PartnerDashboard: React.FC = () => {
+  // Activer la traduction automatique
+  useAutoTranslate();
+
   const { currentUser } = useUser();
   const {
     products,
