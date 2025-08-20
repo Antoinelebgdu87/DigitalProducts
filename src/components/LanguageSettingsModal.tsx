@@ -117,8 +117,8 @@ const LanguageSettingsModal: React.FC<LanguageSettingsModalProps> = ({
               <span className="text-sm font-medium">Service de traduction</span>
             </div>
             <p className="text-xs text-muted-foreground">
-              Propulsé par OpenRouter AI avec le modèle Meta Llama 3.2 3B (gratuit à vie).
-              Les traductions sont mises en cache pour de meilleures performances.
+              Traduction hybride avec dictionnaire intégré et API LibreTranslate gratuite.
+              Les traductions sont mises en cache pour des performances optimales.
             </p>
           </div>
 
