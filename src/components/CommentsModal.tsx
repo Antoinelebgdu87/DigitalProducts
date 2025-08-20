@@ -50,6 +50,41 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   const { comments, loading, addComment, deleteComment, canDeleteComment } =
     useComments(productId);
 
+  // State for real-time user avatar
+  const [userAvatar, setUserAvatar] = React.useState(currentUser?.avatarUrl || "");
+
+  // Listen for real-time user avatar updates
+  React.useEffect(() => {
+    if (!currentUser?.id) return;
+
+    const unsubscribe = onSnapshot(
+      doc(db, "users", currentUser.id),
+      (userDoc) => {
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserAvatar(userData.avatarUrl || "");
+          console.log("🔄 User avatar updated in real-time:", userData.avatarUrl);
+        }
+      },
+      (error) => {
+        console.error("❌ Error listening to user avatar:", error);
+      }
+    );
+
+    return () => unsubscribe();
+  }, [currentUser?.id]);
+
+  // Debug current user and avatar
+  React.useEffect(() => {
+    console.log("👤 Current user in comments modal:", {
+      id: currentUser?.id,
+      username: currentUser?.username,
+      avatarUrl: currentUser?.avatarUrl,
+      realTimeAvatar: userAvatar,
+      hasAvatar: !!userAvatar
+    });
+  }, [currentUser, userAvatar]);
+
   // Debug comments data
   React.useEffect(() => {
     console.log("📋 Comments in modal:", comments.map(c => ({
