@@ -18,7 +18,7 @@ interface TosModalProps {
 }
 
 const TosModal: React.FC<TosModalProps> = ({ isOpen, onClose, onAccept }) => {
-  const [language, setLanguage] = useState<'en' | 'fr'>('en');
+  const [language, setLanguage] = useState<"en" | "fr">("en");
   const navigate = useNavigate();
 
   const content = {
@@ -32,12 +32,12 @@ const TosModal: React.FC<TosModalProps> = ({ isOpen, onClose, onAccept }) => {
       keyPoints: [
         "All sales final - NO REFUNDS",
         "Products provided 'as is'",
-        "Personal license only"
+        "Personal license only",
       ],
-      notice: "By accepting, you agree to our complete Terms of Service."
+      notice: "By accepting, you agree to our complete Terms of Service.",
     },
     fr: {
-      title: "Conditions d'Utilisation", 
+      title: "Conditions d'Utilisation",
       description: "Veuillez accepter nos Conditions pour continuer",
       toggleBtn: "EN",
       acceptBtn: "Accepter",
@@ -46,22 +46,23 @@ const TosModal: React.FC<TosModalProps> = ({ isOpen, onClose, onAccept }) => {
       keyPoints: [
         "Ventes finales - AUCUN REMBOURSEMENT",
         "Produits fournis 'en l'état'",
-        "Licence personnelle uniquement"
+        "Licence personnelle uniquement",
       ],
-      notice: "En acceptant, vous acceptez nos Conditions d'Utilisation complètes."
-    }
+      notice:
+        "En acceptant, vous acceptez nos Conditions d'Utilisation complètes.",
+    },
   };
 
   const currentContent = content[language];
 
   const handleViewFullTerms = () => {
-    navigate('/terms');
+    navigate("/terms");
     onClose();
   };
 
   const handleAccept = () => {
-    localStorage.setItem('tosAccepted', 'true');
-    localStorage.setItem('tosAcceptedDate', new Date().toISOString());
+    localStorage.setItem("tosAccepted", "true");
+    localStorage.setItem("tosAcceptedDate", new Date().toISOString());
     onAccept();
   };
 
@@ -85,7 +86,7 @@ const TosModal: React.FC<TosModalProps> = ({ isOpen, onClose, onAccept }) => {
                     </DialogTitle>
                   </div>
                   <button
-                    onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
+                    onClick={() => setLanguage(language === "en" ? "fr" : "en")}
                     className="px-2 py-1 text-xs bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-white transition-all"
                   >
                     {currentContent.toggleBtn}
@@ -101,7 +102,10 @@ const TosModal: React.FC<TosModalProps> = ({ isOpen, onClose, onAccept }) => {
                 <div className="bg-white/5 border border-white/10 rounded-xl p-3">
                   <ul className="space-y-1">
                     {currentContent.keyPoints.map((point, index) => (
-                      <li key={index} className="text-gray-300 text-xs flex items-start gap-2">
+                      <li
+                        key={index}
+                        className="text-gray-300 text-xs flex items-start gap-2"
+                      >
                         <span className="text-red-400 mt-0.5">•</span>
                         <span>{point}</span>
                       </li>
@@ -124,7 +128,7 @@ const TosModal: React.FC<TosModalProps> = ({ isOpen, onClose, onAccept }) => {
                     {currentContent.viewFullBtn}
                   </button>
                 </div>
-                
+
                 <div className="flex gap-2">
                   <button
                     onClick={onClose}
