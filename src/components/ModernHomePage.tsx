@@ -34,6 +34,7 @@ const ModernHomePage: React.FC = () => {
   const { currentUser, checkUserStatus, markWarningsAsRead } = useUser();
   const [showUsernameModal, setShowUsernameModal] = useState(false);
   const [showWarningModal, setShowWarningModal] = useState(false);
+  const [showTosModal, setShowTosModal] = useState(false);
 
   useEffect(() => {
     // Check if user needs to create a username (only if never created one)
