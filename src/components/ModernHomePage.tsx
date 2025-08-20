@@ -28,6 +28,7 @@ import RoleUpdateNotification from "./RoleUpdateNotification";
 import FloatingRoleBadge from "./FloatingRoleBadge";
 import SecureAdminAccess from "./SecureAdminAccess";
 import { useUser } from "@/context/UserContext";
+import SettingsButton from "./SettingsButton";
 
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
@@ -131,6 +132,7 @@ const ModernHomePage: React.FC = () => {
       <RoleUpdateNotification />
       <FloatingRoleBadge />
       <SecureAdminAccess />
+      <SettingsButton />
 
       {/* Navigation */}
       <motion.nav
