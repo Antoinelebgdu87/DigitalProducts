@@ -408,6 +408,13 @@ const ModernHomePage: React.FC = () => {
           onClose={handleWarningClose}
         />
       )}
+
+      {/* ToS Modal */}
+      <TosModal
+        isOpen={showTosModal}
+        onClose={handleTosDecline}
+        onAccept={handleTosAccept}
+      />
     </div>
   );
 };
