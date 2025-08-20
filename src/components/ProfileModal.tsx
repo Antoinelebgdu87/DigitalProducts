@@ -131,6 +131,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
         avatarUrl: finalAvatarUrl,
       });
 
+      console.log("✅ Avatar updated in Firebase:", finalAvatarUrl);
       toast.success("Profile picture updated successfully!");
       onClose();
     } catch (error) {
