@@ -141,6 +141,12 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "home.no_products": "No products available",
     "home.loading": "Loading products...",
     "home.footer": "All rights reserved",
+
+    // User roles
+    "role.admin": "Admin",
+    "role.partner": "Partner",
+    "role.shop_access": "Shop",
+    "role.user": "User",
   },
   pt: {
     // Navigation & UI
@@ -160,7 +166,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "auth.connecting": "Conectando...",
     
     // Settings
-    "settings.title": "Configurações",
+    "settings.title": "Configura��ões",
     "settings.theme": "Tema",
     "settings.language": "Idioma",
     "settings.save": "Salvar",
@@ -238,7 +244,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "theme.purple": "紫",
     "theme.green": "緑",
     "theme.red": "赤",
-    "theme.orange": "オレンジ",
+    "theme.orange": "オ���ンジ",
     
     // Common
     "common.close": "閉じる",
@@ -447,7 +453,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "settings.language": "语言",
     "settings.save": "保存",
     "settings.cancel": "取消",
-    "settings.reset": "重置",
+    "settings.reset": "重���",
     
     // Themes
     "theme.system": "系统",
