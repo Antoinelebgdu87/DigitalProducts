@@ -113,18 +113,18 @@ const ModernHomePage: React.FC = () => {
     },
     {
       icon: Zap,
-      title: "Instant Access",
-      description: "Download immediately",
+      title: t("feature.instant_access"),
+      description: t("product.instant_download"),
     },
     {
       icon: Globe,
-      title: "Premium Quality",
-      description: "Curated digital products",
+      title: t("feature.high_quality"),
+      description: "Produits numériques sélectionnés",
     },
     {
       icon: Star,
-      title: "Secure Delivery",
-      description: "Safe & reliable downloads",
+      title: t("feature.secure_payment"),
+      description: "Téléchargements sûrs et fiables",
     },
   ];
 
@@ -201,10 +201,9 @@ const ModernHomePage: React.FC = () => {
             variants={itemVariants}
             className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
           >
-            Discover exceptional digital products with instant access.
+            {t("home.description")}
             <br />
-            <span className="text-red-400">No accounts, no hassle.</span> Just
-            pure digital excellence.
+            <span className="text-red-400">{t("product.no_account_required")}</span>
           </motion.p>
 
           <motion.div
@@ -227,7 +226,7 @@ const ModernHomePage: React.FC = () => {
                 }}
                 className="px-8 py-4 text-lg bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-2xl shadow-2xl hover:shadow-red-500/50 transition-all duration-300"
               >
-                Explore Products
+                {t("btn.explore_products")}
                 <ArrowRight className="w-5 h-5 ml-2" />
               </Button>
             </motion.div>
@@ -249,7 +248,7 @@ const ModernHomePage: React.FC = () => {
                 }}
                 className="px-8 py-4 text-lg border-white/30 text-white hover:bg-white/10 rounded-2xl backdrop-blur-sm"
               >
-                Learn More
+                {t("btn.learn_more")}
               </Button>
             </motion.div>
           </motion.div>
