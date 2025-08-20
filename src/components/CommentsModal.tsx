@@ -32,6 +32,8 @@ import {
 import { toast } from "sonner";
 import { Comment } from "@/types";
 import { repairCommentsAvatars } from "@/lib/repair-comments";
+import { onSnapshot, doc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface CommentsModalProps {
   isOpen: boolean;
