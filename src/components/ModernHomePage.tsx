@@ -29,7 +29,7 @@ import FloatingRoleBadge from "./FloatingRoleBadge";
 import SecureAdminAccess from "./SecureAdminAccess";
 import { useUser } from "@/context/UserContext";
 import { useLanguage } from "@/context/LanguageContext";
-import AutoTranslate from "./AutoTranslate\";\nimport SettingsButton from \"./SettingsButton";
+import AutoTranslate from './AutoTranslate";\nimport SettingsButton from "./SettingsButton';
 
 const ModernHomePage: React.FC = () => {
   const { products, loading } = useProducts();
@@ -201,9 +201,16 @@ const ModernHomePage: React.FC = () => {
             variants={itemVariants}
             className="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto leading-relaxed"
           >
-            <AutoTranslate>Découvrez notre collection de produits numériques premium</AutoTranslate>
+            <AutoTranslate>
+              Découvrez notre collection de produits numériques premium
+            </AutoTranslate>
             <br />
-            <span className="text-red-400"><AutoTranslate>Aucun compte requis, aucune complication.</AutoTranslate></span> <AutoTranslate>Juste de l'excellence numérique pure.</AutoTranslate>
+            <span className="text-red-400">
+              <AutoTranslate>
+                Aucun compte requis, aucune complication.
+              </AutoTranslate>
+            </span>{" "}
+            <AutoTranslate>Juste de l'excellence numérique pure.</AutoTranslate>
           </motion.p>
 
           <motion.div
