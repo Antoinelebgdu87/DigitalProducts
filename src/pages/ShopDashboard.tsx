@@ -685,116 +685,122 @@ const ShopDashboard: React.FC = () => {
                 </Dialog>
               </div>
 
-              <div className="grid gap-4">
-                {userProducts.map((product) => (
-                  <Card
-                    key={product.id}
-                    className="border-gray-800 bg-gray-900/50"
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="w-16 h-16 rounded-lg bg-gray-800 flex items-center justify-center overflow-hidden">
-                            {product.imageUrl ? (
-                              <img
-                                src={product.imageUrl}
-                                alt={product.title}
-                                className="w-full h-full object-cover"
-                              />
-                            ) : (
-                              <Package className="w-6 h-6 text-gray-400" />
-                            )}
-                          </div>
-                          <div>
-                            <h3 className="text-lg font-semibold text-white">
-                              {product.title}
-                            </h3>
-                            <p className="text-gray-400 text-sm">
-                              {product.description}
-                            </p>
-                            <div className="flex items-center space-x-2 mt-2">
-                              <Badge
-                                variant={
-                                  product.type === "free"
-                                    ? "default"
-                                    : "destructive"
-                                }
-                                className={
-                                  product.type === "free"
-                                    ? "bg-green-600"
-                                    : "bg-red-600"
-                                }
-                              >
-                                {product.type === "free" ? "Gratuit" : "Payant"}
-                              </Badge>
-                              <Badge
-                                variant="outline"
-                                className={
-                                  product.actionType === "discord"
-                                    ? "border-purple-500 text-purple-400"
-                                    : "border-blue-500 text-blue-400"
-                                }
-                              >
-                                {product.actionType === "discord" ? (
-                                  <>
-                                    <LinkIcon className="w-3 h-3 mr-1" />
-                                    Action: Discord
-                                  </>
-                                ) : (
-                                  <>
-                                    <Download className="w-3 h-3 mr-1" />
-                                    Action: Download
-                                  </>
-                                )}
-                              </Badge>
-                              {product.type === "paid" && product.price && (
+              <div className="space-y-4">
+                {userProducts.length > 0 ? (
+                  userProducts.map((product) => (
+                    <Card
+                      key={product.id}
+                      className="border-gray-800/50 bg-gradient-to-r from-gray-900/80 to-gray-800/60 backdrop-blur-sm hover:border-purple-500/30 transition-all duration-300 group"
+                    >
+                      <CardContent className="p-6">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4">
+                            <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-gray-800 to-gray-700 flex items-center justify-center overflow-hidden border border-gray-700/50">
+                              {product.imageUrl ? (
+                                <img
+                                  src={product.imageUrl}
+                                  alt={product.title}
+                                  className="w-full h-full object-cover"
+                                />
+                              ) : (
+                                <Package className="w-8 h-8 text-gray-400" />
+                              )}
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-xl font-bold text-white mb-2 group-hover:text-purple-300 transition-colors">
+                                {product.title}
+                              </h3>
+                              <p className="text-gray-400 text-sm mb-3 line-clamp-2">
+                                {product.description}
+                              </p>
+                              <div className="flex items-center space-x-2 flex-wrap gap-2">
+                                <Badge
+                                  className={`${
+                                    product.type === "free"
+                                      ? "bg-green-600/20 text-green-400 border-green-500/30"
+                                      : "bg-red-600/20 text-red-400 border-red-500/30"
+                                  }`}
+                                >
+                                  {product.type === "free" ? "Gratuit" : "Payant"}
+                                </Badge>
+
                                 <Badge
                                   variant="outline"
-                                  className="border-yellow-500 text-yellow-400"
+                                  className={`${
+                                    product.actionType === "discord"
+                                      ? "border-purple-500/30 text-purple-400"
+                                      : "border-blue-500/30 text-blue-400"
+                                  }`}
                                 >
-                                  <Euro className="w-3 h-3 mr-1" />
-                                  {product.price.toFixed(2)}
+                                  {product.actionType === "discord" ? (
+                                    <>
+                                      <LinkIcon className="w-3 h-3 mr-1" />
+                                      Discord
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Download className="w-3 h-3 mr-1" />
+                                      Download
+                                    </>
+                                  )}
                                 </Badge>
-                              )}
-                              <span className="text-gray-500 text-xs">
-                                {formatDate(product.createdAt)}
-                              </span>
+
+                                {product.type === "paid" && product.price && (
+                                  <Badge className="bg-yellow-600/20 text-yellow-400 border-yellow-500/30">
+                                    <Euro className="w-3 h-3 mr-1" />
+                                    {product.price.toFixed(2)}€
+                                  </Badge>
+                                )}
+
+                                <span className="text-gray-500 text-xs">
+                                  {formatDate(product.createdAt)}
+                                </span>
+                              </div>
                             </div>
                           </div>
+
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEditProduct(product)}
+                              className="border-blue-600/50 text-blue-400 hover:bg-blue-600/10 hover:border-blue-500/50 transition-all"
+                            >
+                              <Edit className="w-4 h-4" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => deleteProduct(product.id)}
+                              className="border-red-600/50 text-red-400 hover:bg-red-600/10 hover:border-red-500/50 transition-all"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditProduct(product)}
-                            className="border-blue-700 text-blue-400 hover:bg-blue-500/10"
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => deleteProduct(product.id)}
-                            className="border-red-700 text-red-400 hover:bg-red-500/10"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-                {userProducts.length === 0 && (
-                  <Card className="border-gray-800 bg-gray-900/50">
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <Card className="border-gray-800/50 bg-gradient-to-br from-gray-900/50 to-gray-800/30 backdrop-blur-sm">
                     <CardContent className="p-12 text-center">
-                      <Package className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-white mb-2">
-                        Aucun produit
+                      <div className="p-4 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl w-fit mx-auto mb-6">
+                        <Package className="w-16 h-16 text-purple-400" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-white mb-4">
+                        Votre Boutique Vous Attend !
                       </h3>
-                      <p className="text-gray-400">
-                        Commencez par ajouter votre premier produit à votre
-                        boutique
+                      <p className="text-gray-400 max-w-md mx-auto mb-6">
+                        Commencez à créer vos premiers produits numériques et partagez votre talent avec le monde
                       </p>
+                      <Button
+                        onClick={() => setShowProductDialog(true)}
+                        className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 py-3"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Créer mon Premier Produit
+                        <Heart className="w-4 h-4 ml-2" />
+                      </Button>
                     </CardContent>
                   </Card>
                 )}
