@@ -1,209 +1,215 @@
-// Système de fallback pour gérer les erreurs Firebase
-export class FirebaseFallback {
-  private static isOffline = false;
-  private static fallbackData: Map<string, any> = new Map();
+// Système de fallback pour Firebase - empêche l'écran noir en production
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
 
-  // Détecter si Firebase est accessible
-  static async checkFirebaseConnection(): Promise<boolean> {
-    try {
-      // Essayer une opération simple pour tester la connexion
-      const { db } = await import("./firebase");
-      const { doc, getDoc } = await import("firebase/firestore");
-
-      // Test avec un document qui n'existe probablement pas
-      await getDoc(doc(db, "test", "connectivity"));
-      return true;
-    } catch (error: any) {
-      console.warn("Firebase connection test failed:", error);
-
-      // Vérifier si c'est une erreur réseau
-      if (
-        error?.message?.includes("Failed to fetch") ||
-        error?.message?.includes("network") ||
-        error?.code === "unavailable" ||
-        error?.code === "deadline-exceeded"
-      ) {
-        this.isOffline = true;
-        return false;
-      }
-
-      // Si ce n'est pas une erreur réseau, Firebase fonctionne probablement
-      return true;
-    }
+// Configuration Firebase avec variables d'environnement ET fallback
+const getFirebaseConfig = () => {
+  // Essayez d'abord les variables d'environnement (pour la production)
+  if (import.meta.env.VITE_FIREBASE_API_KEY) {
+    return {
+      apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+      authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+      projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+      storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+      appId: import.meta.env.VITE_FIREBASE_APP_ID,
+      measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
+    };
   }
+  
+  // Fallback vers la configuration hardcodée (pour le développement)
+  return {
+    apiKey: "AIzaSyACAkQ5Q68eKdD5vpFZU7-h8L-qeFlYnDI",
+    authDomain: "test-a4251.firebaseapp.com",
+    projectId: "test-a4251",
+    storageBucket: "test-a4251.firebasestorage.app",
+    messagingSenderId: "75154939894",
+    appId: "1:75154939894:web:0d93f0eaa0e31bdbe5f1d7",
+    measurementId: "G-THRZRBSW9S",
+  };
+};
 
-  // Sauvegarder des données en fallback
-  static saveToFallback(key: string, data: any): void {
-    this.fallbackData.set(key, {
-      data,
-      timestamp: Date.now(),
-    });
+// État global pour Firebase
+let app: any = null;
+let db: any = null;
+let analytics: any = null;
+let isFirebaseConnected = false;
+let connectionAttempted = false;
 
-    // Sauvegarder aussi dans localStorage pour la persistance
-    try {
-      localStorage.setItem(
-        `firebase_fallback_${key}`,
-        JSON.stringify({
-          data,
-          timestamp: Date.now(),
-        }),
-      );
-    } catch (error) {
-      console.warn("Failed to save to localStorage:", error);
-    }
+// Fonction pour initialiser Firebase avec gestion d'erreur
+export const initializeFirebaseWithFallback = async () => {
+  if (connectionAttempted) {
+    return { app, db, analytics, isConnected: isFirebaseConnected };
   }
-
-  // Récupérer des données de fallback
-  static getFromFallback(key: string): any | null {
-    // D'abord essayer la mémoire
-    let fallbackItem = this.fallbackData.get(key);
-
-    // Puis essayer localStorage
-    if (!fallbackItem) {
+  
+  connectionAttempted = true;
+  
+  try {
+    console.log("🔥 Tentative de connexion à Firebase...");
+    
+    const config = getFirebaseConfig();
+    
+    // Test de validation de config
+    if (!config.apiKey || !config.projectId) {
+      throw new Error("Configuration Firebase manquante");
+    }
+    
+    app = initializeApp(config);
+    db = getFirestore(app);
+    
+    // Test de connexion sans bloquer
+    try {
+      analytics = getAnalytics(app);
+    } catch (analyticsError) {
+      console.warn("⚠️ Analytics non disponible (peut être normal):", analyticsError);
+    }
+    
+    // Test de base avec timeout
+    const testPromise = new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error("Timeout Firebase"));
+      }, 5000); // 5 secondes max
+      
+      // Test minimal - juste vérifier si Firestore répond
       try {
-        const stored = localStorage.getItem(`firebase_fallback_${key}`);
-        if (stored) {
-          fallbackItem = JSON.parse(stored);
+        const testRef = db._delegate || db;
+        if (testRef) {
+          clearTimeout(timeout);
+          resolve(true);
+        } else {
+          clearTimeout(timeout);
+          reject(new Error("Firestore non accessible"));
         }
       } catch (error) {
-        console.warn("Failed to read from localStorage:", error);
+        clearTimeout(timeout);
+        reject(error);
       }
-    }
-
-    if (fallbackItem) {
-      // Vérifier si les données ne sont pas trop anciennes (1 heure max)
-      const maxAge = 60 * 60 * 1000; // 1 heure
-      if (Date.now() - fallbackItem.timestamp < maxAge) {
-        return fallbackItem.data;
-      }
-    }
-
-    return null;
+    });
+    
+    await testPromise;
+    
+    isFirebaseConnected = true;
+    console.log("✅ Firebase connecté avec succès - Projet:", config.projectId);
+    
+    return { app, db, analytics, isConnected: true };
+    
+  } catch (error) {
+    console.error("❌ Erreur de connexion Firebase:", error);
+    console.log("🔄 Mode dégradé activé - L'application fonctionnera avec des données locales");
+    
+    // Mode dégradé - créer des objets mock
+    isFirebaseConnected = false;
+    
+    // Objets mock pour éviter les erreurs
+    db = null;
+    analytics = null;
+    
+    return { app: null, db: null, analytics: null, isConnected: false };
   }
+};
 
-  // Créer des données par défaut pour différents types de collections
-  static getDefaultData(collectionName: string): any[] {
-    switch (collectionName) {
-      case "products":
-        return [
-          {
-            id: "default-1",
-            title: "Produit d'exemple",
-            description: "Description du produit d'exemple",
-            price: 0,
-            type: "free",
-            actionType: "download",
-            imageUrl: "/placeholder.svg",
-            downloadUrl: "#",
-            lives: 1,
-            createdAt: new Date().toISOString(),
-          },
-        ];
+// Export de l'état de connexion
+export const getFirebaseStatus = () => ({
+  isConnected: isFirebaseConnected,
+  hasAttempted: connectionAttempted,
+  app,
+  db,
+  analytics
+});
 
-      case "users":
-        return [];
+// Re-export des fonctions Firebase avec gestion d'erreur
+import {
+  collection as fsCollection,
+  doc as fsDoc,
+  addDoc as fsAddDoc,
+  getDoc as fsGetDoc,
+  updateDoc as fsUpdateDoc,
+  deleteDoc as fsDeleteDoc,
+  onSnapshot as fsOnSnapshot,
+  query as fsQuery,
+  where as fsWhere,
+  getDocs as fsGetDocs,
+  Timestamp as fsTimestamp,
+  setDoc as fsSetDoc,
+  orderBy as fsOrderBy,
+} from "firebase/firestore";
 
-      case "comments":
-        return [];
-
-      case "licenses":
-        return [];
-
-      default:
-        return [];
-    }
+// Fonctions wrapper qui gèrent le mode dégradé
+export const collection = (...args: any[]) => {
+  if (!isFirebaseConnected || !db) {
+    throw new Error("Firebase non connecté - Mode dégradé");
   }
+  return fsCollection(db, ...args);
+};
 
-  // Wrapper pour les opérations Firebase avec fallback automatique
-  static async safeOperation<T>(
-    operation: () => Promise<T>,
-    fallbackKey: string,
-    defaultValue: T,
-  ): Promise<T> {
-    try {
-      // Essayer l'opération Firebase
-      const result = await operation();
-
-      // Si réussie, sauvegarder en fallback
-      this.saveToFallback(fallbackKey, result);
-      this.isOffline = false;
-
-      return result;
-    } catch (error: any) {
-      console.warn(`Firebase operation failed for ${fallbackKey}:`, error);
-
-      // Vérifier si c'est une erreur réseau
-      if (
-        error?.message?.includes("Failed to fetch") ||
-        error?.message?.includes("network") ||
-        error?.code === "unavailable" ||
-        error?.code === "deadline-exceeded"
-      ) {
-        this.isOffline = true;
-
-        // Essayer de récupérer depuis le fallback
-        const fallbackData = this.getFromFallback(fallbackKey);
-        if (fallbackData !== null) {
-          console.info(`Using fallback data for ${fallbackKey}`);
-          return fallbackData;
-        }
-      }
-
-      // Si pas de fallback disponible, retourner la valeur par défaut
-      console.info(`Using default value for ${fallbackKey}`);
-      return defaultValue;
-    }
+export const doc = (...args: any[]) => {
+  if (!isFirebaseConnected || !db) {
+    throw new Error("Firebase non connecté - Mode dégradé");
   }
+  return fsDoc(db, ...args);
+};
 
-  // Vérifier le statut de connexion
-  static isFirebaseOffline(): boolean {
-    return this.isOffline;
+export const addDoc = (...args: any[]) => {
+  if (!isFirebaseConnected || !db) {
+    throw new Error("Firebase non connecté - Mode dégradé");
   }
+  return fsAddDoc(...args);
+};
 
-  // Nettoyer les données anciennes du fallback
-  static cleanupOldFallbackData(): void {
-    const maxAge = 24 * 60 * 60 * 1000; // 24 heures
-    const now = Date.now();
-
-    // Nettoyer la mémoire
-    for (const [key, value] of this.fallbackData.entries()) {
-      if (now - value.timestamp > maxAge) {
-        this.fallbackData.delete(key);
-      }
-    }
-
-    // Nettoyer localStorage
-    try {
-      for (let i = localStorage.length - 1; i >= 0; i--) {
-        const key = localStorage.key(i);
-        if (key?.startsWith("firebase_fallback_")) {
-          const stored = localStorage.getItem(key);
-          if (stored) {
-            const data = JSON.parse(stored);
-            if (now - data.timestamp > maxAge) {
-              localStorage.removeItem(key);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.warn("Error cleaning localStorage:", error);
-    }
+export const getDoc = (...args: any[]) => {
+  if (!isFirebaseConnected || !db) {
+    throw new Error("Firebase non connecté - Mode dégradé");
   }
-}
+  return fsGetDoc(...args);
+};
 
-// Initialiser le nettoyage automatique
-if (typeof window !== "undefined") {
-  // Nettoyer au démarrage
-  FirebaseFallback.cleanupOldFallbackData();
+export const updateDoc = (...args: any[]) => {
+  if (!isFirebaseConnected || !db) {
+    throw new Error("Firebase non connecté - Mode dégradé");
+  }
+  return fsUpdateDoc(...args);
+};
 
-  // Nettoyer périodiquement (toutes les heures)
-  setInterval(
-    () => {
-      FirebaseFallback.cleanupOldFallbackData();
-    },
-    60 * 60 * 1000,
-  );
-}
+export const deleteDoc = (...args: any[]) => {
+  if (!isFirebaseConnected || !db) {
+    throw new Error("Firebase non connecté - Mode dégradé");
+  }
+  return fsDeleteDoc(...args);
+};
 
-export default FirebaseFallback;
+export const onSnapshot = (...args: any[]) => {
+  if (!isFirebaseConnected || !db) {
+    throw new Error("Firebase non connecté - Mode dégradé");
+  }
+  return fsOnSnapshot(...args);
+};
+
+export const query = (...args: any[]) => {
+  if (!isFirebaseConnected || !db) {
+    throw new Error("Firebase non connecté - Mode dégradé");
+  }
+  return fsQuery(...args);
+};
+
+export const where = fsWhere;
+export const getDocs = (...args: any[]) => {
+  if (!isFirebaseConnected || !db) {
+    throw new Error("Firebase non connecté - Mode dégradé");
+  }
+  return fsGetDocs(...args);
+};
+
+export const setDoc = (...args: any[]) => {
+  if (!isFirebaseConnected || !db) {
+    throw new Error("Firebase non connecté - Mode dégradé");
+  }
+  return fsSetDoc(...args);
+};
+
+export const orderBy = fsOrderBy;
+export const Timestamp = fsTimestamp;
+
+// Export de compatibilité
+export const isFirebaseAvailable = () => isFirebaseConnected;
+export { db, analytics };
