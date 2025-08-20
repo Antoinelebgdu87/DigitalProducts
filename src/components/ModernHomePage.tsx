@@ -108,8 +108,8 @@ const ModernHomePage: React.FC = () => {
   const features = [
     {
       icon: Shield,
-      title: "100% Anonymous",
-      description: "No registration required",
+      title: t("product.no_account_required"),
+      description: "Aucune inscription requise",
     },
     {
       icon: Zap,
