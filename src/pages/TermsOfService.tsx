@@ -61,49 +61,60 @@ const TermsOfService = () => {
 
         <div className="space-y-8">
           {/* Section 1: Acceptance */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5 text-green-400" />
-                1. Acceptation des Conditions
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
-                Bienvenue sur <strong>DigitalHub</strong> ! En accédant à ce site, en créant un compte, 
-                en téléchargeant, en achetant ou en utilisant nos services, vous acceptez automatiquement 
-                et sans réserve ces conditions d'utilisation.
-              </p>
-              <p>
-                Si vous n'acceptez pas ces conditions, vous devez immédiatement cesser d'utiliser nos services. 
-                Pas de négociation possible sur ce point ! 🤝
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-white">
+                  <Shield className="h-5 w-5 text-red-400" />
+                  1. Acceptance of Terms
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-gray-300">
+                <p>
+                  Welcome to <strong className="text-red-400">DigitalHub</strong>. By accessing this website,
+                  creating an account, downloading, purchasing, or using our services, you automatically accept
+                  these terms of use without reservation.
+                </p>
+                <p>
+                  If you do not accept these terms, you must immediately cease using our services.
+                  This is non-negotiable.
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Section 2: Services */}
-          <Card>
-            <CardHeader>
-              <CardTitle>2. Description des Services</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
-                DigitalHub propose une plateforme de vente de produits numériques incluant mais non limité à :
-              </p>
-              <ul className="list-disc pl-6 space-y-2">
-                <li>Scripts et outils de développement</li>
-                <li>Templates et designs</li>
-                <li>Ressources digitales</li>
-                <li>Services de consultation</li>
-                <li>Formations en ligne</li>
-                <li>Et tout autre produit numérique que nous décidons de proposer</li>
-              </ul>
-              <p>
-                Nous nous réservons le droit de modifier, suspendre ou arrêter tout service à tout moment 
-                sans préavis. Parce que c'est notre site et qu'on fait ce qu'on veut ! 😎
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+          >
+            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">2. Service Description</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-gray-300">
+                <p>
+                  DigitalHub provides a platform for digital product sales including but not limited to:
+                </p>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>Development scripts and tools</li>
+                  <li>Templates and designs</li>
+                  <li>Digital resources</li>
+                  <li>Consultation services</li>
+                  <li>Online training</li>
+                  <li>Any other digital products we choose to offer</li>
+                </ul>
+                <p>
+                  We reserve the right to modify, suspend, or discontinue any service at any time without notice.
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Section 3: No Refunds */}
           <Card className="border-red-500/50 bg-red-950/30">
