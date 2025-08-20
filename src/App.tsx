@@ -11,6 +11,8 @@ import {
 } from "@/context/MaintenanceContext";
 import { UserProvider } from "@/context/UserContext";
 import { AdminModeProvider } from "@/context/AdminModeContext";
+import { LanguageProvider } from "@/context/LanguageContext";
+import { ThemeProvider } from "@/context/ThemeContext";
 // Firebase toujours utilisé
 import ModernHomePage from "./components/ModernHomePage";
 import AdminLogin from "./pages/AdminLogin";
@@ -140,17 +142,21 @@ const App = () => (
         }}
       />
       <BrowserRouter>
-        <AuthProvider>
-          <AdminModeProvider>
-            <MaintenanceProvider>
-              <UserProvider>
-                <div className="dark min-h-screen bg-background text-foreground">
-                  <AppContent />
-                </div>
-              </UserProvider>
-            </MaintenanceProvider>
-          </AdminModeProvider>
-        </AuthProvider>
+        <LanguageProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <AdminModeProvider>
+                <MaintenanceProvider>
+                  <UserProvider>
+                    <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+                      <AppContent />
+                    </div>
+                  </UserProvider>
+                </MaintenanceProvider>
+              </AdminModeProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </LanguageProvider>
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
