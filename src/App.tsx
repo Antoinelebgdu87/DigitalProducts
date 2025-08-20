@@ -145,7 +145,6 @@ const App = () => (
                 <TranslationProvider>
                   <div className="dark min-h-screen bg-background text-foreground">
                     <AppContent />
-                    <LanguageSettingsButton />
                   </div>
                 </TranslationProvider>
               </UserProvider>
