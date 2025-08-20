@@ -51,6 +51,9 @@ import { Product } from "@/types";
 import { useUser } from "@/context/UserContext";
 
 const AdminLimitedDashboard: React.FC = () => {
+  // Activer la traduction automatique
+  useAutoTranslate();
+
   const { logout } = useAuth();
   const {
     products,
