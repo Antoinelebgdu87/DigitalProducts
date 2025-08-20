@@ -13,7 +13,10 @@ import { UserProvider } from "@/context/UserContext";
 import { AdminModeProvider } from "@/context/AdminModeContext";
 import { TranslationProvider } from "@/context/TranslationContext";
 // Firebase avec fallback pour éviter l'écran noir
-import { initializeFirebaseWithFallback, getFirebaseStatus } from "@/lib/firebase-fallback";
+import {
+  initializeFirebaseWithFallback,
+  getFirebaseStatus,
+} from "@/lib/firebase-fallback";
 import ModernHomePage from "./components/ModernHomePage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -67,7 +70,9 @@ const AppContent = () => {
             const result = await firebaseInitPromise;
 
             if (result.isConnected) {
-              console.log("✅ Firebase connecté - Synchronisation en temps réel active");
+              console.log(
+                "✅ Firebase connecté - Synchronisation en temps réel active",
+              );
               setIsFirebaseHealthy(true);
               setFirebaseError(null);
             } else {
@@ -104,7 +109,9 @@ const AppContent = () => {
           <div className="text-center space-y-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
             <div>
-              <p className="text-lg font-medium">Chargement de l'application...</p>
+              <p className="text-lg font-medium">
+                Chargement de l'application...
+              </p>
               {!isAppReady && (
                 <p className="text-sm text-muted-foreground mt-2">
                   Connexion aux services...
@@ -113,11 +120,10 @@ const AppContent = () => {
             </div>
             {firebaseError && (
               <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-md">
-                <p className="text-yellow-300 text-sm">
-                  ⚠️ {firebaseError}
-                </p>
+                <p className="text-yellow-300 text-sm">⚠️ {firebaseError}</p>
                 <p className="text-yellow-400/80 text-xs mt-1">
-                  L'application continuera de fonctionner avec des fonctionnalités limitées.
+                  L'application continuera de fonctionner avec des
+                  fonctionnalités limitées.
                 </p>
               </div>
             )}
@@ -186,14 +192,17 @@ const AppContent = () => {
             </div>
             <h1 className="text-2xl font-bold mb-2">Erreur de chargement</h1>
             <p className="text-gray-300 mb-4">
-              Une erreur inattendue s'est produite. L'application ne peut pas démarrer correctement.
+              Une erreur inattendue s'est produite. L'application ne peut pas
+              démarrer correctement.
             </p>
 
             {/* Détails de l'erreur pour le debug */}
             <details className="text-left bg-gray-800 rounded p-3 mb-4 text-sm">
-              <summary className="cursor-pointer text-red-400 mb-2">Détails techniques</summary>
+              <summary className="cursor-pointer text-red-400 mb-2">
+                Détails techniques
+              </summary>
               <code className="text-gray-300">
-                {error?.message || 'Erreur inconnue'}
+                {error?.message || "Erreur inconnue"}
               </code>
             </details>
           </div>

@@ -26,7 +26,7 @@ const getFirebaseConfig = () => {
     storageBucket: "test-a4251.firebasestorage.app",
     messagingSenderId: "75154939894",
     appId: "1:75154939894:web:0d93f0eaa0e31bdbe5f1d7",
-    measurementId: "G-THRZRBSW9S"
+    measurementId: "G-THRZRBSW9S",
   };
 };
 
@@ -49,7 +49,10 @@ export const initializeFirebaseWithFallback = async () => {
     console.log("🔥 Initialisation Firebase directe...");
 
     const config = getFirebaseConfig();
-    console.log("📋 Config Firebase:", { projectId: config.projectId, authDomain: config.authDomain });
+    console.log("📋 Config Firebase:", {
+      projectId: config.projectId,
+      authDomain: config.authDomain,
+    });
 
     // Initialiser Firebase DIRECTEMENT
     app = initializeApp(config);
@@ -64,17 +67,24 @@ export const initializeFirebaseWithFallback = async () => {
 
     // Marquer comme connecté immédiatement
     isFirebaseConnected = true;
-    console.log("✅ Firebase initialisé avec succès - Projet:", config.projectId);
+    console.log(
+      "✅ Firebase initialisé avec succès - Projet:",
+      config.projectId,
+    );
 
     return { app, db, analytics, isConnected: true };
-
   } catch (error) {
     console.error("��� Erreur critique Firebase:", error);
 
     // Même en cas d'erreur, essayer de marquer comme connecté
     isFirebaseConnected = true; // FORCER la connexion
 
-    return { app, db: db || null, analytics: analytics || null, isConnected: true };
+    return {
+      app,
+      db: db || null,
+      analytics: analytics || null,
+      isConnected: true,
+    };
   }
 };
 
@@ -84,7 +94,7 @@ export const getFirebaseStatus = () => ({
   hasAttempted: connectionAttempted,
   app,
   db,
-  analytics
+  analytics,
 });
 
 // Re-export des fonctions Firebase avec gestion d'erreur
@@ -177,7 +187,11 @@ const FirebaseFallback = {
   // Méthodes supplémentaires pour compatibilité
   checkFirebaseConnection: () => Promise.resolve(true),
   isFirebaseOffline: () => false,
-  safeOperation: async (operation: any, fallbackKey?: string, defaultValue?: any) => {
+  safeOperation: async (
+    operation: any,
+    fallbackKey?: string,
+    defaultValue?: any,
+  ) => {
     try {
       return await operation();
     } catch (error) {
@@ -205,10 +219,10 @@ const FirebaseFallback = {
       products: [],
       users: [],
       licenses: [],
-      comments: []
+      comments: [],
     };
     return defaults[key] || [];
-  }
+  },
 };
 
 export default FirebaseFallback;

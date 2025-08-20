@@ -1,7 +1,9 @@
 // ⚠️ DEPRECATED - Utilisez firebase-fallback.ts à la place
 // Ce fichier reste pour la compatibilité mais redirige vers le nouveau système
 
-console.warn("⚠️ firebase.ts est deprecated - utilisez firebase-fallback.ts pour un meilleur error handling");
+console.warn(
+  "⚠️ firebase.ts est deprecated - utilisez firebase-fallback.ts pour un meilleur error handling",
+);
 
 // Re-export tout depuis le nouveau système de fallback
 export {
@@ -22,5 +24,5 @@ export {
   setDoc,
   orderBy,
   initializeFirebaseWithFallback,
-  getFirebaseStatus
+  getFirebaseStatus,
 } from "./firebase-fallback";
