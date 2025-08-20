@@ -117,40 +117,48 @@ const TermsOfService = () => {
           </motion.div>
 
           {/* Section 3: No Refunds */}
-          <Card className="border-red-500/50 bg-red-950/30">
-            <CardHeader>
-              <CardTitle className="text-red-400">
-                3. 🚫 POLITIQUE DE NON-REMBOURSEMENT - ULTRA STRICTE
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="bg-red-900/50 p-4 rounded-lg border border-red-500/50">
-                <p className="font-bold text-red-300 text-lg mb-2">
-                  ⚠️ AUCUN REMBOURSEMENT - ZÉRO - NADA - NOTHING ⚠️
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.5 }}
+          >
+            <Card className="border-red-500/40 bg-red-950/30 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-red-400 text-xl">
+                  3. NO REFUND POLICY - ABSOLUTE
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="bg-red-900/40 p-6 rounded-xl border border-red-500/30">
+                  <p className="font-bold text-red-300 text-xl mb-3">
+                    ZERO REFUNDS - FINAL SALES ONLY
+                  </p>
+                  <p className="text-red-200">
+                    All sales are <strong>FINAL</strong> and <strong>NON-REFUNDABLE</strong>.
+                    Once purchased, the transaction is complete and irreversible.
+                  </p>
+                </div>
+                <p className="text-gray-300">
+                  This policy applies in ALL circumstances including but not limited to:
                 </p>
-                <p>
-                  Toutes les ventes sont <strong>DÉFINITIVES</strong> et <strong>NON-REMBOURSABLES</strong>. 
-                  Une fois que vous avez acheté un produit, c'est fini, terminé, game over !
-                </p>
-              </div>
-              <p>
-                Cette politique s'applique dans TOUS les cas, y compris mais non limité à :
-              </p>
-              <ul className="list-disc pl-6 space-y-1 text-red-200">
-                <li>Changement d'avis</li>
-                <li>Incompatibilité technique (vous auriez dû vérifier avant !)</li>
-                <li>Attentes non satisfaites</li>
-                <li>Erreur d'achat</li>
-                <li>Problèmes de votre côté</li>
-                <li>Phase de la lune</li>
-                <li>Météo défavorable</li>
-                <li>Votre chat qui a marché sur le clavier</li>
-              </ul>
-              <p className="font-bold text-red-300">
-                En gros : vous achetez, vous gardez. Point final ! 🔒
-              </p>
-            </CardContent>
-          </Card>
+                <ul className="list-disc pl-6 space-y-1 text-gray-400">
+                  <li>Change of mind</li>
+                  <li>Technical incompatibility</li>
+                  <li>Unmet expectations</li>
+                  <li>Purchase errors</li>
+                  <li>User-side issues</li>
+                  <li>Dissatisfaction with quality</li>
+                  <li>Changed requirements</li>
+                  <li>Any other reason whatsoever</li>
+                </ul>
+                <div className="bg-black/50 p-4 rounded-lg border border-red-500/20">
+                  <p className="font-bold text-red-400">
+                    Bottom line: You buy it, you own it. No exceptions.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Section 4: User Responsibilities */}
           <Card>
