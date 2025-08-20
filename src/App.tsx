@@ -13,7 +13,7 @@ import { UserProvider } from "@/context/UserContext";
 import { AdminModeProvider } from "@/context/AdminModeContext";
 import { TranslationProvider } from "@/context/TranslationContext";
 // Firebase toujours utilisé
-import Index from "./pages/Index";
+import ModernHomePage from "./components/ModernHomePage";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminLimitedDashboard from "./pages/AdminLimitedDashboard";
@@ -23,7 +23,6 @@ import MaintenancePage from "./pages/MaintenancePage";
 import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import DevToolsProtection from "./components/DevToolsProtection";
-import GlobalLayout from "./components/GlobalLayout";
 import { useAutoTranslate } from "./hooks/useAutoTranslate";
 import FirebaseConnectionStatus from "./components/FirebaseConnectionStatus";
 
@@ -65,7 +64,7 @@ const AppContent = () => {
     }
 
     return (
-      <GlobalLayout>
+      <>
         <DevToolsProtection />
         <FirebaseConnectionStatus />
         <Routes>
@@ -75,7 +74,7 @@ const AppContent = () => {
               isMaintenanceMode && !isAuthenticated ? (
                 <MaintenancePage message={maintenanceMessage} />
               ) : (
-                <Index />
+                <ModernHomePage />
               )
             }
           />
@@ -103,7 +102,7 @@ const AppContent = () => {
             }
           />
         </Routes>
-      </GlobalLayout>
+      </>
     );
   } catch (error) {
     console.error("Error in AppContent:", error);
