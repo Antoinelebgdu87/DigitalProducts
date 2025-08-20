@@ -1,11 +1,13 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/UserContext";
+import { useLanguage } from "@/context/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { User, Store, Crown, Shield, Sparkles } from "lucide-react";
 
 const UserRoleBadge: React.FC = () => {
   const { currentUser } = useUser();
+  const { t } = useLanguage();
 
   if (!currentUser) {
     return null;
@@ -27,13 +29,13 @@ const UserRoleBadge: React.FC = () => {
   const getRoleLabel = () => {
     switch (currentUser.role) {
       case "admin":
-        return "Admin";
+        return t("role.admin");
       case "partner":
-        return "Partner";
+        return t("role.partner");
       case "shop_access":
-        return "Shop";
+        return t("role.shop_access");
       default:
-        return "User";
+        return t("role.user");
     }
   };
 
