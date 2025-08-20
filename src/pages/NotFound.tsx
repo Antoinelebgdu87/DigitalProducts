@@ -7,6 +7,9 @@ import BackgroundAnimation from "@/components/BackgroundAnimation";
 import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 
 const NotFound: React.FC = () => {
+  // Activer la traduction automatique
+  useAutoTranslate();
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 relative">
       <BackgroundAnimation />
