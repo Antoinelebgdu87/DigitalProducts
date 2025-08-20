@@ -13,6 +13,7 @@ import { Shield, Lock, AlertTriangle, Eye, EyeOff } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useLanguage } from "@/context/LanguageContext";
 
 const SecureAdminAccess: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +23,7 @@ const SecureAdminAccess: React.FC = () => {
   const [isVerifying, setIsVerifying] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useLanguage();
 
   // Listener for Ctrl + F1
   useEffect(() => {
@@ -71,10 +73,10 @@ const SecureAdminAccess: React.FC = () => {
         <DialogHeader>
           <DialogTitle className="text-white flex items-center space-x-2">
             <Shield className="w-5 h-5 text-red-400" />
-            <span>Connexion Admin Rapide</span>
+            <span>{t("auth.quick.access")}</span>
           </DialogTitle>
           <DialogDescription className="text-gray-400">
-            Entrez vos identifiants administrateur
+            {t("auth.login")}
           </DialogDescription>
         </DialogHeader>
 
@@ -83,14 +85,14 @@ const SecureAdminAccess: React.FC = () => {
           <form onSubmit={handleLoginSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username" className="text-white text-sm">
-                Nom d'utilisateur
+                {t("auth.username")}
               </Label>
               <Input
                 id="username"
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Entrez votre nom d'utilisateur..."
+                placeholder={t("auth.username") + "..."}
                 className="bg-gray-800 border-gray-700 text-white"
                 required
                 autoFocus
@@ -99,7 +101,7 @@ const SecureAdminAccess: React.FC = () => {
 
             <div className="space-y-2">
               <Label htmlFor="password" className="text-white text-sm">
-                Mot de passe
+                {t("auth.password")}
               </Label>
               <div className="relative">
                 <Input
@@ -107,7 +109,7 @@ const SecureAdminAccess: React.FC = () => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Entrez votre mot de passe..."
+                  placeholder={t("auth.password") + "..."}
                   className="bg-gray-800 border-gray-700 text-white pr-10"
                   required
                 />
@@ -135,7 +137,7 @@ const SecureAdminAccess: React.FC = () => {
               ) : (
                 <Lock className="w-4 h-4 mr-2" />
               )}
-              {isVerifying ? "Connexion..." : "Se connecter"}
+              {isVerifying ? t("auth.connecting") : t("auth.login")}
             </Button>
           </form>
 
