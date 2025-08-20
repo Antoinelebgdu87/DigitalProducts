@@ -259,25 +259,34 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                     <CardContent className="p-5">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-4 flex-1">
-                          {/* User Avatar */}
-                          <div className="relative">
-                            <Avatar className="w-10 h-10 border-2 border-gray-600/50 shadow-lg">
-                              <AvatarImage
-                                src={comment.avatarUrl}
-                                alt={comment.username || "User"}
-                                className="object-cover"
-                              />
-                              <AvatarFallback
-                                className={`${getAvatarFallbackColors(comment.userRole)} text-white font-medium`}
-                              >
-                                {comment.username?.charAt(0).toUpperCase() ||
-                                  "U"}
-                              </AvatarFallback>
-                            </Avatar>
-                            {/* Role indicator */}
-                            <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-black rounded-full flex items-center justify-center border border-gray-600">
+                          {/* User Avatar - Enhanced */}
+                          <div className="relative group">
+                            <div className="w-12 h-12 p-0.5 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full">
+                              <Avatar className="w-full h-full border-0 shadow-xl">
+                                <AvatarImage
+                                  src={comment.avatarUrl}
+                                  alt={comment.username || "User"}
+                                  className="object-cover"
+                                  onError={(e) => {
+                                    console.log(`❌ Failed to load avatar for ${comment.username}:`, comment.avatarUrl);
+                                  }}
+                                  onLoad={() => {
+                                    console.log(`✅ Avatar loaded for ${comment.username}:`, comment.avatarUrl);
+                                  }}
+                                />
+                                <AvatarFallback
+                                  className={`${getAvatarFallbackColors(comment.userRole)} text-white font-semibold text-sm`}
+                                >
+                                  {comment.username?.charAt(0).toUpperCase() || "U"}
+                                </AvatarFallback>
+                              </Avatar>
+                            </div>
+                            {/* Role indicator - Enhanced */}
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-black rounded-full flex items-center justify-center border-2 border-gray-800 shadow-lg">
                               {getRoleIcon(comment.userRole || "user")}
                             </div>
+                            {/* Hover glow effect */}
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                           </div>
 
                           {/* Comment Content */}
