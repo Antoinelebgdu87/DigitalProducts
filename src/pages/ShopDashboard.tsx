@@ -53,6 +53,7 @@ import { Product } from "@/types";
 import { Link, Navigate } from "react-router-dom";
 import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 import ProductModal from "@/components/ProductModal";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const ShopDashboard: React.FC = () => {
   // Activer la traduction automatique
