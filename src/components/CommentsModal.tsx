@@ -340,19 +340,33 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
               <CardContent className="p-5">
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="flex items-start space-x-4">
-                    {/* Current user avatar */}
-                    <Avatar className="w-10 h-10 border-2 border-purple-500/50 shadow-lg flex-shrink-0">
-                      <AvatarImage
-                        src={currentUser.avatarUrl}
-                        alt={currentUser.username}
-                        className="object-cover"
-                      />
-                      <AvatarFallback
-                        className={`${getAvatarFallbackColors(currentUser.role)} text-white font-medium`}
-                      >
-                        {currentUser.username?.charAt(0).toUpperCase() || "U"}
-                      </AvatarFallback>
-                    </Avatar>
+                    {/* Current user avatar - Enhanced */}
+                    <div className="relative group flex-shrink-0">
+                      <div className="w-12 h-12 p-0.5 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full">
+                        <Avatar className="w-full h-full border-0 shadow-xl">
+                          <AvatarImage
+                            src={currentUser.avatarUrl}
+                            alt={currentUser.username}
+                            className="object-cover"
+                            onError={() => {
+                              console.log(`❌ Failed to load current user avatar:`, currentUser.avatarUrl);
+                            }}
+                            onLoad={() => {
+                              console.log(`✅ Current user avatar loaded:`, currentUser.avatarUrl);
+                            }}
+                          />
+                          <AvatarFallback className={`${getAvatarFallbackColors(currentUser.role)} text-white font-semibold text-sm`}>
+                            {currentUser.username?.charAt(0).toUpperCase() || "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                      {/* Role indicator for current user */}
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-black rounded-full flex items-center justify-center border-2 border-gray-800 shadow-lg">
+                        {getRoleIcon(currentUser.role || "user")}
+                      </div>
+                      {/* Glow effect */}
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    </div>
 
                     {/* Comment input */}
                     <div className="flex-1 space-y-3">
