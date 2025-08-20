@@ -388,14 +388,14 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                       <div className="w-12 h-12 p-0.5 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full">
                         <Avatar className="w-full h-full border-0 shadow-xl">
                           <AvatarImage
-                            src={currentUser.avatarUrl}
+                            src={userAvatar}
                             alt={currentUser.username}
                             className="object-cover"
                             onError={() => {
-                              console.log(`❌ Failed to load current user avatar:`, currentUser.avatarUrl);
+                              console.log(`❌ Failed to load current user avatar:`, userAvatar);
                             }}
                             onLoad={() => {
-                              console.log(`✅ Current user avatar loaded:`, currentUser.avatarUrl);
+                              console.log(`✅ Current user avatar loaded:`, userAvatar);
                             }}
                           />
                           <AvatarFallback className={`${getAvatarFallbackColors(currentUser.role)} text-white font-semibold text-sm`}>
