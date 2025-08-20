@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/UserContext";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Store, Crown, Shield, Sparkles } from "lucide-react";
+import ProfileModal from "./ProfileModal";
 
 const UserRoleBadge: React.FC = () => {
   const { currentUser } = useUser();
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   if (!currentUser) {
     return null;
@@ -51,54 +54,66 @@ const UserRoleBadge: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      {/* Avatar compact */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="w-6 h-6 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center ring-2 ring-white/20"
-      >
-        <User className="w-3 h-3 text-white" />
-      </motion.div>
+    <>
+      <div className="flex items-center space-x-2">
+        {/* Avatar cliquable avec vraie photo */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className="cursor-pointer"
+          onClick={() => setIsProfileModalOpen(true)}
+        >
+          <Avatar className="w-6 h-6 ring-2 ring-white/20">
+            <AvatarImage
+              src={currentUser.avatarUrl}
+              alt={currentUser.username}
+            />
+            <AvatarFallback className="bg-gradient-to-br from-red-500 to-red-700 text-white text-xs">
+              <User className="w-3 h-3" />
+            </AvatarFallback>
+          </Avatar>
+        </motion.div>
 
-      {/* Username compact */}
-      <motion.span
-        initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.3, delay: 0.1 }}
-        className="text-white text-xs font-medium max-w-20 truncate"
-      >
-        {currentUser.username}
-      </motion.span>
+        {/* Username compact */}
+        <motion.span
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.3, delay: 0.1 }}
+          className="text-white text-xs font-medium max-w-20 truncate"
+        >
+          {currentUser.username}
+        </motion.span>
 
-      {/* Role badge compact et joli */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3, delay: 0.2 }}
-        whileHover={{ scale: 1.05 }}
-        className="relative"
-      >
-        <Badge
-          className={`
+        {/* Role badge compact et joli */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+          whileHover={{ scale: 1.05 }}
+          className="relative"
+        >
+          <Badge
+            className={`
             ${getRoleColor()}
             text-xs px-2 py-0.5 rounded-full shadow-lg border
             transition-all duration-300 hover:shadow-xl
             ${currentUser.role === "partner" ? "animate-pulse" : ""}
           `}
-        >
-          {getRoleIcon()}
-          <span className="ml-1 font-medium">{getRoleLabel()}</span>
-          {currentUser.role === "partner" && (
-            <Sparkles className="w-2.5 h-2.5 ml-1 animate-pulse" />
-          )}
-        </Badge>
+          >
+            {getRoleIcon()}
+            <span className="ml-1 font-medium">{getRoleLabel()}</span>
+            {currentUser.role === "partner" && (
+              <Sparkles className="w-2.5 h-2.5 ml-1 animate-pulse" />
+            )}
+          </Badge>
 
-        {/* Glow effect pour les rôles spéciaux */}
-        {(currentUser.role === "admin" || currentUser.role === "partner") && (
-          <motion.div
-            className={`
+          {/* Glow effect pour les rôles spéciaux */}
+          {(currentUser.role === "admin" || currentUser.role === "partner") && (
+            <motion.div
+              className={`
               absolute inset-0 rounded-full blur-sm -z-10
               ${
                 currentUser.role === "admin"
@@ -106,19 +121,26 @@ const UserRoleBadge: React.FC = () => {
                   : "bg-yellow-500/30"
               }
             `}
-            animate={{
-              opacity: [0.3, 0.6, 0.3],
-              scale: [1, 1.1, 1],
-            }}
-            transition={{
-              duration: 2,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
-        )}
-      </motion.div>
-    </div>
+              animate={{
+                opacity: [0.3, 0.6, 0.3],
+                scale: [1, 1.1, 1],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
+          )}
+        </motion.div>
+      </div>
+
+      {/* Modal de personnalisation */}
+      <ProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+      />
+    </>
   );
 };
 

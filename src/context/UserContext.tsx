@@ -30,6 +30,7 @@ export interface User {
   warnings: Warning[];
   createdAt: Date;
   lastSeen: Date;
+  avatarUrl?: string;
 }
 
 export interface Warning {
@@ -186,7 +187,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({
               const now = new Date();
               if (now > existingUser.banExpiresAt) {
                 console.log(
-                  "���� Ban temporaire expiré au chargement, débannissement automatique",
+                  "����� Ban temporaire expiré au chargement, débannissement automatique",
                 );
                 await unbanUser(existingUser.id);
                 // Re-charger l'utilisateur après débannissement

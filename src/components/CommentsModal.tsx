@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
   DialogContent,
@@ -24,9 +25,15 @@ import {
   Shield,
   Package,
   Loader2,
+  Crown,
+  Store,
+  UserCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Comment } from "@/types";
+import { repairCommentsAvatars } from "@/lib/repair-comments";
+import { onSnapshot, doc } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 interface CommentsModalProps {
   isOpen: boolean;
@@ -45,14 +52,58 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   const { comments, loading, addComment, deleteComment, canDeleteComment } =
     useComments(productId);
 
-  // Debug logging for modal
+  // State for real-time user avatar
+  const [userAvatar, setUserAvatar] = React.useState(
+    currentUser?.avatarUrl || "",
+  );
+
+  // Listen for real-time user avatar updates
   React.useEffect(() => {
-    console.log(`📖 CommentsModal for ${productId}:`, {
-      loading,
-      commentsCount: comments.length,
-      comments,
+    if (!currentUser?.id) return;
+
+    const unsubscribe = onSnapshot(
+      doc(db, "users", currentUser.id),
+      (userDoc) => {
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserAvatar(userData.avatarUrl || "");
+          console.log(
+            "🔄 User avatar updated in real-time:",
+            userData.avatarUrl,
+          );
+        }
+      },
+      (error) => {
+        console.error("❌ Error listening to user avatar:", error);
+      },
+    );
+
+    return () => unsubscribe();
+  }, [currentUser?.id]);
+
+  // Debug current user and avatar
+  React.useEffect(() => {
+    console.log("👤 Current user in comments modal:", {
+      id: currentUser?.id,
+      username: currentUser?.username,
+      avatarUrl: currentUser?.avatarUrl,
+      realTimeAvatar: userAvatar,
+      hasAvatar: !!userAvatar,
     });
-  }, [productId, loading, comments]);
+  }, [currentUser, userAvatar]);
+
+  // Debug comments data
+  React.useEffect(() => {
+    console.log(
+      "📋 Comments in modal:",
+      comments.map((c) => ({
+        id: c.id,
+        username: c.username,
+        avatarUrl: c.avatarUrl,
+        hasAvatar: !!c.avatarUrl,
+      })),
+    );
+  }, [comments]);
 
   const [newComment, setNewComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -63,12 +114,32 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
 
     setIsSubmitting(true);
     try {
-      await addComment(productId, newComment);
+      // Force using the real-time avatar
+      const commentData = {
+        productId,
+        userId: currentUser.id,
+        username: currentUser.username,
+        userRole: currentUser.role,
+        content: newComment,
+        createdAt: new Date(),
+        avatarUrl: userAvatar, // Use real-time avatar
+      };
+
+      console.log("💾 Adding comment with real-time avatar:", commentData);
+
+      // Add comment directly with Firebase
+      const { addDoc, collection, Timestamp } = await import(
+        "firebase/firestore"
+      );
+      await addDoc(collection(db, "comments"), {
+        ...commentData,
+        createdAt: Timestamp.now(),
+      });
+
       setNewComment("");
-      toast.success("Commentaire ajouté avec succès!");
+      toast.success("Comment added successfully!");
     } catch (error: any) {
-      const errorMessage =
-        error.message || "Erreur lors de l'ajout du commentaire";
+      const errorMessage = error.message || "Failed to add comment";
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -78,11 +149,21 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
   const handleDelete = async (commentId: string) => {
     try {
       await deleteComment(commentId);
-      toast.success("Commentaire supprimé avec succès!");
+      toast.success("Comment deleted successfully!");
     } catch (error: any) {
-      const errorMessage =
-        error.message || "Erreur lors de la suppression du commentaire";
+      const errorMessage = error.message || "Failed to delete comment";
       toast.error(errorMessage);
+    }
+  };
+
+  // DEBUG: Function to repair comments without avatars
+  const handleRepairComments = async () => {
+    try {
+      const repairedCount = await repairCommentsAvatars();
+      toast.success(`Repaired ${repairedCount} comments!`);
+    } catch (error) {
+      console.error("Failed to repair comments:", error);
+      toast.error("Failed to repair comments");
     }
   };
 
@@ -90,7 +171,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     try {
       let validDate: Date;
 
-      if (!date) return "Date inconnue";
+      if (!date) return "Unknown date";
       if (date instanceof Date) {
         validDate = date;
       } else if (date && typeof date.toDate === "function") {
@@ -104,14 +185,14 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
           date.seconds * 1000 + (date.nanoseconds || 0) / 1000000,
         );
       } else {
-        return "Date invalide";
+        return "Invalid date";
       }
 
       if (isNaN(validDate.getTime())) {
-        return "Date invalide";
+        return "Invalid date";
       }
 
-      return new Intl.DateTimeFormat("fr-FR", {
+      return new Intl.DateTimeFormat("en-US", {
         day: "2-digit",
         month: "2-digit",
         year: "numeric",
@@ -120,20 +201,20 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
       }).format(validDate);
     } catch (error) {
       console.error("Error formatting date:", error, date);
-      return "Date invalide";
+      return "Invalid date";
     }
   };
 
   const getRoleIcon = (role: string | undefined) => {
     switch (role) {
       case "admin":
-        return <Shield className="w-4 h-4 text-red-400" />;
+        return <Shield className="w-3 h-3 text-red-400" />;
       case "shop_access":
-        return <Package className="w-4 h-4 text-purple-400" />;
+        return <Store className="w-3 h-3 text-purple-400" />;
       case "partner":
-        return <User className="w-4 h-4 text-yellow-400" />;
+        return <Crown className="w-3 h-3 text-yellow-400" />;
       default:
-        return <User className="w-4 h-4 text-gray-400" />;
+        return <UserCircle className="w-3 h-3 text-gray-400" />;
     }
   };
 
@@ -142,81 +223,165 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
       case "admin":
         return "Admin";
       case "shop_access":
-        return "Boutique";
+        return "Shop";
       case "partner":
-        return "Partenaire";
+        return "Partner";
       default:
-        return "Utilisateur";
+        return "User";
     }
   };
 
   const getRoleColor = (role: string | undefined) => {
     switch (role) {
       case "admin":
-        return "bg-red-600 text-white";
+        return "bg-gradient-to-r from-red-500 to-red-600 text-white border-red-400/50";
       case "shop_access":
-        return "bg-purple-600 text-white";
+        return "bg-gradient-to-r from-purple-500 to-purple-600 text-white border-purple-400/50";
       case "partner":
-        return "bg-yellow-600 text-white";
+        return "bg-gradient-to-r from-yellow-500 to-yellow-600 text-white border-yellow-400/50";
       default:
-        return "bg-gray-600 text-gray-200";
+        return "bg-gradient-to-r from-gray-500 to-gray-600 text-white border-gray-400/50";
+    }
+  };
+
+  const getAvatarFallbackColors = (role: string | undefined) => {
+    switch (role) {
+      case "admin":
+        return "bg-gradient-to-br from-red-500 to-red-700";
+      case "shop_access":
+        return "bg-gradient-to-br from-purple-500 to-purple-700";
+      case "partner":
+        return "bg-gradient-to-br from-yellow-500 to-yellow-700";
+      default:
+        return "bg-gradient-to-br from-blue-500 to-purple-600";
     }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gray-900 border-gray-800 max-w-2xl max-h-[80vh]">
-        <DialogHeader>
-          <DialogTitle className="text-white flex items-center space-x-2">
-            <MessageCircle className="w-5 h-5 text-blue-400" />
-            <span>Commentaires</span>
-          </DialogTitle>
-          <DialogDescription className="text-gray-400">
-            {productTitle} • {comments.length} commentaire(s)
+      <DialogContent className="bg-black/95 border-gray-800 max-w-3xl max-h-[85vh] backdrop-blur-lg">
+        <DialogHeader className="border-b border-gray-800 pb-4">
+          <div className="flex items-center justify-between">
+            <DialogTitle className="text-white flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+                <MessageCircle className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <span className="text-xl font-semibold">Comments</span>
+                <p className="text-sm text-gray-400 font-normal mt-1">
+                  {productTitle}
+                </p>
+              </div>
+            </DialogTitle>
+
+            {/* DEBUG: Repair button */}
+            {currentUser?.role === "admin" && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRepairComments}
+                className="border-yellow-600 text-yellow-400 hover:bg-yellow-600 hover:text-white"
+              >
+                🔧 Repair Avatars
+              </Button>
+            )}
+          </div>
+          <DialogDescription className="text-purple-400 font-medium flex items-center space-x-4">
+            <span>
+              {comments.length} comment{comments.length !== 1 ? "s" : ""}
+            </span>
+            <span className="text-xs text-gray-500">
+              {comments.filter((c) => c.avatarUrl).length} with avatars
+            </span>
+            {userAvatar && (
+              <span className="text-xs text-green-400">
+                ✓ Your avatar ready
+              </span>
+            )}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4">
-          {/* Liste des commentaires */}
-          <ScrollArea className="h-96">
-            <div className="space-y-3 pr-4">
+        <div className="space-y-6">
+          {/* Comments List */}
+          <ScrollArea className="h-96 pr-4">
+            <div className="space-y-4">
               {loading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
-                  <span className="ml-2 text-gray-400">
-                    Chargement des commentaires...
-                  </span>
+                <div className="flex items-center justify-center py-12">
+                  <div className="text-center space-y-3">
+                    <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto" />
+                    <span className="text-gray-300 text-sm">
+                      Loading comments...
+                    </span>
+                  </div>
                 </div>
               ) : comments.length === 0 ? (
-                <div className="text-center py-8">
-                  <MessageCircle className="w-12 h-12 text-gray-400 mx-auto mb-2" />
-                  <p className="text-gray-400">
-                    Aucun commentaire pour le moment
-                  </p>
-                  <p className="text-gray-500 text-sm">
-                    Soyez le premier à commenter!
-                  </p>
+                <div className="text-center py-12 space-y-4">
+                  <div className="w-16 h-16 bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-full flex items-center justify-center mx-auto">
+                    <MessageCircle className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <div>
+                    <p className="text-gray-300 font-medium">No comments yet</p>
+                    <p className="text-gray-500 text-sm mt-1">
+                      Be the first to share your thoughts!
+                    </p>
+                  </div>
                 </div>
               ) : (
-                comments.map((comment) => (
+                comments.map((comment, index) => (
                   <Card
                     key={comment.id}
-                    className="border-gray-700 bg-gray-800/50"
+                    className="border-gray-700/50 bg-gray-900/50 backdrop-blur-sm hover:bg-gray-900/70 transition-all duration-200"
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-5">
                       <div className="flex items-start justify-between">
-                        <div className="flex items-start space-x-3 flex-1">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                            {getRoleIcon(comment.userRole || "user")}
+                        <div className="flex items-start space-x-4 flex-1">
+                          {/* User Avatar - Enhanced */}
+                          <div className="relative group">
+                            <div className="w-12 h-12 p-0.5 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full">
+                              <Avatar className="w-full h-full border-0 shadow-xl">
+                                <AvatarImage
+                                  src={comment.avatarUrl}
+                                  alt={comment.username || "User"}
+                                  className="object-cover"
+                                  onError={(e) => {
+                                    console.log(
+                                      `❌ Failed to load avatar for ${comment.username}:`,
+                                      comment.avatarUrl,
+                                    );
+                                  }}
+                                  onLoad={() => {
+                                    console.log(
+                                      `✅ Avatar loaded for ${comment.username}:`,
+                                      comment.avatarUrl,
+                                    );
+                                  }}
+                                />
+                                <AvatarFallback
+                                  className={`${getAvatarFallbackColors(comment.userRole)} text-white font-semibold text-sm`}
+                                >
+                                  {comment.username?.charAt(0).toUpperCase() ||
+                                    "U"}
+                                </AvatarFallback>
+                              </Avatar>
+                            </div>
+                            {/* Role indicator - Enhanced */}
+                            <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-black rounded-full flex items-center justify-center border-2 border-gray-800 shadow-lg">
+                              {getRoleIcon(comment.userRole || "user")}
+                            </div>
+                            {/* Hover glow effect */}
+                            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/20 to-blue-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center space-x-2 mb-1">
-                              <span className="text-white font-medium text-sm">
-                                {comment.username || "Utilisateur inconnu"}
+
+                          {/* Comment Content */}
+                          <div className="flex-1 min-w-0 space-y-2">
+                            {/* Header */}
+                            <div className="flex items-center space-x-3 flex-wrap">
+                              <span className="text-white font-semibold">
+                                {comment.username || "Unknown User"}
                               </span>
                               <Badge
                                 variant="outline"
-                                className={`text-xs ${getRoleColor(comment.userRole || "user")}`}
+                                className={`text-xs ${getRoleColor(comment.userRole || "user")} px-2 py-1`}
                               >
                                 {getRoleLabel(comment.userRole || "user")}
                               </Badge>
@@ -224,17 +389,22 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                                 {formatDate(comment.createdAt)}
                               </span>
                             </div>
-                            <p className="text-gray-300 text-sm leading-relaxed break-words">
-                              {comment.content || "Contenu indisponible"}
+
+                            {/* Comment text */}
+                            <p className="text-gray-200 text-sm leading-relaxed break-words">
+                              {comment.content || "Content unavailable"}
                             </p>
                           </div>
                         </div>
+
+                        {/* Delete button */}
                         {canDeleteComment(comment) && (
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDelete(comment.id)}
-                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10 ml-2 flex-shrink-0"
+                            className="text-red-400 hover:text-red-300 hover:bg-red-500/10 ml-3 p-2"
+                            title="Delete comment"
                           >
                             <Trash2 className="w-4 h-4" />
                           </Button>
@@ -247,58 +417,115 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
             </div>
           </ScrollArea>
 
-          {/* Formulaire d'ajout de commentaire */}
+          {/* Add Comment Form */}
           {currentUser ? (
-            <form onSubmit={handleSubmit} className="space-y-3">
-              <div className="space-y-2">
-                <Label htmlFor="newComment" className="text-white text-sm">
-                  Ajouter un commentaire
-                </Label>
-                <Textarea
-                  id="newComment"
-                  value={newComment}
-                  onChange={(e) => setNewComment(e.target.value)}
-                  placeholder="Écrivez votre commentaire..."
-                  className="bg-gray-800 border-gray-700 text-white resize-none"
-                  rows={3}
-                  maxLength={500}
-                />
-                <div className="flex items-center justify-between">
-                  <span className="text-gray-500 text-xs">
-                    {newComment.length}/500 caractères
-                  </span>
-                  <Button
-                    type="submit"
-                    disabled={!newComment.trim() || isSubmitting}
-                    className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50"
-                    size="sm"
-                  >
-                    {isSubmitting ? (
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                    ) : (
-                      <Send className="w-4 h-4 mr-2" />
-                    )}
-                    {isSubmitting ? "Envoi..." : "Envoyer"}
-                  </Button>
-                </div>
-              </div>
-            </form>
+            <Card className="border-gray-700/50 bg-gray-900/30 backdrop-blur-sm">
+              <CardContent className="p-5">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="flex items-start space-x-4">
+                    {/* Current user avatar - Enhanced */}
+                    <div className="relative group flex-shrink-0">
+                      <div className="w-12 h-12 p-0.5 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full">
+                        <Avatar className="w-full h-full border-0 shadow-xl">
+                          <AvatarImage
+                            src={userAvatar}
+                            alt={currentUser.username}
+                            className="object-cover"
+                            onError={() => {
+                              console.log(
+                                `❌ Failed to load current user avatar:`,
+                                userAvatar,
+                              );
+                            }}
+                            onLoad={() => {
+                              console.log(
+                                `✅ Current user avatar loaded:`,
+                                userAvatar,
+                              );
+                            }}
+                          />
+                          <AvatarFallback
+                            className={`${getAvatarFallbackColors(currentUser.role)} text-white font-semibold text-sm`}
+                          >
+                            {currentUser.username?.charAt(0).toUpperCase() ||
+                              "U"}
+                          </AvatarFallback>
+                        </Avatar>
+                      </div>
+                      {/* Role indicator for current user */}
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 bg-black rounded-full flex items-center justify-center border-2 border-gray-800 shadow-lg">
+                        {getRoleIcon(currentUser.role || "user")}
+                      </div>
+                      {/* Glow effect */}
+                      <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-500/30 to-blue-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                    </div>
+
+                    {/* Comment input */}
+                    <div className="flex-1 space-y-3">
+                      <Label
+                        htmlFor="newComment"
+                        className="text-white text-sm font-medium"
+                      >
+                        Add a comment
+                      </Label>
+                      <Textarea
+                        id="newComment"
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Share your thoughts..."
+                        className="bg-black/50 border-gray-600 text-white placeholder:text-gray-500 resize-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500/20"
+                        rows={3}
+                        maxLength={500}
+                      />
+
+                      {/* Footer */}
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-500 text-xs">
+                          {newComment.length}/500 characters
+                        </span>
+                        <Button
+                          type="submit"
+                          disabled={!newComment.trim() || isSubmitting}
+                          className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 disabled:opacity-50 text-white font-medium"
+                          size="sm"
+                        >
+                          {isSubmitting ? (
+                            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          ) : (
+                            <Send className="w-4 h-4 mr-2" />
+                          )}
+                          {isSubmitting ? "Posting..." : "Post Comment"}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </CardContent>
+            </Card>
           ) : (
-            <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-4 text-center">
-              <p className="text-gray-400 text-sm">
-                Vous devez être connecté pour commenter
-              </p>
-            </div>
+            <Card className="border-gray-700/50 bg-gray-900/30 backdrop-blur-sm">
+              <CardContent className="p-5">
+                <div className="text-center space-y-2">
+                  <UserCircle className="w-8 h-8 text-gray-400 mx-auto" />
+                  <p className="text-gray-300 font-medium">
+                    Sign in to comment
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    You need to be logged in to share your thoughts
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
           )}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="border-t border-gray-800 pt-4">
           <Button
             variant="outline"
             onClick={onClose}
-            className="border-gray-700 text-gray-300"
+            className="border-gray-600 text-gray-300 hover:bg-gray-800"
           >
-            Fermer
+            Close
           </Button>
         </DialogFooter>
       </DialogContent>

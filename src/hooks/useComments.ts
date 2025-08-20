@@ -21,6 +21,13 @@ export const useComments = (productId?: string) => {
 
   // Helper function to convert Firestore data to Comment objects
   const parseComment = (commentData: any): Comment => {
+    console.log("🔍 Parse comment data:", {
+      id: commentData.id,
+      username: commentData.username,
+      avatarUrl: commentData.avatarUrl,
+      hasAvatar: !!commentData.avatarUrl,
+    });
+
     return {
       id: commentData.id,
       productId: commentData.productId,
@@ -29,6 +36,7 @@ export const useComments = (productId?: string) => {
       userRole: commentData.userRole || "user", // Ajout du rôle utilisateur avec valeur par défaut
       content: commentData.content,
       createdAt: commentData.createdAt || Timestamp.now(),
+      avatarUrl: commentData.avatarUrl, // Inclure l'avatar
     };
   };
 
@@ -180,6 +188,14 @@ export const useComments = (productId?: string) => {
 
     try {
       console.log("➕ Ajout d'un commentaire pour le produit:", productId);
+      console.log("👤 Current user data for comment:", {
+        id: currentUser.id,
+        username: currentUser.username,
+        role: currentUser.role,
+        avatarUrl: currentUser.avatarUrl,
+        hasAvatar: !!currentUser.avatarUrl,
+        avatarUrlLength: currentUser.avatarUrl?.length || 0,
+      });
 
       const commentData = {
         productId,
@@ -188,7 +204,10 @@ export const useComments = (productId?: string) => {
         userRole: currentUser.role, // Inclure le rôle utilisateur
         content,
         createdAt: Timestamp.now(),
+        avatarUrl: currentUser.avatarUrl, // Inclure l'avatar
       };
+
+      console.log("💾 Comment data to save:", commentData);
 
       await addDoc(collection(db, "comments"), commentData);
       console.log("✅ Commentaire ajouté avec succès");
