@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Home, AlertTriangle } from "lucide-react";
 import { Link } from "react-router-dom";
 import BackgroundAnimation from "@/components/BackgroundAnimation";
+import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 
 const NotFound: React.FC = () => {
   return (
