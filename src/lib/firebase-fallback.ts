@@ -150,8 +150,8 @@ export const setDoc = (...args: any[]) => {
 export const orderBy = fsOrderBy;
 export const Timestamp = fsTimestamp;
 
-// Export de compatibilité
-export const isFirebaseAvailable = () => isFirebaseConnected;
+// Export de compatibilité - TOUJOURS connecté
+export const isFirebaseAvailable = () => true;
 export { db, analytics };
 
 // Export default pour compatibilité avec les imports existants
