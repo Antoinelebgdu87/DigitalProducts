@@ -354,11 +354,11 @@ const ShopDashboard: React.FC = () => {
             <TabsContent value="products" className="space-y-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-semibold text-white">
+                  <h2 className="text-2xl font-bold text-white mb-2">
                     Gestion des Produits
                   </h2>
-                  <p className="text-gray-400 text-sm">
-                    {userProducts.length} produit(s) dans votre boutique
+                  <p className="text-gray-400">
+                    {userProducts.length} produit{userProducts.length !== 1 ? "s" : ""} dans votre boutique
                   </p>
                 </div>
                 <Dialog
@@ -366,9 +366,10 @@ const ShopDashboard: React.FC = () => {
                   onOpenChange={setShowProductDialog}
                 >
                   <DialogTrigger asChild>
-                    <Button className="bg-purple-600 hover:bg-purple-700">
+                    <Button className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 px-6 py-3">
                       <Plus className="w-4 h-4 mr-2" />
-                      Ajouter un Produit
+                      Créer un Produit
+                      <Heart className="w-4 h-4 ml-2" />
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="bg-gray-900 border-gray-800 max-w-2xl">
