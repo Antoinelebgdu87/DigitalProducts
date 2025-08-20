@@ -106,7 +106,26 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
 
     setIsSubmitting(true);
     try {
-      await addComment(productId, newComment);
+      // Force using the real-time avatar
+      const commentData = {
+        productId,
+        userId: currentUser.id,
+        username: currentUser.username,
+        userRole: currentUser.role,
+        content: newComment,
+        createdAt: new Date(),
+        avatarUrl: userAvatar, // Use real-time avatar
+      };
+
+      console.log("💾 Adding comment with real-time avatar:", commentData);
+
+      // Add comment directly with Firebase
+      const { addDoc, collection, Timestamp } = await import("firebase/firestore");
+      await addDoc(collection(db, "comments"), {
+        ...commentData,
+        createdAt: Timestamp.now(),
+      });
+
       setNewComment("");
       toast.success("Comment added successfully!");
     } catch (error: any) {
