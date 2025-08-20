@@ -220,8 +220,14 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
               </Button>
             )}
           </div>
-          <DialogDescription className="text-purple-400 font-medium">
-            {comments.length} comment{comments.length !== 1 ? "s" : ""}
+          <DialogDescription className="text-purple-400 font-medium flex items-center space-x-4">
+            <span>{comments.length} comment{comments.length !== 1 ? "s" : ""}</span>
+            <span className="text-xs text-gray-500">
+              {comments.filter(c => c.avatarUrl).length} with avatars
+            </span>
+            {currentUser?.avatarUrl && (
+              <span className="text-xs text-green-400">✓ Your avatar ready</span>
+            )}
           </DialogDescription>
         </DialogHeader>
 
