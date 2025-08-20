@@ -14,6 +14,7 @@ import {
 import BackgroundAnimation from "@/components/BackgroundAnimation";
 import { Lock, Eye, EyeOff, Shield } from "lucide-react";
 import { toast } from "sonner";
+import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 
 const AdminLogin: React.FC = () => {
   const [username, setUsername] = useState("");
