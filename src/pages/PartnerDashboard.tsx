@@ -50,6 +50,7 @@ import { toast } from "sonner";
 import { Product } from "@/types";
 import { Link, Navigate } from "react-router-dom";
 import { useAutoTranslate } from "@/hooks/useAutoTranslate";
+import ProductModal from "@/components/ProductModal";
 
 const PartnerDashboard: React.FC = () => {
   // Activer la traduction automatique
@@ -283,328 +284,48 @@ const PartnerDashboard: React.FC = () => {
                     partenaire
                   </p>
                 </div>
-                <Dialog
-                  open={showProductDialog}
-                  onOpenChange={setShowProductDialog}
+                <Button
+                  onClick={() => setShowProductDialog(true)}
+                  className="bg-yellow-600 hover:bg-yellow-700"
                 >
-                  <DialogTrigger asChild>
-                    <Button className="bg-yellow-600 hover:bg-yellow-700">
-                      <Plus className="w-4 h-4 mr-2" />
-                      Ajouter un Produit
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="bg-gray-900 border-gray-800 max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle className="text-white">
-                        Nouveau Produit Partenaire
-                      </DialogTitle>
-                      <DialogDescription className="text-gray-400">
-                        Ajoutez un nouveau produit exclusif à votre espace
-                        partenaire
-                      </DialogDescription>
-                    </DialogHeader>
-                    <form onSubmit={handleProductSubmit} className="space-y-4">
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="title" className="text-white">
-                            Titre
-                          </Label>
-                          <Input
-                            id="title"
-                            value={productForm.title}
-                            onChange={(e) =>
-                              setProductForm({
-                                ...productForm,
-                                title: e.target.value,
-                              })
-                            }
-                            className="bg-gray-800 border-gray-700 text-white"
-                            required
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="type" className="text-white">
-                            Type
-                          </Label>
-                          <Select
-                            value={productForm.type}
-                            onValueChange={(value: "free" | "paid") =>
-                              setProductForm({ ...productForm, type: value })
-                            }
-                          >
-                            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="free">Gratuit</SelectItem>
-                              <SelectItem value="paid">Payant</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="actionType" className="text-white">
-                            Action principale
-                          </Label>
-                          <Select
-                            value={productForm.actionType}
-                            onValueChange={(value: "download" | "discord") =>
-                              setProductForm({
-                                ...productForm,
-                                actionType: value,
-                              })
-                            }
-                          >
-                            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="download">
-                                <div className="flex items-center space-x-2">
-                                  <Download className="w-4 h-4" />
-                                  <span>Téléchargement</span>
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="discord">
-                                <div className="flex items-center space-x-2">
-                                  <LinkIcon className="w-4 h-4" />
-                                  <span>Discord</span>
-                                </div>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                      {productForm.type === "paid" && (
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="price" className="text-white">
-                              Prix (€)
-                            </Label>
-                            <Input
-                              id="price"
-                              type="number"
-                              min="0"
-                              step="0.01"
-                              value={productForm.price}
-                              onChange={(e) =>
-                                setProductForm({
-                                  ...productForm,
-                                  price: parseFloat(e.target.value) || 0,
-                                })
-                              }
-                              className="bg-gray-800 border-gray-700 text-white"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="lives" className="text-white">
-                              Nombre de vies
-                            </Label>
-                            <Select
-                              value={productForm.lives.toString()}
-                              onValueChange={(value) =>
-                                setProductForm({
-                                  ...productForm,
-                                  lives: parseInt(value),
-                                })
-                              }
-                            >
-                              <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="1">1 vie</SelectItem>
-                                <SelectItem value="3">3 vies</SelectItem>
-                                <SelectItem value="5">5 vies</SelectItem>
-                                <SelectItem value="10">10 vies</SelectItem>
-                                <SelectItem value="25">25 vies</SelectItem>
-                                <SelectItem value="50">50 vies</SelectItem>
-                                <SelectItem value="100">100 vies</SelectItem>
-                                <SelectItem value="999">
-                                  Illimité (999)
-                                </SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-                      )}
-                      <div className="space-y-2">
-                        <Label htmlFor="description" className="text-white">
-                          Description
-                        </Label>
-                        <Textarea
-                          id="description"
-                          value={productForm.description}
-                          onChange={(e) =>
-                            setProductForm({
-                              ...productForm,
-                              description: e.target.value,
-                            })
-                          }
-                          className="bg-gray-800 border-gray-700 text-white"
-                          rows={3}
-                          required
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="imageUrl" className="text-white">
-                          Image URL
-                        </Label>
-                        <Input
-                          id="imageUrl"
-                          value={productForm.imageUrl}
-                          onChange={(e) =>
-                            setProductForm({
-                              ...productForm,
-                              imageUrl: e.target.value,
-                            })
-                          }
-                          className="bg-gray-800 border-gray-700 text-white"
-                          placeholder="https://example.com/image.jpg"
-                        />
-                      </div>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Ajouter un Produit
+                </Button>
 
-                      {productForm.actionType === "download" && (
-                        <div className="space-y-2">
-                          <Label htmlFor="contentType" className="text-white">
-                            Type de contenu
-                          </Label>
-                          <Select
-                            value={productForm.contentType}
-                            onValueChange={(value: "link" | "text") =>
-                              setProductForm({
-                                ...productForm,
-                                contentType: value,
-                              })
-                            }
-                          >
-                            <SelectTrigger className="bg-gray-800 border-gray-700 text-white">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="link">
-                                <div className="flex items-center space-x-2">
-                                  <LinkIcon className="w-4 h-4" />
-                                  <span>Lien de téléchargement</span>
-                                </div>
-                              </SelectItem>
-                              <SelectItem value="text">
-                                <div className="flex items-center space-x-2">
-                                  <FileText className="w-4 h-4" />
-                                  <span>Contenu texte (bloc-notes)</span>
-                                </div>
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
+                {/* Nouvelle modale de création de produit partenaire */}
+                <ProductModal
+                  isOpen={showProductDialog}
+                  onOpenChange={setShowProductDialog}
+                  onSubmit={handleProductSubmit}
+                  formData={productForm}
+                  setFormData={setProductForm}
+                  title="Nouveau Produit Partenaire"
+                  description="Ajoutez un nouveau produit exclusif à votre espace partenaire"
+                  submitButtonText="Créer le Produit"
+                  submitButtonClass="bg-yellow-600 hover:bg-yellow-700"
+                  icon={<Crown className="w-5 h-5 text-yellow-400" />}
+                />
 
-                      {/* Champs conditionnels selon l'action type */}
-                      {productForm.actionType === "download" &&
-                        (productForm.contentType === "link" ? (
-                          <div className="space-y-2">
-                            <Label htmlFor="downloadUrl" className="text-white">
-                              URL de téléchargement
-                            </Label>
-                            <Input
-                              id="downloadUrl"
-                              value={productForm.downloadUrl}
-                              onChange={(e) =>
-                                setProductForm({
-                                  ...productForm,
-                                  downloadUrl: e.target.value,
-                                })
-                              }
-                              className="bg-gray-800 border-gray-700 text-white"
-                              placeholder="https://example.com/download"
-                              required
-                            />
-                          </div>
-                        ) : (
-                          <div className="space-y-2">
-                            <Label htmlFor="content" className="text-white">
-                              Contenu du bloc-notes
-                            </Label>
-                            <Textarea
-                              id="content"
-                              value={productForm.content}
-                              onChange={(e) =>
-                                setProductForm({
-                                  ...productForm,
-                                  content: e.target.value,
-                                })
-                              }
-                              className="bg-gray-800 border-gray-700 text-white"
-                              rows={8}
-                              placeholder="Entrez le contenu qui sera affiché dans le bloc-notes..."
-                              required
-                            />
-                          </div>
-                        ))}
-
-                      {productForm.actionType === "discord" && (
-                        <div className="space-y-2">
-                          <Label
-                            htmlFor="discordUrlRequired"
-                            className="text-white"
-                          >
-                            Discord Server URL{" "}
-                            <span className="text-red-400">*</span>
-                          </Label>
-                          <Input
-                            id="discordUrlRequired"
-                            value={productForm.discordUrl}
-                            onChange={(e) =>
-                              setProductForm({
-                                ...productForm,
-                                discordUrl: e.target.value,
-                              })
-                            }
-                            className="bg-gray-800 border-gray-700 text-white"
-                            placeholder="https://discord.gg/example"
-                            required
-                          />
-                        </div>
-                      )}
-
-                      {productForm.actionType === "download" && (
-                        <div className="space-y-2">
-                          <Label htmlFor="discordUrl" className="text-white">
-                            Discord Server URL (optionnel)
-                          </Label>
-                          <Input
-                            id="discordUrl"
-                            value={productForm.discordUrl}
-                            onChange={(e) =>
-                              setProductForm({
-                                ...productForm,
-                                discordUrl: e.target.value,
-                              })
-                            }
-                            className="bg-gray-800 border-gray-700 text-white"
-                            placeholder="https://discord.gg/example"
-                          />
-                        </div>
-                      )}
-
-                      <DialogFooter>
-                        <Button
-                          type="button"
-                          variant="outline"
-                          onClick={() => setShowProductDialog(false)}
-                          className="border-gray-700"
-                        >
-                          Annuler
-                        </Button>
-                        <Button
-                          type="submit"
-                          className="bg-yellow-600 hover:bg-yellow-700"
-                        >
-                          Ajouter
-                        </Button>
-                      </DialogFooter>
-                    </form>
-                  </DialogContent>
-                </Dialog>
+                {/* Modale d'édition de produit partenaire */}
+                <ProductModal
+                  isOpen={showEditDialog}
+                  onOpenChange={(open) => {
+                    setShowEditDialog(open);
+                    if (!open) {
+                      setEditingProduct(null);
+                      resetProductForm();
+                    }
+                  }}
+                  onSubmit={handleUpdateProduct}
+                  formData={productForm}
+                  setFormData={setProductForm}
+                  title="Modifier le Produit Partenaire"
+                  description="Modifiez les informations de votre produit exclusif"
+                  submitButtonText="Mettre à jour"
+                  submitButtonClass="bg-yellow-600 hover:bg-yellow-700"
+                  icon={<Crown className="w-5 h-5 text-yellow-400" />}
+                  isEdit={true}
+                />
 
                 {/* Edit Product Dialog */}
                 <Dialog open={showEditDialog} onOpenChange={setShowEditDialog}>
