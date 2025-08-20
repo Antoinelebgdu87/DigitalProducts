@@ -90,6 +90,17 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     }
   };
 
+  // DEBUG: Function to repair comments without avatars
+  const handleRepairComments = async () => {
+    try {
+      const repairedCount = await repairCommentsAvatars();
+      toast.success(`Repaired ${repairedCount} comments!`);
+    } catch (error) {
+      console.error("Failed to repair comments:", error);
+      toast.error("Failed to repair comments");
+    }
+  };
+
   const formatDate = (date: any) => {
     try {
       let validDate: Date;
