@@ -357,15 +357,28 @@ class HybridTranslationService {
       '← Back to Home': '← Volver al Inicio'
     },
     de: {
+      // Übersetzungsinterface
       'Paramètres de traduction': 'Übersetzungseinstellungen',
+      'Configurez la langue d\'affichage et activez la traduction automatique avec IA.': 'Konfigurieren Sie die Anzeigesprache und aktivieren Sie die automatische KI-Übersetzung.',
       'Traduction IA': 'KI-Übersetzung',
+      'Gratuit': 'Kostenlos',
+      'Activez la traduction automatique de tous les textes avec OpenRouter AI': 'Aktivieren Sie die automatische Übersetzung aller Texte mit OpenRouter AI',
+      'Traduction en cours...': 'Übersetzen...',
       'Langue d\'affichage': 'Anzeigesprache',
       'Service de traduction': 'Übersetzungsdienst',
+      'Traduction hybride avec dictionnaire intégré et API LibreTranslate gratuite.': 'Hybride Übersetzung mit integriertem Wörterbuch und kostenloser LibreTranslate API.',
+      'Les traductions sont mises en cache pour des performances optimales.': 'Übersetzungen werden für optimale Leistung zwischengespeichert.',
       'Textes traduits': 'Übersetzte Texte',
       'Mode actuel': 'Aktueller Modus',
       'Original': 'Original',
       'Traduit': 'Übersetzt',
       'Fermer': 'Schließen',
+      'Langue: ': 'Sprache: ',
+      'IA activée': 'KI aktiviert',
+      'Langues': 'Sprachen',
+      'Paramètres avancés': 'Erweiterte Einstellungen',
+
+      // Startseite
       'DigitalHub': 'DigitalHub',
       'Digital Products': 'Digitale Produkte',
       'Discover exceptional digital products with instant access.': 'Entdecken Sie außergewöhnliche digitale Produkte mit sofortigem Zugang.',
@@ -382,20 +395,56 @@ class HybridTranslationService {
       'Secure Delivery': 'Sichere Lieferung',
       'Safe & reliable downloads': 'Sichere und zuverlässige Downloads',
       'Featured Products': 'Ausgewählte Produkte',
+      'Handpicked collection of premium digital assets, tools, and resources for creators and professionals.': 'Handverlesene Sammlung von Premium-Digital-Assets, Tools und Ressourcen für Kreative und Profis.',
       'Loading Products': 'Produkte Werden Geladen',
+      'Fetching the latest digital products...': 'Die neuesten digitalen Produkte werden geladen...',
       'Coming Soon': 'Bald Verfügbar',
-      'All rights reserved': 'Alle Rechte vorbehalten'
+      'Amazing products are being curated for you. Stay tuned for something incredible!': 'Erstaunliche Produkte werden für Sie kuratiert. Bleiben Sie dran für etwas Unglaubliches!',
+      'All rights reserved': 'Alle Rechte vorbehalten',
+
+      // Benutzermodals
+      'Bienvenue !': 'Willkommen!',
+      'Créez votre nom d\'utilisateur pour accéder à la plateforme': 'Erstellen Sie Ihren Benutzernamen, um auf die Plattform zuzugreifen',
+      'Nom d\'utilisateur': 'Benutzername',
+      'Entrez votre pseudo': 'Geben Sie Ihren Spitznamen ein',
+      'Générer un nouveau pseudo': 'Neuen Spitznamen generieren',
+      'Ou utilisez le pseudo généré automatiquement': 'Oder verwenden Sie den automatisch generierten Spitznamen',
+      'Création...': 'Erstellen...',
+      'Créer mon compte': 'Mein Konto erstellen',
+      'Votre pseudo sera visible par les autres utilisateurs': 'Ihr Spitzname wird für andere Benutzer sichtbar sein',
+
+      // Verwaltung
+      'Administration': 'Verwaltung',
+      'Secure access to admin panel': 'Sicherer Zugang zum Admin-Panel',
+      'Username': 'Benutzername',
+      'Password': 'Passwort',
+      'Sign In': 'Anmelden',
+      'Connecting...': 'Verbinden...',
+      '← Back to Home': '← Zurück zur Startseite'
     },
     it: {
+      // Interfaccia di traduzione
       'Paramètres de traduction': 'Impostazioni di Traduzione',
+      'Configurez la langue d\'affichage et activez la traduction automatique avec IA.': 'Configura la lingua di visualizzazione e attiva la traduzione automatica con IA.',
       'Traduction IA': 'Traduzione IA',
+      'Gratuit': 'Gratuito',
+      'Activez la traduction automatique de tous les textes avec OpenRouter AI': 'Attiva la traduzione automatica di tutti i testi con OpenRouter AI',
+      'Traduction en cours...': 'Traduzione in corso...',
       'Langue d\'affichage': 'Lingua di Visualizzazione',
       'Service de traduction': 'Servizio di Traduzione',
+      'Traduction hybride avec dictionnaire intégré et API LibreTranslate gratuite.': 'Traduzione ibrida con dizionario integrato e API LibreTranslate gratuita.',
+      'Les traductions sont mises en cache pour des performances optimales.': 'Le traduzioni sono memorizzate nella cache per prestazioni ottimali.',
       'Textes traduits': 'Testi tradotti',
       'Mode actuel': 'Modalità attuale',
       'Original': 'Originale',
       'Traduit': 'Tradotto',
       'Fermer': 'Chiudi',
+      'Langue: ': 'Lingua: ',
+      'IA activée': 'IA attivata',
+      'Langues': 'Lingue',
+      'Paramètres avancés': 'Impostazioni avanzate',
+
+      // Pagina iniziale
       'DigitalHub': 'DigitalHub',
       'Digital Products': 'Prodotti Digitali',
       'Discover exceptional digital products with instant access.': 'Scopri prodotti digitali eccezionali con accesso istantaneo.',
@@ -412,9 +461,32 @@ class HybridTranslationService {
       'Secure Delivery': 'Consegna Sicura',
       'Safe & reliable downloads': 'Download sicuri e affidabili',
       'Featured Products': 'Prodotti in Evidenza',
+      'Handpicked collection of premium digital assets, tools, and resources for creators and professionals.': 'Collezione selezionata di asset digitali premium, strumenti e risorse per creatori e professionisti.',
       'Loading Products': 'Caricamento Prodotti',
+      'Fetching the latest digital products...': 'Recupero degli ultimi prodotti digitali...',
       'Coming Soon': 'Prossimamente',
-      'All rights reserved': 'Tutti i diritti riservati'
+      'Amazing products are being curated for you. Stay tuned for something incredible!': 'Prodotti straordinari sono in corso di selezione per te. Resta sintonizzato per qualcosa di incredibile!',
+      'All rights reserved': 'Tutti i diritti riservati',
+
+      // Modali utente
+      'Bienvenue !': 'Benvenuto!',
+      'Créez votre nom d\'utilisateur pour accéder à la plateforme': 'Crea il tuo nome utente per accedere alla piattaforma',
+      'Nom d\'utilisateur': 'Nome utente',
+      'Entrez votre pseudo': 'Inserisci il tuo nickname',
+      'Générer un nouveau pseudo': 'Genera nuovo nickname',
+      'Ou utilisez le pseudo généré automatiquement': 'O usa il nickname generato automaticamente',
+      'Création...': 'Creazione...',
+      'Créer mon compte': 'Crea il mio account',
+      'Votre pseudo sera visible par les autres utilisateurs': 'Il tuo nickname sarà visibile agli altri utenti',
+
+      // Amministrazione
+      'Administration': 'Amministrazione',
+      'Secure access to admin panel': 'Accesso sicuro al pannello di amministrazione',
+      'Username': 'Nome utente',
+      'Password': 'Password',
+      'Sign In': 'Accedi',
+      'Connecting...': 'Connessione...',
+      '← Back to Home': '← Torna alla Home'
     },
     fr: {} // Pas besoin de traductions pour le français
   };
