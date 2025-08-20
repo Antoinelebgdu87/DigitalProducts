@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useUser } from "@/context/UserContext";
 import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { User, Store, Crown, Shield, Sparkles } from "lucide-react";
+import ProfileModal from "./ProfileModal";
 
 const UserRoleBadge: React.FC = () => {
   const { currentUser } = useUser();
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
 
   if (!currentUser) {
     return null;
@@ -51,16 +54,28 @@ const UserRoleBadge: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center space-x-2">
-      {/* Avatar compact */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.3 }}
-        className="w-6 h-6 rounded-full bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center ring-2 ring-white/20"
-      >
-        <User className="w-3 h-3 text-white" />
-      </motion.div>
+    <>
+      <div className="flex items-center space-x-2">
+        {/* Avatar cliquable avec vraie photo */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          className="cursor-pointer"
+          onClick={() => setIsProfileModalOpen(true)}
+        >
+          <Avatar className="w-6 h-6 ring-2 ring-white/20">
+            <AvatarImage
+              src={currentUser.avatarUrl}
+              alt={currentUser.username}
+            />
+            <AvatarFallback className="bg-gradient-to-br from-red-500 to-red-700 text-white text-xs">
+              <User className="w-3 h-3" />
+            </AvatarFallback>
+          </Avatar>
+        </motion.div>
 
       {/* Username compact */}
       <motion.span
@@ -118,7 +133,14 @@ const UserRoleBadge: React.FC = () => {
           />
         )}
       </motion.div>
-    </div>
+      </div>
+
+      {/* Modal de personnalisation */}
+      <ProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+      />
+    </>
   );
 };
 
