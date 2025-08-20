@@ -187,10 +187,21 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "admin.users": "Usuários",
     "admin.settings": "Configurações Admin",
     "admin.maintenance": "Manutenção",
+
+    // Homepage
+    "home.title": "DigitalHub",
+    "home.subtitle": "Sua plataforma digital",
+    "home.description": "Descubra nossa coleç��o de produtos digitais premium",
+    "home.featured": "Produtos em Destaque",
+    "home.shop": "Loja",
+    "home.all_products": "Todos os Produtos",
+    "home.no_products": "Nenhum produto disponível",
+    "home.loading": "Carregando produtos...",
+    "home.footer": "Todos os direitos reservados",
   },
   ja: {
     // Navigation & UI
-    "nav.home": "ホ��ム",
+    "nav.home": "ホーム",
     "nav.admin": "管理",
     "nav.settings": "設定",
     "nav.logout": "ログアウト",
@@ -216,7 +227,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     // Themes
     "theme.system": "システム",
     "theme.light": "ライト",
-    "theme.dark": "ダーク",
+    "theme.dark": "ダー���",
     "theme.blue": "青",
     "theme.purple": "紫",
     "theme.green": "緑",
@@ -229,7 +240,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "common.edit": "編集",
     "common.delete": "削除",
     "common.save": "保存",
-    "common.cancel": "キ��ンセル",
+    "common.cancel": "キャンセル",
     "common.loading": "読み込み中...",
     "common.error": "エラー",
     "common.success": "成功",
@@ -239,6 +250,17 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "admin.users": "ユーザー",
     "admin.settings": "管理設定",
     "admin.maintenance": "メンテナンス",
+
+    // Homepage
+    "home.title": "DigitalHub",
+    "home.subtitle": "あなたのデジタルプラットフォーム",
+    "home.description": "プレミアムデジタル製品コレクションを発見",
+    "home.featured": "注目商品",
+    "home.shop": "ショップ",
+    "home.all_products": "全商品",
+    "home.no_products": "利用可能な商品がありません",
+    "home.loading": "商品を読み込み中...",
+    "home.footer": "全著作権所有",
   },
   es: {
     // Navigation & UI
@@ -323,7 +345,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "theme.dark": "Dunkel",
     "theme.blue": "Blau",
     "theme.purple": "Lila",
-    "theme.green": "Grün",
+    "theme.green": "Gr��n",
     "theme.red": "Rot",
     "theme.orange": "Orange",
     
