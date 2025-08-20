@@ -335,53 +335,75 @@ const TermsOfService = () => {
           </motion.div>
 
           {/* Section 10: Legal */}
-          <Card>
-            <CardHeader>
-              <CardTitle>10. Aspects Légaux</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
-                <strong>Droit applicable :</strong> Ces conditions sont régies par le droit français.
-              </p>
-              <p>
-                <strong>Juridiction :</strong> Tout litige sera soumis à la juridiction exclusive 
-                des tribunaux français compétents.
-              </p>
-              <p>
-                <strong>Divisibilité :</strong> Si une partie de ces conditions est jugée invalide, 
-                le reste reste en vigueur.
-              </p>
-              <p>
-                <strong>Force majeure :</strong> Nous ne sommes pas responsables des retards ou 
-                défaillances dus à des causes indépendantes de notre volonté (guerre, pandémie, 
-                invasion d'aliens, apocalypse zombie, etc.).
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.2 }}
+          >
+            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">10. Legal Framework</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-gray-300">
+                <p>
+                  <strong className="text-red-400">Governing Law:</strong> These terms are governed by French law.
+                </p>
+                <p>
+                  <strong className="text-red-400">Jurisdiction:</strong> All disputes will be subject to the exclusive
+                  jurisdiction of competent French courts.
+                </p>
+                <p>
+                  <strong className="text-red-400">Severability:</strong> If any part of these terms is deemed invalid,
+                  the remainder remains in effect.
+                </p>
+                <p>
+                  <strong className="text-red-400">Force Majeure:</strong> We are not responsible for delays or
+                  failures due to causes beyond our control (war, pandemic, natural disasters, etc.).
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Section 11: Contact */}
-          <Card>
-            <CardHeader>
-              <CardTitle>11. Contact et Support</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p>
-                Pour toute question concernant ces conditions d'utilisation, vous pouvez nous contacter.
-                Mais attention :
-              </p>
-              <ul className="list-disc pl-6 space-y-1">
-                <li>❌ Ne nous contactez PAS pour demander des remboursements</li>
-                <li>❌ Ne nous contactez PAS pour contester ces conditions</li>
-                <li>❌ Ne nous contactez PAS pour nous dire que c'est injuste</li>
-                <li>✅ Contactez-nous pour des questions techniques légitimes</li>
-                <li>✅ Contactez-nous pour des bugs avérés</li>
-                <li>✅ Contactez-nous pour des clarifications sur les conditions</li>
-              </ul>
-              <p className="text-green-400">
-                On est sympas quand on nous traite bien ! 😊
-              </p>
-            </CardContent>
-          </Card>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.3 }}
+          >
+            <Card className="bg-black/40 border-white/10 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle className="text-white">11. Contact and Support</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-gray-300">
+                <p>
+                  For questions regarding these terms of use, you may contact us. However:
+                </p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="bg-red-950/20 p-4 rounded-lg border border-red-500/30">
+                    <h4 className="text-red-400 font-semibold mb-2">DO NOT Contact Us For:</h4>
+                    <ul className="space-y-1 text-red-200">
+                      <li>• Refund requests</li>
+                      <li>• Disputing these terms</li>
+                      <li>• Complaints about fairness</li>
+                      <li>• Emotional arguments</li>
+                    </ul>
+                  </div>
+                  <div className="bg-green-950/20 p-4 rounded-lg border border-green-500/30">
+                    <h4 className="text-green-400 font-semibold mb-2">Acceptable Inquiries:</h4>
+                    <ul className="space-y-1 text-green-200">
+                      <li>• Legitimate technical questions</li>
+                      <li>• Verified bugs</li>
+                      <li>• Terms clarification</li>
+                      <li>• Product support</li>
+                    </ul>
+                  </div>
+                </div>
+                <p className="text-green-400">
+                  Professional communication yields professional responses.
+                </p>
+              </CardContent>
+            </Card>
+          </motion.div>
 
           {/* Final Warning */}
           <Card className="border-purple-500/50 bg-purple-950/30">
