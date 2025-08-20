@@ -23,6 +23,8 @@ import {
   X,
   Image as ImageIcon,
   Loader2,
+  FileImage,
+  Plus,
 } from "lucide-react";
 import { toast } from "sonner";
 import { doc, updateDoc } from "firebase/firestore";
@@ -39,31 +41,56 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
-  const [activeTab, setActiveTab] = useState("url");
+  const [activeTab, setActiveTab] = useState("file");
+  const [isDragOver, setIsDragOver] = useState(false);
 
   // Handle file upload
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Validate file type
-      if (!file.type.startsWith("image/")) {
-        toast.error("Veuillez sélectionner un fichier image valide");
-        return;
-      }
-
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("L'image doit faire moins de 5MB");
-        return;
-      }
-
-      setImageFile(file);
-      
-      // Create preview URL
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-      setActiveTab("file");
+      processFile(file);
     }
+  };
+
+  // Handle drag and drop
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) {
+      processFile(file);
+    }
+  };
+
+  const processFile = (file: File) => {
+    // Validate file type
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image must be less than 5MB");
+      return;
+    }
+
+    setImageFile(file);
+    
+    // Create preview URL
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    setActiveTab("file");
   };
 
   // Convert file to base64 for storage
@@ -93,7 +120,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
           new URL(avatarUrl);
           finalAvatarUrl = avatarUrl.trim();
         } catch {
-          toast.error("Veuillez entrer une URL valide");
+          toast.error("Please enter a valid URL");
           setIsUploading(false);
           return;
         }
@@ -104,11 +131,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
         avatarUrl: finalAvatarUrl,
       });
 
-      toast.success("Photo de profil mise à jour avec succès!");
+      toast.success("Profile picture updated successfully!");
       onClose();
     } catch (error) {
-      console.error("Erreur lors de la mise à jour:", error);
-      toast.error("Erreur lors de la mise à jour de la photo de profil");
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile picture");
     } finally {
       setIsUploading(false);
     }
@@ -127,10 +154,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
       setAvatarUrl("");
       setImageFile(null);
       setPreviewUrl("");
-      toast.success("Photo de profil supprimée");
+      toast.success("Profile picture removed");
     } catch (error) {
-      console.error("Erreur lors de la suppression:", error);
-      toast.error("Erreur lors de la suppression de la photo de profil");
+      console.error("Error removing avatar:", error);
+      toast.error("Failed to remove profile picture");
     } finally {
       setIsUploading(false);
     }
@@ -154,14 +181,14 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="bg-gray-900 border-gray-800 max-w-md">
+      <DialogContent className="bg-black/95 border-gray-800 max-w-md backdrop-blur-lg">
         <DialogHeader>
           <DialogTitle className="text-white flex items-center space-x-2">
-            <Camera className="w-5 h-5 text-blue-400" />
-            <span>Personnaliser le profil</span>
+            <Camera className="w-5 h-5 text-purple-400" />
+            <span>Customize Profile</span>
           </DialogTitle>
-          <DialogDescription className="text-gray-400">
-            Choisissez votre photo de profil
+          <DialogDescription className="text-gray-300">
+            Choose your profile picture
           </DialogDescription>
         </DialogHeader>
 
@@ -169,12 +196,12 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
           {/* Current Avatar Preview */}
           <div className="flex justify-center">
             <div className="relative">
-              <Avatar className="w-24 h-24 border-4 border-gray-700">
+              <Avatar className="w-32 h-32 border-4 border-purple-500/30 shadow-2xl shadow-purple-500/20">
                 <AvatarImage 
                   src={getDisplayAvatarUrl()} 
                   alt={currentUser?.username || "Avatar"}
                 />
-                <AvatarFallback className="bg-gradient-to-br from-blue-500 to-purple-600 text-white text-2xl">
+                <AvatarFallback className="bg-gradient-to-br from-purple-600 to-blue-600 text-white text-3xl">
                   {currentUser?.username?.charAt(0).toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
@@ -183,11 +210,11 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                 <Button
                   variant="destructive"
                   size="sm"
-                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full p-0"
+                  className="absolute -top-2 -right-2 w-8 h-8 rounded-full p-0 bg-red-500 hover:bg-red-600 border-2 border-black"
                   onClick={handleRemoveAvatar}
                   disabled={isUploading}
                 >
-                  <X className="w-3 h-3" />
+                  <X className="w-4 h-4" />
                 </Button>
               )}
             </div>
@@ -195,59 +222,109 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
 
           {/* Upload Options */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 bg-gray-800">
-              <TabsTrigger value="url" className="text-gray-300">
+            <TabsList className="grid w-full grid-cols-2 bg-gray-900/80 border border-gray-700">
+              <TabsTrigger 
+                value="file" 
+                className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Upload
+              </TabsTrigger>
+              <TabsTrigger 
+                value="url" 
+                className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+              >
                 <Link className="w-4 h-4 mr-2" />
                 URL
               </TabsTrigger>
-              <TabsTrigger value="file" className="text-gray-300">
-                <Upload className="w-4 h-4 mr-2" />
-                Fichier
-              </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="url" className="space-y-4 mt-4">
-              <Card className="border-gray-700 bg-gray-800/50">
-                <CardContent className="p-4">
-                  <div className="space-y-3">
+            <TabsContent value="file" className="space-y-4 mt-6">
+              {/* Enhanced File Upload Zone */}
+              <div
+                className={`
+                  relative border-2 border-dashed rounded-xl p-8 transition-all duration-300 cursor-pointer
+                  ${isDragOver 
+                    ? 'border-purple-400 bg-purple-500/10' 
+                    : 'border-gray-600 bg-gray-900/50 hover:border-purple-500 hover:bg-gray-900/80'
+                  }
+                `}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => document.getElementById('file-input')?.click()}
+              >
+                <input
+                  id="file-input"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+                
+                <div className="text-center space-y-4">
+                  <div className="mx-auto w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+                    {imageFile ? (
+                      <FileImage className="w-8 h-8 text-white" />
+                    ) : (
+                      <Plus className="w-8 h-8 text-white" />
+                    )}
+                  </div>
+                  
+                  <div>
+                    <p className="text-white font-medium">
+                      {imageFile ? imageFile.name : "Choose an image"}
+                    </p>
+                    <p className="text-gray-400 text-sm mt-1">
+                      {imageFile 
+                        ? `${(imageFile.size / 1024 / 1024).toFixed(2)} MB`
+                        : "Drag & drop or click to browse"
+                      }
+                    </p>
+                  </div>
+                  
+                  <div className="flex justify-center">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        document.getElementById('file-input')?.click();
+                      }}
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      {imageFile ? "Change File" : "Select File"}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <p className="text-gray-500 text-xs">
+                  Supported formats: JPG, PNG, GIF • Max size: 5MB
+                </p>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="url" className="space-y-4 mt-6">
+              <Card className="border-gray-700 bg-gray-900/50 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="space-y-4">
                     <Label htmlFor="avatarUrl" className="text-white text-sm flex items-center space-x-2">
-                      <Link className="w-4 h-4" />
-                      <span>URL de l'image</span>
+                      <Link className="w-4 h-4 text-purple-400" />
+                      <span>Image URL</span>
                     </Label>
                     <Input
                       id="avatarUrl"
                       type="url"
                       value={avatarUrl}
                       onChange={(e) => setAvatarUrl(e.target.value)}
-                      placeholder="https://exemple.com/avatar.jpg"
-                      className="bg-gray-800 border-gray-700 text-white"
+                      placeholder="https://example.com/avatar.jpg"
+                      className="bg-black/50 border-gray-600 text-white placeholder:text-gray-500 focus:border-purple-500"
                     />
                     <p className="text-gray-500 text-xs">
-                      Collez l'URL d'une image depuis internet
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
-            <TabsContent value="file" className="space-y-4 mt-4">
-              <Card className="border-gray-700 bg-gray-800/50">
-                <CardContent className="p-4">
-                  <div className="space-y-3">
-                    <Label className="text-white text-sm flex items-center space-x-2">
-                      <ImageIcon className="w-4 h-4" />
-                      <span>Télécharger une image</span>
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleFileChange}
-                        className="bg-gray-800 border-gray-700 text-white file:bg-blue-600 file:text-white file:border-0 file:rounded-md file:px-3 file:py-1"
-                      />
-                    </div>
-                    <p className="text-gray-500 text-xs">
-                      Formats supportés: JPG, PNG, GIF (max 5MB)
+                      Paste an image URL from the internet
                     </p>
                   </div>
                 </CardContent>
@@ -256,26 +333,26 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
           </Tabs>
         </div>
 
-        <DialogFooter className="flex space-x-2">
+        <DialogFooter className="flex space-x-3 pt-4">
           <Button
             variant="outline"
             onClick={onClose}
-            className="border-gray-700 text-gray-300"
+            className="border-gray-600 text-gray-300 hover:bg-gray-800"
             disabled={isUploading}
           >
-            Annuler
+            Cancel
           </Button>
           <Button
             onClick={handleSave}
             disabled={isUploading || (!avatarUrl.trim() && !imageFile)}
-            className="bg-blue-600 hover:bg-blue-700"
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium"
           >
             {isUploading ? (
               <Loader2 className="w-4 h-4 animate-spin mr-2" />
             ) : (
               <Save className="w-4 h-4 mr-2" />
             )}
-            {isUploading ? "Sauvegarde..." : "Sauvegarder"}
+            {isUploading ? "Saving..." : "Save Changes"}
           </Button>
         </DialogFooter>
       </DialogContent>
