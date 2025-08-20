@@ -72,6 +72,12 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "home.no_products": "Aucun produit disponible",
     "home.loading": "Chargement des produits...",
     "home.footer": "Tous droits réservés",
+
+    // User roles
+    "role.admin": "Admin",
+    "role.partner": "Partenaire",
+    "role.shop_access": "Boutique",
+    "role.user": "Utilisateur",
   },
   en: {
     // Navigation & UI
@@ -191,7 +197,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     // Homepage
     "home.title": "DigitalHub",
     "home.subtitle": "Sua plataforma digital",
-    "home.description": "Descubra nossa coleç��o de produtos digitais premium",
+    "home.description": "Descubra nossa coleção de produtos digitais premium",
     "home.featured": "Produtos em Destaque",
     "home.shop": "Loja",
     "home.all_products": "Todos os Produtos",
@@ -227,7 +233,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     // Themes
     "theme.system": "システム",
     "theme.light": "ライト",
-    "theme.dark": "ダー���",
+    "theme.dark": "ダーク",
     "theme.blue": "青",
     "theme.purple": "紫",
     "theme.green": "緑",
@@ -345,7 +351,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "theme.dark": "Dunkel",
     "theme.blue": "Blau",
     "theme.purple": "Lila",
-    "theme.green": "Gr��n",
+    "theme.green": "Grün",
     "theme.red": "Rot",
     "theme.orange": "Orange",
     
