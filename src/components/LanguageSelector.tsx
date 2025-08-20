@@ -11,7 +11,7 @@ import { useTranslation } from "@/context/TranslationContext";
 
 const LanguageSelector: React.FC = () => {
   const { currentLanguage, setLanguage } = useTranslation();
-  
+
   const languages = [
     { code: "fr", name: "Français", flag: "🇫🇷" },
     { code: "en", name: "English", flag: "🇺🇸" },
@@ -22,20 +22,24 @@ const LanguageSelector: React.FC = () => {
   ];
 
   const getCurrentLanguage = () => {
-    return languages.find(lang => lang.code === currentLanguage) || languages[0];
+    return (
+      languages.find((lang) => lang.code === currentLanguage) || languages[0]
+    );
   };
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           size="sm"
           className="border-white/20 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 transition-all duration-200"
         >
           <Globe className="w-4 h-4 mr-2" />
           <span className="mr-1">{getCurrentLanguage().flag}</span>
-          <span className="hidden sm:inline mr-1">{getCurrentLanguage().name}</span>
+          <span className="hidden sm:inline mr-1">
+            {getCurrentLanguage().name}
+          </span>
           <ChevronDown className="w-4 h-4" />
         </Button>
       </DropdownMenuTrigger>

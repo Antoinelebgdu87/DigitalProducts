@@ -240,7 +240,8 @@ const ShopDashboard: React.FC = () => {
                     )}
                   </h1>
                   <p className="text-sm text-gray-400">
-                    Gérez vos produits et suivez vos ventes • {currentUser.username}
+                    Gérez vos produits et suivez vos ventes •{" "}
+                    {currentUser.username}
                   </p>
                 </div>
               </div>
@@ -272,7 +273,8 @@ const ShopDashboard: React.FC = () => {
                   variant="outline"
                   className="border-purple-500/30 text-purple-400 bg-purple-500/10"
                 >
-                  {userProducts.length} produit{userProducts.length !== 1 ? "s" : ""}
+                  {userProducts.length} produit
+                  {userProducts.length !== 1 ? "s" : ""}
                 </Badge>
                 <Link to="/">
                   <Button
@@ -311,18 +313,20 @@ const ShopDashboard: React.FC = () => {
                   </div>
                   <div className="hidden md:flex items-center space-x-6">
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-400">{userProducts.length}</div>
+                      <div className="text-2xl font-bold text-purple-400">
+                        {userProducts.length}
+                      </div>
                       <div className="text-xs text-gray-400">Produits</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-green-400">
-                        {userProducts.filter(p => p.type === "free").length}
+                        {userProducts.filter((p) => p.type === "free").length}
                       </div>
                       <div className="text-xs text-gray-400">Gratuits</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-yellow-400">
-                        {userProducts.filter(p => p.type === "paid").length}
+                        {userProducts.filter((p) => p.type === "paid").length}
                       </div>
                       <div className="text-xs text-gray-400">Payants</div>
                     </div>
@@ -358,7 +362,8 @@ const ShopDashboard: React.FC = () => {
                     Gestion des Produits
                   </h2>
                   <p className="text-gray-400">
-                    {userProducts.length} produit{userProducts.length !== 1 ? "s" : ""} dans votre boutique
+                    {userProducts.length} produit
+                    {userProducts.length !== 1 ? "s" : ""} dans votre boutique
                   </p>
                 </div>
                 <Dialog
@@ -721,7 +726,9 @@ const ShopDashboard: React.FC = () => {
                                       : "bg-red-600/20 text-red-400 border-red-500/30"
                                   }`}
                                 >
-                                  {product.type === "free" ? "Gratuit" : "Payant"}
+                                  {product.type === "free"
+                                    ? "Gratuit"
+                                    : "Payant"}
                                 </Badge>
 
                                 <Badge
@@ -791,7 +798,8 @@ const ShopDashboard: React.FC = () => {
                         Votre Boutique Vous Attend !
                       </h3>
                       <p className="text-gray-400 max-w-md mx-auto mb-6">
-                        Commencez à créer vos premiers produits numériques et partagez votre talent avec le monde
+                        Commencez à créer vos premiers produits numériques et
+                        partagez votre talent avec le monde
                       </p>
                       <Button
                         onClick={() => setShowProductDialog(true)}
@@ -891,7 +899,9 @@ const ShopDashboard: React.FC = () => {
               {/* Graphique placeholder */}
               <Card className="border-gray-800/50 bg-gray-900/50 backdrop-blur-sm">
                 <CardHeader>
-                  <CardTitle className="text-white">Performance des Produits</CardTitle>
+                  <CardTitle className="text-white">
+                    Performance des Produits
+                  </CardTitle>
                   <CardDescription className="text-gray-400">
                     Évolution de vos ventes et téléchargements
                   </CardDescription>
@@ -899,7 +909,9 @@ const ShopDashboard: React.FC = () => {
                 <CardContent className="p-6">
                   <div className="text-center py-12">
                     <BarChart3 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-white mb-2">Graphiques Avancés</h3>
+                    <h3 className="text-xl font-semibold text-white mb-2">
+                      Graphiques Avancés
+                    </h3>
                     <p className="text-gray-400">
                       Statistiques détaillées et graphiques disponibles bientôt
                     </p>
