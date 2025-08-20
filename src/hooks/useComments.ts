@@ -188,12 +188,13 @@ export const useComments = (productId?: string) => {
 
     try {
       console.log("➕ Ajout d'un commentaire pour le produit:", productId);
-      console.log("👤 Current user data:", {
+      console.log("👤 Current user data for comment:", {
         id: currentUser.id,
         username: currentUser.username,
         role: currentUser.role,
         avatarUrl: currentUser.avatarUrl,
-        hasAvatar: !!currentUser.avatarUrl
+        hasAvatar: !!currentUser.avatarUrl,
+        avatarUrlLength: currentUser.avatarUrl?.length || 0
       });
 
       const commentData = {
