@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Construction, Wrench, Hammer, Settings } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 
 interface MaintenancePageProps {
   message: string;
