@@ -53,7 +53,7 @@ export class FirebaseService {
   static async safeGet<T>(
     operation: () => Promise<T>,
     fallbackKey: string,
-    defaultValue: T
+    defaultValue: T,
   ): Promise<T> {
     return FirebaseFallback.safeOperation(operation, fallbackKey, defaultValue);
   }

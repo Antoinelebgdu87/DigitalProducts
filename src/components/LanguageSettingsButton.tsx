@@ -1,17 +1,25 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
-import { Settings, Globe, Loader2, Sparkles } from 'lucide-react';
-import { useTranslation, AVAILABLE_LANGUAGES } from '@/context/TranslationContext';
-import LanguageSettingsModal from './LanguageSettingsModal';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { Settings, Globe, Loader2, Sparkles } from "lucide-react";
+import {
+  useTranslation,
+  AVAILABLE_LANGUAGES,
+} from "@/context/TranslationContext";
+import LanguageSettingsModal from "./LanguageSettingsModal";
 
 const LanguageSettingsButton: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { currentLanguage, isTranslating, isTranslationEnabled } = useTranslation();
+  const { currentLanguage, isTranslating, isTranslationEnabled } =
+    useTranslation();
 
   const currentLanguageInfo = AVAILABLE_LANGUAGES.find(
-    lang => lang.code === currentLanguage
+    (lang) => lang.code === currentLanguage,
   );
 
   return (
@@ -59,9 +67,9 @@ const LanguageSettingsButton: React.FC = () => {
         </Tooltip>
 
         {/* Badge de statut */}
-        {(isTranslationEnabled || currentLanguage !== 'fr') && (
+        {(isTranslationEnabled || currentLanguage !== "fr") && (
           <div className="absolute -top-2 -left-2">
-            <Badge 
+            <Badge
               variant={isTranslationEnabled ? "default" : "secondary"}
               className="text-xs px-2 py-1 rounded-full"
             >

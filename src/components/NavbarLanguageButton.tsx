@@ -1,37 +1,41 @@
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from '@/components/ui/dropdown-menu';
-import { 
-  Globe, 
-  Settings, 
-  Loader2, 
-  Sparkles, 
+} from "@/components/ui/dropdown-menu";
+import {
+  Globe,
+  Settings,
+  Loader2,
+  Sparkles,
   Check,
-  Languages 
-} from 'lucide-react';
-import { motion } from 'framer-motion';
-import { useTranslation, AVAILABLE_LANGUAGES, type Language } from '@/context/TranslationContext';
-import LanguageSettingsModal from './LanguageSettingsModal';
+  Languages,
+} from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  useTranslation,
+  AVAILABLE_LANGUAGES,
+  type Language,
+} from "@/context/TranslationContext";
+import LanguageSettingsModal from "./LanguageSettingsModal";
 
 const NavbarLanguageButton: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const { 
-    currentLanguage, 
-    isTranslating, 
-    isTranslationEnabled, 
+  const {
+    currentLanguage,
+    isTranslating,
+    isTranslationEnabled,
     setLanguage,
-    toggleTranslation 
+    toggleTranslation,
   } = useTranslation();
 
   const currentLanguageInfo = AVAILABLE_LANGUAGES.find(
-    lang => lang.code === currentLanguage
+    (lang) => lang.code === currentLanguage,
   );
 
   const handleLanguageSelect = async (language: Language) => {
@@ -46,10 +50,7 @@ const NavbarLanguageButton: React.FC = () => {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               variant="ghost"
               size="sm"
@@ -70,13 +71,12 @@ const NavbarLanguageButton: React.FC = () => {
                   </span>
                 </div>
               )}
-              
             </Button>
           </motion.div>
         </DropdownMenuTrigger>
-        
-        <DropdownMenuContent 
-          align="end" 
+
+        <DropdownMenuContent
+          align="end"
           className="w-56 bg-black/90 backdrop-blur-xl border-white/20"
         >
           {/* Toggle AI Translation */}
@@ -92,21 +92,23 @@ const NavbarLanguageButton: React.FC = () => {
               <Check className="h-4 w-4 text-green-400" />
             )}
           </DropdownMenuItem>
-          
+
           <DropdownMenuSeparator className="bg-white/20" />
-          
+
           {/* Language Selection */}
           <div className="px-2 py-1">
-            <div className="text-xs text-gray-400 mb-2 font-medium">Langues</div>
+            <div className="text-xs text-gray-400 mb-2 font-medium">
+              Langues
+            </div>
             <div className="grid grid-cols-2 gap-1">
               {AVAILABLE_LANGUAGES.map((language) => (
                 <DropdownMenuItem
                   key={language.code}
                   onClick={() => handleLanguageSelect(language.code)}
                   className={`cursor-pointer hover:bg-white/10 rounded p-2 ${
-                    currentLanguage === language.code 
-                      ? 'bg-white/20 text-white' 
-                      : 'text-gray-300'
+                    currentLanguage === language.code
+                      ? "bg-white/20 text-white"
+                      : "text-gray-300"
                   }`}
                 >
                   <div className="flex items-center gap-2 w-full">
@@ -120,9 +122,9 @@ const NavbarLanguageButton: React.FC = () => {
               ))}
             </div>
           </div>
-          
+
           <DropdownMenuSeparator className="bg-white/20" />
-          
+
           {/* Settings */}
           <DropdownMenuItem
             onClick={() => setIsModalOpen(true)}

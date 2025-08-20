@@ -1,17 +1,21 @@
-import React from 'react';
+import React from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Settings, Globe, Loader2, Sparkles } from 'lucide-react';
-import { useTranslation, AVAILABLE_LANGUAGES, type Language } from '@/context/TranslationContext';
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Settings, Globe, Loader2, Sparkles } from "lucide-react";
+import {
+  useTranslation,
+  AVAILABLE_LANGUAGES,
+  type Language,
+} from "@/context/TranslationContext";
 
 interface LanguageSettingsModalProps {
   isOpen: boolean;
@@ -43,17 +47,21 @@ const LanguageSettingsModal: React.FC<LanguageSettingsModalProps> = ({
             Paramètres de traduction
           </DialogTitle>
           <DialogDescription>
-            Configurez la langue d'affichage et activez la traduction automatique avec IA.
+            Configurez la langue d'affichage et activez la traduction
+            automatique avec IA.
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-6 py-4">
           {/* Toggle de traduction IA */}
           <div className="flex items-center justify-between p-4 border rounded-lg bg-muted/50">
             <div className="space-y-1">
               <div className="flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" />
-                <Label htmlFor="translation-toggle" className="text-sm font-medium">
+                <Label
+                  htmlFor="translation-toggle"
+                  className="text-sm font-medium"
+                >
                   Traduction IA
                 </Label>
                 <Badge variant="secondary" className="text-xs">
@@ -61,7 +69,8 @@ const LanguageSettingsModal: React.FC<LanguageSettingsModalProps> = ({
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground">
-                Activez la traduction automatique de tous les textes avec OpenRouter AI
+                Activez la traduction automatique de tous les textes avec
+                OpenRouter AI
               </p>
             </div>
             <Switch
@@ -88,12 +97,14 @@ const LanguageSettingsModal: React.FC<LanguageSettingsModalProps> = ({
               <Globe className="h-4 w-4" />
               <Label className="text-sm font-medium">Langue d'affichage</Label>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-2">
               {AVAILABLE_LANGUAGES.map((language) => (
                 <Button
                   key={language.code}
-                  variant={currentLanguage === language.code ? "default" : "outline"}
+                  variant={
+                    currentLanguage === language.code ? "default" : "outline"
+                  }
                   className="h-auto p-3 justify-start"
                   onClick={() => handleLanguageSelect(language.code)}
                   disabled={isTranslating}
@@ -102,7 +113,9 @@ const LanguageSettingsModal: React.FC<LanguageSettingsModalProps> = ({
                     <span className="text-lg">{language.flag}</span>
                     <div className="text-left">
                       <div className="text-sm font-medium">{language.name}</div>
-                      <div className="text-xs opacity-60">{language.code.toUpperCase()}</div>
+                      <div className="text-xs opacity-60">
+                        {language.code.toUpperCase()}
+                      </div>
                     </div>
                   </div>
                 </Button>
@@ -117,8 +130,9 @@ const LanguageSettingsModal: React.FC<LanguageSettingsModalProps> = ({
               <span className="text-sm font-medium">Service de traduction</span>
             </div>
             <p className="text-xs text-muted-foreground">
-              Traduction hybride avec dictionnaire intégré et API LibreTranslate gratuite.
-              Les traductions sont mises en cache pour des performances optimales.
+              Traduction hybride avec dictionnaire intégré et API LibreTranslate
+              gratuite. Les traductions sont mises en cache pour des
+              performances optimales.
             </p>
           </div>
 
@@ -128,11 +142,13 @@ const LanguageSettingsModal: React.FC<LanguageSettingsModalProps> = ({
               <div className="text-lg font-bold text-primary">
                 {Object.keys(useTranslation().translations).length}
               </div>
-              <div className="text-xs text-muted-foreground">Textes traduits</div>
+              <div className="text-xs text-muted-foreground">
+                Textes traduits
+              </div>
             </div>
             <div className="text-center p-3 bg-muted/30 rounded-lg">
               <div className="text-lg font-bold text-green-500">
-                {currentLanguage === 'fr' ? 'Original' : 'Traduit'}
+                {currentLanguage === "fr" ? "Original" : "Traduit"}
               </div>
               <div className="text-xs text-muted-foreground">Mode actuel</div>
             </div>

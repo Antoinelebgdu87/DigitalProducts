@@ -36,9 +36,12 @@ export const useProductsWithFallback = () => {
     const initializeProducts = async () => {
       try {
         // D'abord essayer de charger depuis le fallback
-        const fallbackProducts = FirebaseFallback.getFromFallback('products');
+        const fallbackProducts = FirebaseFallback.getFromFallback("products");
         if (fallbackProducts && Array.isArray(fallbackProducts)) {
-          console.log("📦 Chargement des produits depuis le cache:", fallbackProducts.length);
+          console.log(
+            "📦 Chargement des produits depuis le cache:",
+            fallbackProducts.length,
+          );
           setProducts(fallbackProducts);
           setLoading(false);
         }
@@ -79,16 +82,22 @@ export const useProductsWithFallback = () => {
 
                 setProducts(productsData);
                 setConnectionError(null);
-                
+
                 // Sauvegarder en fallback
-                FirebaseFallback.saveToFallback('products', productsData);
-                
-                console.log("📦 Produits chargés depuis Firebase:", productsData.length);
+                FirebaseFallback.saveToFallback("products", productsData);
+
+                console.log(
+                  "📦 Produits chargés depuis Firebase:",
+                  productsData.length,
+                );
               } catch (error) {
-                console.error("❌ Erreur lors du traitement des produits:", error);
+                console.error(
+                  "❌ Erreur lors du traitement des produits:",
+                  error,
+                );
                 // En cas d'erreur, garder les données de fallback si disponibles
                 if (!fallbackProducts) {
-                  setProducts(FirebaseFallback.getDefaultData('products'));
+                  setProducts(FirebaseFallback.getDefaultData("products"));
                 }
               } finally {
                 setLoading(false);
@@ -97,10 +106,11 @@ export const useProductsWithFallback = () => {
             (error) => {
               console.error("❌ Erreur lors de l'écoute des produits:", error);
               setConnectionError("Connexion Firebase interrompue");
-              
+
               // Utiliser les données de fallback ou par défaut
-              const fallbackData = FirebaseFallback.getFromFallback('products') || 
-                                  FirebaseFallback.getDefaultData('products');
+              const fallbackData =
+                FirebaseFallback.getFromFallback("products") ||
+                FirebaseFallback.getDefaultData("products");
               setProducts(fallbackData);
               setLoading(false);
             },
@@ -109,14 +119,14 @@ export const useProductsWithFallback = () => {
 
         // Essayer Firebase avec retry
         await FirebaseService.withRetry(loadFromFirebase);
-
       } catch (error) {
         console.error("❌ Erreur d'initialisation Firebase:", error);
         setConnectionError("Impossible de se connecter à Firebase");
-        
+
         // Utiliser les données de fallback ou par défaut
-        const fallbackData = FirebaseFallback.getFromFallback('products') || 
-                            FirebaseFallback.getDefaultData('products');
+        const fallbackData =
+          FirebaseFallback.getFromFallback("products") ||
+          FirebaseFallback.getDefaultData("products");
         setProducts(fallbackData);
         setLoading(false);
       }
@@ -138,23 +148,27 @@ export const useProductsWithFallback = () => {
     return FirebaseService.safeGet(
       async () => {
         console.log("➕ Ajout d'un nouveau produit:", productData.title);
-        
+
         const docRef = await addDoc(collection(db, "products"), {
           ...productData,
           createdAt: Timestamp.now(),
         });
-        
+
         console.log("✅ Produit ajouté avec ID:", docRef.id);
       },
-      'add_product_operation',
-      undefined
+      "add_product_operation",
+      undefined,
     );
   };
 
   const deleteProduct = async (productId: string): Promise<void> => {
     return FirebaseService.safeGet(
       async () => {
-        if (!productId || typeof productId !== "string" || productId.trim() === "") {
+        if (
+          !productId ||
+          typeof productId !== "string" ||
+          productId.trim() === ""
+        ) {
           throw new Error(`ID de produit invalide: "${productId}"`);
         }
 
@@ -163,7 +177,9 @@ export const useProductsWithFallback = () => {
           throw new Error(`Produit avec l'ID "${productId}" non trouvé`);
         }
 
-        console.log(`🗑️ Suppression du produit: "${productToDelete.title}" (ID: ${productId})`);
+        console.log(
+          `🗑️ Suppression du produit: "${productToDelete.title}" (ID: ${productId})`,
+        );
 
         const docRef = doc(db, "products", productId);
         const docSnap = await getDoc(docRef);
@@ -173,10 +189,12 @@ export const useProductsWithFallback = () => {
         }
 
         await deleteDoc(docRef);
-        console.log(`✅ Produit "${productToDelete.title}" supprimé avec succès`);
+        console.log(
+          `✅ Produit "${productToDelete.title}" supprimé avec succès`,
+        );
       },
-      'delete_product_operation',
-      undefined
+      "delete_product_operation",
+      undefined,
     );
   };
 
@@ -187,14 +205,14 @@ export const useProductsWithFallback = () => {
     return FirebaseService.safeGet(
       async () => {
         console.log("📝 Mise à jour du produit:", productId);
-        
+
         const docRef = doc(db, "products", productId);
         await updateDoc(docRef, productData);
-        
+
         console.log("✅ Produit mis à jour avec succès:", productId);
       },
-      'update_product_operation',
-      undefined
+      "update_product_operation",
+      undefined,
     );
   };
 
@@ -202,12 +220,12 @@ export const useProductsWithFallback = () => {
     return FirebaseService.safeGet(
       async () => {
         console.log("🔄 Rechargement des produits depuis Firebase...");
-        
+
         const productsQuery = query(
           collection(db, "products"),
           orderBy("createdAt", "desc"),
         );
-        
+
         const snapshot = await getDocs(productsQuery);
         const productsData = snapshot.docs.map((doc) => {
           const data = doc.data();
@@ -217,13 +235,13 @@ export const useProductsWithFallback = () => {
             createdAt: data.createdAt || Timestamp.now(),
           } as Product;
         });
-        
+
         setProducts(productsData);
-        FirebaseFallback.saveToFallback('products', productsData);
+        FirebaseFallback.saveToFallback("products", productsData);
         console.log("✅ Produits rechargés:", productsData.length);
       },
-      'refetch_products',
-      undefined
+      "refetch_products",
+      undefined,
     );
   };
 
