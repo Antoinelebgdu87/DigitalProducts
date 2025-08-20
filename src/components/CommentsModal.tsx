@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Dialog,
   DialogContent,
@@ -206,9 +207,15 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex items-start space-x-3 flex-1">
-                          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center flex-shrink-0">
-                            {getRoleIcon(comment.userRole || "user")}
-                          </div>
+                          <Avatar className="w-8 h-8 flex-shrink-0 ring-2 ring-gray-600">
+                            <AvatarImage
+                              src={comment.avatarUrl}
+                              alt={comment.username || "Utilisateur"}
+                            />
+                            <AvatarFallback className="bg-gradient-to-r from-blue-500 to-purple-600 text-white text-sm">
+                              {getRoleIcon(comment.userRole || "user")}
+                            </AvatarFallback>
+                          </Avatar>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center space-x-2 mb-1">
                               <span className="text-white font-medium text-sm">
