@@ -41,6 +41,9 @@ const AppContent = () => {
       useMaintenance();
     const { isAuthenticated } = useAuth();
 
+    // Activer la traduction automatique
+    useAutoTranslate();
+
     // Show Firebase status
     React.useEffect(() => {
       console.log(
