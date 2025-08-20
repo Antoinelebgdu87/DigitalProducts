@@ -50,17 +50,22 @@ const SettingsButton: React.FC<SettingsButtonProps> = ({
     <>
       <Button
         onClick={() => setIsSettingsOpen(true)}
-        variant="outline"
+        variant="ghost"
         size="sm"
-        className={cn("flex items-center space-x-2", className)}
+        className={cn(
+          "flex items-center space-x-1 text-gray-300 hover:text-white",
+          "hover:bg-white/10 transition-all duration-200",
+          "border border-gray-600 hover:border-gray-400",
+          className
+        )}
       >
         <Settings className="w-4 h-4" />
-        <span>{t("nav.settings")}</span>
+        <span className="text-xs">{t("nav.settings")}</span>
       </Button>
 
-      <SettingsModal 
-        isOpen={isSettingsOpen} 
-        onClose={() => setIsSettingsOpen(false)} 
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
       />
     </>
   );
