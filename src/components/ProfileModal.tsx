@@ -86,7 +86,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
     }
 
     setImageFile(file);
-    
+
     // Create preview URL
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
@@ -99,7 +99,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
+      reader.onerror = (error) => reject(error);
     });
   };
 
@@ -197,15 +197,15 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
           <div className="flex justify-center">
             <div className="relative">
               <Avatar className="w-32 h-32 border-4 border-purple-500/30 shadow-2xl shadow-purple-500/20">
-                <AvatarImage 
-                  src={getDisplayAvatarUrl()} 
+                <AvatarImage
+                  src={getDisplayAvatarUrl()}
                   alt={currentUser?.username || "Avatar"}
                 />
                 <AvatarFallback className="bg-gradient-to-br from-purple-600 to-blue-600 text-white text-3xl">
                   {currentUser?.username?.charAt(0).toUpperCase() || "U"}
                 </AvatarFallback>
               </Avatar>
-              
+
               {(currentUser?.avatarUrl || getDisplayAvatarUrl()) && (
                 <Button
                   variant="destructive"
@@ -221,17 +221,21 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
           </div>
 
           {/* Upload Options */}
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="w-full"
+          >
             <TabsList className="grid w-full grid-cols-2 bg-gray-900/80 border border-gray-700">
-              <TabsTrigger 
-                value="file" 
+              <TabsTrigger
+                value="file"
                 className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
               >
                 <Upload className="w-4 h-4 mr-2" />
                 Upload
               </TabsTrigger>
-              <TabsTrigger 
-                value="url" 
+              <TabsTrigger
+                value="url"
                 className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
               >
                 <Link className="w-4 h-4 mr-2" />
@@ -244,15 +248,16 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
               <div
                 className={`
                   relative border-2 border-dashed rounded-xl p-8 transition-all duration-300 cursor-pointer
-                  ${isDragOver 
-                    ? 'border-purple-400 bg-purple-500/10' 
-                    : 'border-gray-600 bg-gray-900/50 hover:border-purple-500 hover:bg-gray-900/80'
+                  ${
+                    isDragOver
+                      ? "border-purple-400 bg-purple-500/10"
+                      : "border-gray-600 bg-gray-900/50 hover:border-purple-500 hover:bg-gray-900/80"
                   }
                 `}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                onClick={() => document.getElementById('file-input')?.click()}
+                onClick={() => document.getElementById("file-input")?.click()}
               >
                 <input
                   id="file-input"
@@ -261,7 +266,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                   onChange={handleFileChange}
                   className="hidden"
                 />
-                
+
                 <div className="text-center space-y-4">
                   <div className="mx-auto w-16 h-16 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
                     {imageFile ? (
@@ -270,27 +275,26 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                       <Plus className="w-8 h-8 text-white" />
                     )}
                   </div>
-                  
+
                   <div>
                     <p className="text-white font-medium">
                       {imageFile ? imageFile.name : "Choose an image"}
                     </p>
                     <p className="text-gray-400 text-sm mt-1">
-                      {imageFile 
+                      {imageFile
                         ? `${(imageFile.size / 1024 / 1024).toFixed(2)} MB`
-                        : "Drag & drop or click to browse"
-                      }
+                        : "Drag & drop or click to browse"}
                     </p>
                   </div>
-                  
+
                   <div className="flex justify-center">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       className="border-purple-500 text-purple-400 hover:bg-purple-500 hover:text-white"
                       onClick={(e) => {
                         e.stopPropagation();
-                        document.getElementById('file-input')?.click();
+                        document.getElementById("file-input")?.click();
                       }}
                     >
                       <Upload className="w-4 h-4 mr-2" />
@@ -299,7 +303,7 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="text-center">
                 <p className="text-gray-500 text-xs">
                   Supported formats: JPG, PNG, GIF • Max size: 5MB
@@ -311,7 +315,10 @@ const ProfileModal: React.FC<ProfileModalProps> = ({ isOpen, onClose }) => {
               <Card className="border-gray-700 bg-gray-900/50 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <div className="space-y-4">
-                    <Label htmlFor="avatarUrl" className="text-white text-sm flex items-center space-x-2">
+                    <Label
+                      htmlFor="avatarUrl"
+                      className="text-white text-sm flex items-center space-x-2"
+                    >
                       <Link className="w-4 h-4 text-purple-400" />
                       <span>Image URL</span>
                     </Label>

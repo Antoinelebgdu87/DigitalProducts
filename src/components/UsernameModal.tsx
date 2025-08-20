@@ -13,7 +13,17 @@ import { Label } from "@/components/ui/label";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { RefreshCw, User, Camera, Upload, Link, SkipForward, UserPlus, Plus, FileImage } from "lucide-react";
+import {
+  RefreshCw,
+  User,
+  Camera,
+  Upload,
+  Link,
+  SkipForward,
+  UserPlus,
+  Plus,
+  FileImage,
+} from "lucide-react";
 import { useUser } from "@/context/UserContext";
 import { toast } from "sonner";
 
@@ -82,7 +92,7 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
       reader.onload = () => resolve(reader.result as string);
-      reader.onerror = error => reject(error);
+      reader.onerror = (error) => reject(error);
     });
   };
 
@@ -101,12 +111,15 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
     try {
       // First create the user
       const user = await createUsername(username.trim());
-      
+
       // Then update avatar if provided
-      if ((activeTab === "url" && avatarUrl.trim()) || (activeTab === "file" && imageFile)) {
+      if (
+        (activeTab === "url" && avatarUrl.trim()) ||
+        (activeTab === "file" && imageFile)
+      ) {
         const { updateDoc, doc } = await import("firebase/firestore");
         const { db } = await import("@/lib/firebase");
-        
+
         let finalAvatarUrl = "";
         if (activeTab === "file" && imageFile) {
           finalAvatarUrl = await fileToBase64(imageFile);
@@ -120,14 +133,14 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
             return;
           }
         }
-        
+
         if (finalAvatarUrl) {
           await updateDoc(doc(db, "users", user.id), {
             avatarUrl: finalAvatarUrl,
           });
         }
       }
-      
+
       localStorage.setItem("hasCreatedUser", "true");
       toast.success(`Welcome, ${username}!`);
       onClose();
@@ -198,16 +211,19 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
       >
         <DialogHeader className="text-center">
           <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
-            {step === 1 ? <User className="w-8 h-8 text-white" /> : <Camera className="w-8 h-8 text-white" />}
+            {step === 1 ? (
+              <User className="w-8 h-8 text-white" />
+            ) : (
+              <Camera className="w-8 h-8 text-white" />
+            )}
           </div>
           <DialogTitle className="text-xl font-semibold text-white">
             {step === 1 ? "Welcome!" : "Profile Picture"}
           </DialogTitle>
           <DialogDescription className="text-gray-300">
-            {step === 1 
+            {step === 1
               ? "Create your username to access the platform"
-              : "Add a profile picture (optional)"
-            }
+              : "Add a profile picture (optional)"}
           </DialogDescription>
         </DialogHeader>
 
@@ -254,10 +270,7 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
             {/* Avatar Preview */}
             <div className="flex justify-center">
               <Avatar className="w-24 h-24 border-4 border-purple-500/30">
-                <AvatarImage 
-                  src={getDisplayAvatarUrl()} 
-                  alt={username}
-                />
+                <AvatarImage src={getDisplayAvatarUrl()} alt={username} />
                 <AvatarFallback className="bg-gradient-to-br from-purple-600 to-blue-600 text-white text-2xl">
                   {username.charAt(0).toUpperCase()}
                 </AvatarFallback>
@@ -265,13 +278,23 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
             </div>
 
             {/* Upload Options */}
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs
+              value={activeTab}
+              onValueChange={setActiveTab}
+              className="w-full"
+            >
               <TabsList className="grid w-full grid-cols-2 bg-gray-900/80 border border-gray-700">
-                <TabsTrigger value="file" className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                <TabsTrigger
+                  value="file"
+                  className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+                >
                   <Upload className="w-4 h-4 mr-2" />
                   Upload
                 </TabsTrigger>
-                <TabsTrigger value="url" className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white">
+                <TabsTrigger
+                  value="url"
+                  className="text-gray-300 data-[state=active]:bg-purple-600 data-[state=active]:text-white"
+                >
                   <Link className="w-4 h-4 mr-2" />
                   URL
                 </TabsTrigger>
@@ -282,15 +305,16 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
                 <div
                   className={`
                     relative border-2 border-dashed rounded-xl p-6 transition-all duration-300 cursor-pointer
-                    ${isDragOver 
-                      ? 'border-purple-400 bg-purple-500/10' 
-                      : 'border-gray-600 bg-gray-900/50 hover:border-purple-500 hover:bg-gray-900/80'
+                    ${
+                      isDragOver
+                        ? "border-purple-400 bg-purple-500/10"
+                        : "border-gray-600 bg-gray-900/50 hover:border-purple-500 hover:bg-gray-900/80"
                     }
                   `}
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
-                  onClick={() => document.getElementById('file-input')?.click()}
+                  onClick={() => document.getElementById("file-input")?.click()}
                 >
                   <input
                     id="file-input"
@@ -299,7 +323,7 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
                     onChange={handleFileChange}
                     className="hidden"
                   />
-                  
+
                   <div className="text-center space-y-3">
                     <div className="mx-auto w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
                       {imageFile ? (
@@ -308,16 +332,15 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
                         <Plus className="w-6 h-6 text-white" />
                       )}
                     </div>
-                    
+
                     <div>
                       <p className="text-white text-sm font-medium">
                         {imageFile ? imageFile.name : "Choose an image"}
                       </p>
                       <p className="text-gray-400 text-xs mt-1">
-                        {imageFile 
+                        {imageFile
                           ? `${(imageFile.size / 1024 / 1024).toFixed(2)} MB`
-                          : "Drag & drop or click to browse"
-                        }
+                          : "Drag & drop or click to browse"}
                       </p>
                     </div>
                   </div>
@@ -331,7 +354,10 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
                 <Card className="border-gray-700 bg-gray-900/50 backdrop-blur-sm">
                   <CardContent className="p-4">
                     <div className="space-y-3">
-                      <Label htmlFor="avatarUrl" className="text-white text-sm flex items-center space-x-2">
+                      <Label
+                        htmlFor="avatarUrl"
+                        className="text-white text-sm flex items-center space-x-2"
+                      >
                         <Link className="w-4 h-4 text-purple-400" />
                         <span>Image URL</span>
                       </Label>
@@ -406,10 +432,9 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
             </div>
           )}
           <div className="text-xs text-gray-500 text-center">
-            {step === 1 
+            {step === 1
               ? "Your username will be visible to other users"
-              : "You can change your picture later"
-            }
+              : "You can change your picture later"}
           </div>
         </DialogFooter>
       </DialogContent>

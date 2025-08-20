@@ -185,7 +185,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
             </div>
           </DialogTitle>
           <DialogDescription className="text-purple-400 font-medium">
-            {comments.length} comment{comments.length !== 1 ? 's' : ''}
+            {comments.length} comment{comments.length !== 1 ? "s" : ""}
           </DialogDescription>
         </DialogHeader>
 
@@ -197,7 +197,9 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                 <div className="flex items-center justify-center py-12">
                   <div className="text-center space-y-3">
                     <Loader2 className="w-8 h-8 animate-spin text-purple-400 mx-auto" />
-                    <span className="text-gray-300 text-sm">Loading comments...</span>
+                    <span className="text-gray-300 text-sm">
+                      Loading comments...
+                    </span>
                   </div>
                 </div>
               ) : comments.length === 0 ? (
@@ -207,7 +209,9 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                   </div>
                   <div>
                     <p className="text-gray-300 font-medium">No comments yet</p>
-                    <p className="text-gray-500 text-sm mt-1">Be the first to share your thoughts!</p>
+                    <p className="text-gray-500 text-sm mt-1">
+                      Be the first to share your thoughts!
+                    </p>
                   </div>
                 </div>
               ) : (
@@ -227,8 +231,11 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                                 alt={comment.username || "User"}
                                 className="object-cover"
                               />
-                              <AvatarFallback className={`${getAvatarFallbackColors(comment.userRole)} text-white font-medium`}>
-                                {comment.username?.charAt(0).toUpperCase() || "U"}
+                              <AvatarFallback
+                                className={`${getAvatarFallbackColors(comment.userRole)} text-white font-medium`}
+                              >
+                                {comment.username?.charAt(0).toUpperCase() ||
+                                  "U"}
                               </AvatarFallback>
                             </Avatar>
                             {/* Role indicator */}
@@ -236,7 +243,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                               {getRoleIcon(comment.userRole || "user")}
                             </div>
                           </div>
-                          
+
                           {/* Comment Content */}
                           <div className="flex-1 min-w-0 space-y-2">
                             {/* Header */}
@@ -254,14 +261,14 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                                 {formatDate(comment.createdAt)}
                               </span>
                             </div>
-                            
+
                             {/* Comment text */}
                             <p className="text-gray-200 text-sm leading-relaxed break-words">
                               {comment.content || "Content unavailable"}
                             </p>
                           </div>
                         </div>
-                        
+
                         {/* Delete button */}
                         {canDeleteComment(comment) && (
                           <Button
@@ -295,14 +302,19 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                         alt={currentUser.username}
                         className="object-cover"
                       />
-                      <AvatarFallback className={`${getAvatarFallbackColors(currentUser.role)} text-white font-medium`}>
+                      <AvatarFallback
+                        className={`${getAvatarFallbackColors(currentUser.role)} text-white font-medium`}
+                      >
                         {currentUser.username?.charAt(0).toUpperCase() || "U"}
                       </AvatarFallback>
                     </Avatar>
-                    
+
                     {/* Comment input */}
                     <div className="flex-1 space-y-3">
-                      <Label htmlFor="newComment" className="text-white text-sm font-medium">
+                      <Label
+                        htmlFor="newComment"
+                        className="text-white text-sm font-medium"
+                      >
                         Add a comment
                       </Label>
                       <Textarea
@@ -314,7 +326,7 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                         rows={3}
                         maxLength={500}
                       />
-                      
+
                       {/* Footer */}
                       <div className="flex items-center justify-between">
                         <span className="text-gray-500 text-xs">
@@ -344,7 +356,9 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
               <CardContent className="p-5">
                 <div className="text-center space-y-2">
                   <UserCircle className="w-8 h-8 text-gray-400 mx-auto" />
-                  <p className="text-gray-300 font-medium">Sign in to comment</p>
+                  <p className="text-gray-300 font-medium">
+                    Sign in to comment
+                  </p>
                   <p className="text-gray-500 text-sm">
                     You need to be logged in to share your thoughts
                   </p>
