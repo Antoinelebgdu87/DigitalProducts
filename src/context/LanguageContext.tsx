@@ -78,6 +78,106 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "role.partner": "Partenaire",
     "role.shop_access": "Boutique",
     "role.user": "Utilisateur",
+
+    // Buttons & Actions
+    "btn.join_discord": "Rejoindre Discord",
+    "btn.learn_more": "En savoir plus",
+    "btn.explore_products": "Explorer les produits",
+    "btn.preview": "Aperçu",
+    "btn.download": "Télécharger",
+    "btn.buy": "Acheter",
+    "btn.view_details": "Voir les détails",
+    "btn.back": "Retour",
+    "btn.next": "Suivant",
+    "btn.submit": "Envoyer",
+    "btn.send": "Envoyer",
+    "btn.refresh": "Actualiser",
+    "btn.retry": "Réessayer",
+
+    // Product & Shop
+    "product.price": "Prix",
+    "product.free": "Gratuit",
+    "product.featured": "En vedette",
+    "product.new": "Nouveau",
+    "product.popular": "Populaire",
+    "product.category": "Catégorie",
+    "product.description": "Description",
+    "product.specifications": "Spécifications",
+    "product.requirements": "Exigences",
+    "product.includes": "Inclus",
+    "product.license": "Licence",
+    "product.support": "Support",
+    "product.instant_download": "Téléchargement instantané",
+    "product.no_account_required": "Aucun compte requis",
+
+    // Comments & Social
+    "comments.title": "Commentaires",
+    "comments.add": "Ajouter un commentaire",
+    "comments.placeholder": "Écrivez votre commentaire...",
+    "comments.submit": "Publier",
+    "comments.loading": "Chargement des commentaires...",
+    "comments.empty": "Aucun commentaire pour le moment",
+    "comments.error": "Erreur lors du chargement",
+    "comments.anonymous": "Anonyme",
+    "comments.reply": "Répondre",
+    "comments.like": "J'aime",
+    "comments.report": "Signaler",
+    "comments.edit": "Modifier",
+    "comments.delete": "Supprimer",
+
+    // Modals
+    "modal.username.title": "Choisir un nom d'utilisateur",
+    "modal.username.placeholder": "Entrez votre nom d'utilisateur",
+    "modal.username.create": "Créer",
+    "modal.ban.title": "Compte suspendu",
+    "modal.warning.title": "Avertissement",
+    "modal.tos.title": "Conditions d'utilisation",
+    "modal.tos.accept": "Accepter",
+    "modal.tos.decline": "Refuser",
+
+    // Navigation & Menu
+    "nav.products": "Produits",
+    "nav.categories": "Catégories",
+    "nav.support": "Support",
+    "nav.about": "À propos",
+    "nav.contact": "Contact",
+    "nav.terms": "Conditions",
+    "nav.privacy": "Confidentialité",
+    "nav.faq": "FAQ",
+
+    // Status & Messages
+    "status.online": "En ligne",
+    "status.offline": "Hors ligne",
+    "status.maintenance": "Maintenance",
+    "status.coming_soon": "Bientôt disponible",
+    "msg.welcome": "Bienvenue",
+    "msg.goodbye": "Au revoir",
+    "msg.thank_you": "Merci",
+    "msg.please_wait": "Veuillez patienter",
+    "msg.something_wrong": "Quelque chose s'est mal passé",
+    "msg.try_again": "Réessayez",
+    "msg.contact_support": "Contactez le support",
+
+    // Time & Dates
+    "time.now": "Maintenant",
+    "time.today": "Aujourd'hui",
+    "time.yesterday": "Hier",
+    "time.week_ago": "Il y a une semaine",
+    "time.month_ago": "Il y a un mois",
+    "time.year_ago": "Il y a un an",
+    "time.minutes": "minutes",
+    "time.hours": "heures",
+    "time.days": "jours",
+
+    // Features & Benefits
+    "feature.instant_access": "Accès instantané",
+    "feature.no_drm": "Sans DRM",
+    "feature.lifetime_updates": "Mises à jour à vie",
+    "feature.customer_support": "Support client",
+    "feature.money_back": "Garantie de remboursement",
+    "feature.secure_payment": "Paiement sécurisé",
+    "feature.fast_download": "Téléchargement rapide",
+    "feature.high_quality": "Haute qualité",
   },
   en: {
     // Navigation & UI
@@ -166,7 +266,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "auth.connecting": "Conectando...",
     
     // Settings
-    "settings.title": "Configura��ões",
+    "settings.title": "Configurações",
     "settings.theme": "Tema",
     "settings.language": "Idioma",
     "settings.save": "Salvar",
@@ -244,7 +344,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "theme.purple": "紫",
     "theme.green": "緑",
     "theme.red": "赤",
-    "theme.orange": "オ���ンジ",
+    "theme.orange": "オレンジ",
     
     // Common
     "common.close": "閉じる",
@@ -453,7 +553,7 @@ const translations: Record<SupportedLanguage, Record<string, string>> = {
     "settings.language": "语言",
     "settings.save": "保存",
     "settings.cancel": "取消",
-    "settings.reset": "重���",
+    "settings.reset": "重置",
     
     // Themes
     "theme.system": "系统",
