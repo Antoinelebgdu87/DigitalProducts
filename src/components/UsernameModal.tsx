@@ -333,7 +333,7 @@ const UsernameModal: React.FC<UsernameModalProps> = ({ isOpen, onClose }) => {
                 disabled={isLoading}
                 className="flex-1 border-gray-700 text-gray-300"
               >
-                <Skip className="w-4 h-4 mr-2" />
+                <SkipForward className="w-4 h-4 mr-2" />
                 Ignorer
               </Button>
               <Button
