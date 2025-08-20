@@ -53,7 +53,9 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
     useComments(productId);
 
   // State for real-time user avatar
-  const [userAvatar, setUserAvatar] = React.useState(currentUser?.avatarUrl || "");
+  const [userAvatar, setUserAvatar] = React.useState(
+    currentUser?.avatarUrl || "",
+  );
 
   // Listen for real-time user avatar updates
   React.useEffect(() => {
@@ -65,12 +67,15 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUserAvatar(userData.avatarUrl || "");
-          console.log("🔄 User avatar updated in real-time:", userData.avatarUrl);
+          console.log(
+            "🔄 User avatar updated in real-time:",
+            userData.avatarUrl,
+          );
         }
       },
       (error) => {
         console.error("❌ Error listening to user avatar:", error);
-      }
+      },
     );
 
     return () => unsubscribe();
@@ -83,18 +88,21 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
       username: currentUser?.username,
       avatarUrl: currentUser?.avatarUrl,
       realTimeAvatar: userAvatar,
-      hasAvatar: !!userAvatar
+      hasAvatar: !!userAvatar,
     });
   }, [currentUser, userAvatar]);
 
   // Debug comments data
   React.useEffect(() => {
-    console.log("📋 Comments in modal:", comments.map(c => ({
-      id: c.id,
-      username: c.username,
-      avatarUrl: c.avatarUrl,
-      hasAvatar: !!c.avatarUrl
-    })));
+    console.log(
+      "📋 Comments in modal:",
+      comments.map((c) => ({
+        id: c.id,
+        username: c.username,
+        avatarUrl: c.avatarUrl,
+        hasAvatar: !!c.avatarUrl,
+      })),
+    );
   }, [comments]);
 
   const [newComment, setNewComment] = useState("");
@@ -120,7 +128,9 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
       console.log("💾 Adding comment with real-time avatar:", commentData);
 
       // Add comment directly with Firebase
-      const { addDoc, collection, Timestamp } = await import("firebase/firestore");
+      const { addDoc, collection, Timestamp } = await import(
+        "firebase/firestore"
+      );
       await addDoc(collection(db, "comments"), {
         ...commentData,
         createdAt: Timestamp.now(),
@@ -277,12 +287,16 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
             )}
           </div>
           <DialogDescription className="text-purple-400 font-medium flex items-center space-x-4">
-            <span>{comments.length} comment{comments.length !== 1 ? "s" : ""}</span>
+            <span>
+              {comments.length} comment{comments.length !== 1 ? "s" : ""}
+            </span>
             <span className="text-xs text-gray-500">
-              {comments.filter(c => c.avatarUrl).length} with avatars
+              {comments.filter((c) => c.avatarUrl).length} with avatars
             </span>
             {userAvatar && (
-              <span className="text-xs text-green-400">✓ Your avatar ready</span>
+              <span className="text-xs text-green-400">
+                ✓ Your avatar ready
+              </span>
             )}
           </DialogDescription>
         </DialogHeader>
@@ -330,16 +344,23 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                                   alt={comment.username || "User"}
                                   className="object-cover"
                                   onError={(e) => {
-                                    console.log(`❌ Failed to load avatar for ${comment.username}:`, comment.avatarUrl);
+                                    console.log(
+                                      `❌ Failed to load avatar for ${comment.username}:`,
+                                      comment.avatarUrl,
+                                    );
                                   }}
                                   onLoad={() => {
-                                    console.log(`✅ Avatar loaded for ${comment.username}:`, comment.avatarUrl);
+                                    console.log(
+                                      `✅ Avatar loaded for ${comment.username}:`,
+                                      comment.avatarUrl,
+                                    );
                                   }}
                                 />
                                 <AvatarFallback
                                   className={`${getAvatarFallbackColors(comment.userRole)} text-white font-semibold text-sm`}
                                 >
-                                  {comment.username?.charAt(0).toUpperCase() || "U"}
+                                  {comment.username?.charAt(0).toUpperCase() ||
+                                    "U"}
                                 </AvatarFallback>
                               </Avatar>
                             </div>
@@ -411,14 +432,23 @@ const CommentsModal: React.FC<CommentsModalProps> = ({
                             alt={currentUser.username}
                             className="object-cover"
                             onError={() => {
-                              console.log(`❌ Failed to load current user avatar:`, userAvatar);
+                              console.log(
+                                `❌ Failed to load current user avatar:`,
+                                userAvatar,
+                              );
                             }}
                             onLoad={() => {
-                              console.log(`✅ Current user avatar loaded:`, userAvatar);
+                              console.log(
+                                `✅ Current user avatar loaded:`,
+                                userAvatar,
+                              );
                             }}
                           />
-                          <AvatarFallback className={`${getAvatarFallbackColors(currentUser.role)} text-white font-semibold text-sm`}>
-                            {currentUser.username?.charAt(0).toUpperCase() || "U"}
+                          <AvatarFallback
+                            className={`${getAvatarFallbackColors(currentUser.role)} text-white font-semibold text-sm`}
+                          >
+                            {currentUser.username?.charAt(0).toUpperCase() ||
+                              "U"}
                           </AvatarFallback>
                         </Avatar>
                       </div>

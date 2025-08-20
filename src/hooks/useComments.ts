@@ -25,7 +25,7 @@ export const useComments = (productId?: string) => {
       id: commentData.id,
       username: commentData.username,
       avatarUrl: commentData.avatarUrl,
-      hasAvatar: !!commentData.avatarUrl
+      hasAvatar: !!commentData.avatarUrl,
     });
 
     return {
@@ -194,7 +194,7 @@ export const useComments = (productId?: string) => {
         role: currentUser.role,
         avatarUrl: currentUser.avatarUrl,
         hasAvatar: !!currentUser.avatarUrl,
-        avatarUrlLength: currentUser.avatarUrl?.length || 0
+        avatarUrlLength: currentUser.avatarUrl?.length || 0,
       });
 
       const commentData = {
