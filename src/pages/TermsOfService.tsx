@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { FileText, ArrowLeft, Languages } from "lucide-react";
+import { FileText, ArrowLeft, Languages, Shield, AlertTriangle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const TermsOfService = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const TermsOfService = () => {
   const content = {
     en: {
       title: "Terms of Service",
+      subtitle: "Legal Agreement & Usage Guidelines",
       lastUpdated: "Effective Date:",
       toggleBtn: "Français",
       backBtn: "Back to Home",
@@ -118,6 +120,7 @@ const TermsOfService = () => {
     },
     fr: {
       title: "Conditions d'Utilisation",
+      subtitle: "Accord Légal et Directives d'Usage",
       lastUpdated: "Date d'entrée en vigueur :",
       toggleBtn: "English",
       backBtn: "Retour à l'accueil",
@@ -230,220 +233,248 @@ const TermsOfService = () => {
     return contentArray.map((item, index) => {
       if (Array.isArray(item)) {
         return (
-          <ul key={index} className="list-disc pl-6 space-y-1">
+          <ul key={index} className="list-disc pl-6 space-y-2">
             {item.map((listItem, listIndex) => (
-              <li key={listIndex}>{listItem}</li>
+              <li key={listIndex} className="text-gray-300">{listItem}</li>
             ))}
           </ul>
         );
       }
-      return <p key={index}>{item}</p>;
+      return <p key={index} className="text-gray-300 leading-relaxed">{item}</p>;
     });
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        delayChildren: 0.1,
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        duration: 0.6,
+      },
+    },
+  };
+
   return (
-    <div className="min-h-screen bg-black">
-      <div className="container mx-auto px-6 py-12 max-w-4xl">
+    <div className="min-h-screen bg-black relative overflow-hidden">
+      {/* Background gradient matching site style */}
+      <div className="fixed inset-0 bg-gradient-to-br from-gray-900/50 via-black to-gray-900/30" />
+      
+      {/* Background pattern */}
+      <div className="fixed inset-0 opacity-20" 
+           style={{
+             backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255,255,255,0.1) 1px, transparent 0)',
+             backgroundSize: '40px 40px'
+           }} 
+      />
+      
+      <div className="relative z-10 container mx-auto px-6 py-8 max-w-6xl">
         {/* Header */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <Button
-              variant="ghost"
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="mb-12"
+        >
+          <div className="flex items-center justify-between mb-8">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/')}
-              className="text-gray-400 hover:text-white"
+              className="group flex items-center gap-3 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/20 rounded-2xl backdrop-blur-xl transition-all duration-300"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {currentContent.backBtn}
-            </Button>
+              <ArrowLeft className="h-4 w-4 text-gray-400 group-hover:text-white transition-colors" />
+              <span className="text-gray-400 group-hover:text-white transition-colors">{currentContent.backBtn}</span>
+            </motion.button>
             
-            <Button
-              variant="outline"
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setLanguage(language === 'en' ? 'fr' : 'en')}
-              className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
+              className="group flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-white/10 to-white/5 hover:from-white/20 hover:to-white/10 border border-white/20 rounded-2xl backdrop-blur-xl transition-all duration-300"
             >
-              <Languages className="h-4 w-4 mr-2" />
-              {currentContent.toggleBtn}
-            </Button>
+              <Languages className="h-5 w-5 text-red-400" />
+              <span className="text-white font-medium">{currentContent.toggleBtn}</span>
+            </motion.button>
           </div>
           
-          <div className="flex items-center gap-3 mb-6">
-            <FileText className="h-8 w-8 text-white" />
-            <h1 className="text-4xl font-bold text-white">
-              {currentContent.title}
-            </h1>
+          <div className="text-center">
+            <motion.div 
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="flex items-center justify-center gap-4 mb-6"
+            >
+              <div className="p-3 bg-gradient-to-r from-red-500/20 to-red-600/20 rounded-2xl border border-red-500/30">
+                <FileText className="h-10 w-10 text-red-400" />
+              </div>
+              <div className="text-left">
+                <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-white via-red-200 to-red-400 bg-clip-text text-transparent">
+                  {currentContent.title}
+                </h1>
+                <p className="text-xl text-gray-400 mt-2">{currentContent.subtitle}</p>
+              </div>
+            </motion.div>
+            
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.4 }}
+              className="text-gray-500 text-lg flex items-center justify-center gap-2"
+            >
+              <AlertTriangle className="h-4 w-4" />
+              {currentContent.lastUpdated} {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+              })}
+            </motion.p>
           </div>
-          <p className="text-gray-400 text-lg">
-            {currentContent.lastUpdated} {new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US', { 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}
-          </p>
-        </div>
+        </motion.div>
 
-        <div className="space-y-8">
+        <motion.div 
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="space-y-8"
+        >
           {/* Agreement */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.agreement.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              {renderContent(currentContent.sections.agreement.content)}
-            </CardContent>
-          </Card>
+          <motion.div variants={itemVariants}>
+            <Card className="group relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl hover:shadow-red-500/10 transition-all duration-500">
+              <div className="absolute -inset-1 bg-gradient-to-r from-red-600/10 via-red-500/5 to-red-400/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative">
+                <CardHeader className="pb-4">
+                  <CardTitle className="flex items-center gap-3 text-white text-2xl">
+                    <Shield className="h-6 w-6 text-red-400" />
+                    {currentContent.sections.agreement.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {renderContent(currentContent.sections.agreement.content)}
+                </CardContent>
+              </div>
+            </Card>
+          </motion.div>
 
           {/* Service Description */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.description.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              {renderContent(currentContent.sections.description.content)}
-            </CardContent>
-          </Card>
-
-          {/* No Refunds */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.noRefund.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              <div className="bg-gray-800/80 p-4 rounded-lg border border-gray-600">
-                <p className="font-semibold text-white mb-2">
-                  {currentContent.sections.noRefund.highlight}
-                </p>
-                <p>{currentContent.sections.noRefund.content[0]}</p>
+          <motion.div variants={itemVariants}>
+            <Card className="group relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl hover:shadow-red-500/10 transition-all duration-500">
+              <div className="absolute -inset-1 bg-gradient-to-r from-red-600/10 via-red-500/5 to-red-400/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-white text-xl">{currentContent.sections.description.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {renderContent(currentContent.sections.description.content)}
+                </CardContent>
               </div>
-              {renderContent(currentContent.sections.noRefund.content.slice(1))}
-            </CardContent>
-          </Card>
+            </Card>
+          </motion.div>
 
-          {/* User Responsibilities */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.userResponsibilities.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              {renderContent(currentContent.sections.userResponsibilities.content)}
-            </CardContent>
-          </Card>
-
-          {/* Intellectual Property */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.intellectualProperty.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              {renderContent(currentContent.sections.intellectualProperty.content)}
-            </CardContent>
-          </Card>
-
-          {/* Disclaimers */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.disclaimers.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              {renderContent(currentContent.sections.disclaimers.content.slice(0, -2))}
-              <div className="bg-gray-800/80 p-4 rounded-lg border border-gray-600">
-                <p className="font-semibold text-white mb-2">{currentContent.sections.disclaimers.content[4]}</p>
-                <p>{currentContent.sections.disclaimers.content[5]}</p>
+          {/* No Refunds - Special highlight */}
+          <motion.div variants={itemVariants}>
+            <Card className="group relative bg-gradient-to-br from-red-950/30 to-red-900/20 backdrop-blur-xl border border-red-500/30 rounded-3xl overflow-hidden shadow-2xl shadow-red-500/20">
+              <div className="absolute -inset-1 bg-gradient-to-r from-red-600/20 via-red-500/20 to-red-400/20 rounded-3xl blur-xl" />
+              <div className="relative">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-red-400 text-xl font-bold">{currentContent.sections.noRefund.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <div className="bg-red-950/40 p-6 rounded-2xl border border-red-500/40">
+                    <p className="font-bold text-red-300 text-xl mb-3 text-center">
+                      {currentContent.sections.noRefund.highlight}
+                    </p>
+                    <p className="text-red-200 text-center">{currentContent.sections.noRefund.content[0]}</p>
+                  </div>
+                  {renderContent(currentContent.sections.noRefund.content.slice(1))}
+                </CardContent>
               </div>
-            </CardContent>
-          </Card>
+            </Card>
+          </motion.div>
 
-          {/* Termination */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.termination.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              {renderContent(currentContent.sections.termination.content)}
-            </CardContent>
-          </Card>
+          {/* Remaining sections */}
+          {Object.entries(currentContent.sections).slice(3).map(([key, section], index) => (
+            <motion.div key={key} variants={itemVariants}>
+              <Card className="group relative bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl overflow-hidden shadow-2xl hover:shadow-red-500/10 transition-all duration-500">
+                <div className="absolute -inset-1 bg-gradient-to-r from-red-600/10 via-red-500/5 to-red-400/10 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="relative">
+                  <CardHeader className="pb-4">
+                    <CardTitle className="text-white text-xl">{section.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {key === 'disclaimers' ? (
+                      <>
+                        {renderContent(section.content.slice(0, -2))}
+                        <div className="bg-gray-900/50 p-6 rounded-2xl border border-gray-700/50">
+                          <p className="font-semibold text-red-400 mb-3 text-lg">{section.content[4]}</p>
+                          <p className="text-gray-300 leading-relaxed">{section.content[5]}</p>
+                        </div>
+                      </>
+                    ) : key === 'contact' ? (
+                      <>
+                        <p className="text-gray-300 leading-relaxed">{section.content[0]}</p>
+                        <div className="bg-gray-900/50 p-6 rounded-2xl border border-gray-700/50">
+                          <p className="font-semibold text-red-400 mb-3">{section.content[1]}</p>
+                          <p className="text-gray-300 leading-relaxed">{section.content[2]}</p>
+                        </div>
+                      </>
+                    ) : (
+                      renderContent(section.content)
+                    )}
+                  </CardContent>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
+        </motion.div>
 
-          {/* Privacy */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.privacy.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              {renderContent(currentContent.sections.privacy.content)}
-            </CardContent>
-          </Card>
-
-          {/* Changes */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.changes.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              {renderContent(currentContent.sections.changes.content)}
-            </CardContent>
-          </Card>
-
-          {/* Governing Law */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.governing.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              {renderContent(currentContent.sections.governing.content)}
-            </CardContent>
-          </Card>
-
-          {/* Severability */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.severability.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              {renderContent(currentContent.sections.severability.content)}
-            </CardContent>
-          </Card>
-
-          {/* Contact */}
-          <Card className="bg-gray-900/50 border-gray-700">
-            <CardHeader>
-              <CardTitle className="text-white">{currentContent.sections.contact.title}</CardTitle>
-            </CardHeader>
-            <CardContent className="text-gray-300 space-y-4">
-              <p>{currentContent.sections.contact.content[0]}</p>
-              <div className="bg-gray-800/80 p-4 rounded-lg border border-gray-600">
-                <p className="font-semibold text-white mb-2">{currentContent.sections.contact.content[1]}</p>
-                <p>{currentContent.sections.contact.content[2]}</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Separator className="my-8 bg-gray-700" />
+        <Separator className="my-12 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
         {/* Footer */}
-        <div className="text-center space-y-4">
-          <p className="text-gray-400">
-            {currentContent.footerText}
-          </p>
-          <div className="flex gap-4 justify-center">
-            <Button 
-              onClick={() => navigate('/')}
-              variant="outline"
-              className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
-            >
-              {currentContent.returnBtn}
-            </Button>
-            <Button 
-              onClick={() => window.print()}
-              variant="ghost"
-              className="text-gray-400 hover:text-white"
-            >
-              {currentContent.printBtn}
-            </Button>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 1 }}
+          className="text-center space-y-6"
+        >
+          <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-3xl p-8">
+            <p className="text-gray-300 text-lg leading-relaxed mb-6">
+              {currentContent.footerText}
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/')}
+                className="px-8 py-3 bg-gradient-to-r from-white/10 to-white/5 hover:from-white/20 hover:to-white/10 border border-white/20 text-white rounded-2xl backdrop-blur-xl transition-all duration-300"
+              >
+                {currentContent.returnBtn}
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => window.print()}
+                className="px-8 py-3 bg-transparent hover:bg-white/5 border border-white/20 text-gray-400 hover:text-white rounded-2xl transition-all duration-300"
+              >
+                {currentContent.printBtn}
+              </motion.button>
+            </div>
           </div>
-          <p className="text-xs text-gray-500">
+          <p className="text-gray-500 text-sm">
             © {new Date().getFullYear()} DigitalHub. {currentContent.copyright}
           </p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
