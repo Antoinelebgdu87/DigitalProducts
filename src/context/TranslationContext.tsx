@@ -499,16 +499,28 @@ class HybridTranslationService {
       return this.cache.get(cacheKey)!;
     }
 
-    // Vérifier les traductions statiques
+    // Vérifier les traductions statiques (priorité absolue)
     const staticTranslation = this.staticTranslations[targetLanguage]?.[text];
     if (staticTranslation) {
       this.cache.set(cacheKey, staticTranslation);
       return staticTranslation;
     }
 
-    // Pour les textes non traduits statiquement, essayer une API gratuite ou retourner le texte original
+    // Pour les textes courts, essayer des traductions approximatives basiques
+    const basicTranslation = this.tryBasicTranslation(text, targetLanguage);
+    if (basicTranslation) {
+      this.cache.set(cacheKey, basicTranslation);
+      return basicTranslation;
+    }
+
+    // Pour les textes non traduits statiquement, limiter les appels API
+    if (text.length > 100 || this.isAPILimited()) {
+      // Texte trop long ou API limitée, retourner original
+      return text;
+    }
+
     try {
-      // Utiliser l'API LibreTranslate gratuite comme fallback
+      // Utiliser l'API LibreTranslate gratuite avec limitation
       const libreTranslateResult = await this.tryLibreTranslate(text, targetLanguage);
       if (libreTranslateResult) {
         this.cache.set(cacheKey, libreTranslateResult);
@@ -520,6 +532,113 @@ class HybridTranslationService {
 
     // Fallback final : retourner le texte original
     return text;
+  }
+
+  private tryBasicTranslation(text: string, targetLanguage: Language): string | null {
+    // Traductions basiques pour des mots/phrases communes
+    const basicTranslations: Record<Language, Record<string, string>> = {
+      en: {
+        'Oui': 'Yes',
+        'Non': 'No',
+        'Bonjour': 'Hello',
+        'Merci': 'Thank you',
+        'Au revoir': 'Goodbye',
+        'Chargement': 'Loading',
+        'Erreur': 'Error',
+        'Succès': 'Success',
+        'Continuer': 'Continue',
+        'Annuler': 'Cancel',
+        'Valider': 'Validate',
+        'Enregistrer': 'Save',
+        'Modifier': 'Edit',
+        'Supprimer': 'Delete'
+      },
+      pt: {
+        'Oui': 'Sim',
+        'Non': 'Não',
+        'Bonjour': 'Olá',
+        'Merci': 'Obrigado',
+        'Au revoir': 'Tchau',
+        'Chargement': 'Carregando',
+        'Erreur': 'Erro',
+        'Succès': 'Sucesso',
+        'Continuer': 'Continuar',
+        'Annuler': 'Cancelar',
+        'Valider': 'Validar',
+        'Enregistrer': 'Salvar',
+        'Modifier': 'Editar',
+        'Supprimer': 'Excluir'
+      },
+      es: {
+        'Oui': 'Sí',
+        'Non': 'No',
+        'Bonjour': 'Hola',
+        'Merci': 'Gracias',
+        'Au revoir': 'Adiós',
+        'Chargement': 'Cargando',
+        'Erreur': 'Error',
+        'Succès': 'Éxito',
+        'Continuer': 'Continuar',
+        'Annuler': 'Cancelar',
+        'Valider': 'Validar',
+        'Enregistrer': 'Guardar',
+        'Modifier': 'Editar',
+        'Supprimer': 'Eliminar'
+      },
+      de: {
+        'Oui': 'Ja',
+        'Non': 'Nein',
+        'Bonjour': 'Hallo',
+        'Merci': 'Danke',
+        'Au revoir': 'Auf Wiedersehen',
+        'Chargement': 'Laden',
+        'Erreur': 'Fehler',
+        'Succès': 'Erfolg',
+        'Continuer': 'Fortsetzen',
+        'Annuler': 'Abbrechen',
+        'Valider': 'Bestätigen',
+        'Enregistrer': 'Speichern',
+        'Modifier': 'Bearbeiten',
+        'Supprimer': 'Löschen'
+      },
+      it: {
+        'Oui': 'Sì',
+        'Non': 'No',
+        'Bonjour': 'Ciao',
+        'Merci': 'Grazie',
+        'Au revoir': 'Arrivederci',
+        'Chargement': 'Caricamento',
+        'Erreur': 'Errore',
+        'Succès': 'Successo',
+        'Continuer': 'Continua',
+        'Annuler': 'Annulla',
+        'Valider': 'Convalida',
+        'Enregistrer': 'Salva',
+        'Modifier': 'Modifica',
+        'Supprimer': 'Elimina'
+      },
+      fr: {}
+    };
+
+    return basicTranslations[targetLanguage]?.[text] || null;
+  }
+
+  private isAPILimited(): boolean {
+    // Vérifier si on a fait trop d'appels API récemment
+    const now = Date.now();
+    const lastCall = localStorage.getItem('lastApiCall');
+    const callCount = parseInt(localStorage.getItem('apiCallCount') || '0');
+
+    if (lastCall && now - parseInt(lastCall) < 60000) { // Moins d'1 minute
+      if (callCount > 5) { // Plus de 5 appels par minute
+        return true;
+      }
+    } else {
+      // Reset du compteur après 1 minute
+      localStorage.setItem('apiCallCount', '0');
+    }
+
+    return false;
   }
 
   private async tryLibreTranslate(text: string, targetLanguage: Language): Promise<string | null> {
