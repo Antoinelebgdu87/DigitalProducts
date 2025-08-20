@@ -38,15 +38,28 @@ class HybridTranslationService {
   // Dictionnaire de traductions communes pour un fallback rapide
   private staticTranslations: Record<Language, Record<string, string>> = {
     en: {
+      // Interface de traduction
       'Paramètres de traduction': 'Translation Settings',
+      'Configurez la langue d\'affichage et activez la traduction automatique avec IA.': 'Configure display language and enable automatic AI translation.',
       'Traduction IA': 'AI Translation',
+      'Gratuit': 'Free',
+      'Activez la traduction automatique de tous les textes avec OpenRouter AI': 'Enable automatic translation of all texts with OpenRouter AI',
+      'Traduction en cours...': 'Translating...',
       'Langue d\'affichage': 'Display Language',
       'Service de traduction': 'Translation Service',
+      'Traduction hybride avec dictionnaire intégré et API LibreTranslate gratuite.': 'Hybrid translation with integrated dictionary and free LibreTranslate API.',
+      'Les traductions sont mises en cache pour des performances optimales.': 'Translations are cached for optimal performance.',
       'Textes traduits': 'Translated texts',
       'Mode actuel': 'Current mode',
       'Original': 'Original',
       'Traduit': 'Translated',
       'Fermer': 'Close',
+      'Langue: ': 'Language: ',
+      'IA activée': 'AI enabled',
+      'Langues': 'Languages',
+      'Paramètres avancés': 'Advanced settings',
+
+      // Page d'accueil
       'DigitalHub': 'DigitalHub',
       'Digital Products': 'Digital Products',
       'Discover exceptional digital products with instant access.': 'Discover exceptional digital products with instant access.',
@@ -68,7 +81,74 @@ class HybridTranslationService {
       'Fetching the latest digital products...': 'Fetching the latest digital products...',
       'Coming Soon': 'Coming Soon',
       'Amazing products are being curated for you. Stay tuned for something incredible!': 'Amazing products are being curated for you. Stay tuned for something incredible!',
-      'All rights reserved': 'All rights reserved'
+      'All rights reserved': 'All rights reserved',
+
+      // Conditions d'utilisation
+      'Conditions d\'Utilisation': 'Terms of Service',
+      'Accord Légal et Directives d\'Usage': 'Legal Agreement and Usage Guidelines',
+      'Date d\'entrée en vigueur :': 'Effective Date:',
+      'Retour à l\'accueil': 'Back to Home',
+      'Imprimer les conditions': 'Print Terms',
+      'Tous droits réservés.': 'All rights reserved.',
+      'En utilisant DigitalHub, vous reconnaissez avoir lu, compris et accepté d\'être lié par ces Conditions d\'Utilisation.': 'By using DigitalHub, you acknowledge that you have read, understood and agreed to be bound by these Terms of Service.',
+      'Accord aux Conditions': 'Agreement to Terms',
+      'Description du Service': 'Service Description',
+      'Politique de Non-Remboursement': 'No Refund Policy',
+      'TOUTES LES VENTES SONT FINALES - AUCUN REMBOURSEMENT': 'ALL SALES ARE FINAL - NO REFUNDS',
+      'Changement d\'avis après achat': 'Change of mind after purchase',
+      'Incompatibilité technique avec les systèmes utilisateur': 'Technical incompatibility with user systems',
+      'Comptes Utilisateur et Responsabilités': 'User Accounts and Responsibilities',
+      'Droits de Propriété Intellectuelle': 'Intellectual Property Rights',
+      'Vous ne pouvez PAS :': 'You may NOT:',
+      'Revendre, redistribuer ou partager les produits achetés': 'Resell, redistribute or share purchased products',
+      'Avertissements et Limitation de Responsabilité': 'Warnings and Limitation of Liability',
+      'Résiliation de Compte': 'Account Termination',
+      'Politique de Confidentialité': 'Privacy Policy',
+      'Modifications des Conditions': 'Terms Modifications',
+      'Loi Applicable et Juridiction': 'Applicable Law and Jurisdiction',
+      'Ces Conditions seront interprétées et régies par les lois de la France': 'These Terms shall be interpreted and governed by the laws of France',
+      'Divisibilité': 'Severability',
+      'Informations de Contact': 'Contact Information',
+      'Avis Important': 'Important Notice',
+      'Veuillez ne pas nous contacter concernant des demandes de remboursement, car toutes les ventes sont finales.': 'Please do not contact us regarding refund requests, as all sales are final.',
+
+      // Modales utilisateur
+      'Bienvenue !': 'Welcome!',
+      'Créez votre nom d\'utilisateur pour accéder à la plateforme': 'Create your username to access the platform',
+      'Nom d\'utilisateur': 'Username',
+      'Entrez votre pseudo': 'Enter your username',
+      'Générer un nouveau pseudo': 'Generate new username',
+      'Ou utilisez le pseudo généré automatiquement': 'Or use the automatically generated username',
+      'Création...': 'Creating...',
+      'Créer mon compte': 'Create my account',
+      'Votre pseudo sera visible par les autres utilisateurs': 'Your username will be visible to other users',
+
+      // Avertissements
+      'Nouvel avertissement': 'New Warning',
+      'Nouveaux avertissements': 'New Warnings',
+      'Avertissement :': 'Warning:',
+      'Veuillez respecter les règles de la plateforme pour éviter de futurs avertissements.': 'Please respect platform rules to avoid future warnings.',
+      'Les avertissements répétés peuvent conduire à un bannissement.': 'Repeated warnings may lead to a ban.',
+      'J\'ai compris': 'I understand',
+
+      // ToS Modal
+      'Veuillez accepter nos Conditions pour continuer': 'Please accept our Terms to continue',
+      'Accepter': 'Accept',
+      'Refuser': 'Decline',
+      'Lire les Conditions': 'Read Terms',
+      'Ventes finales - AUCUN REMBOURSEMENT': 'Final sales - NO REFUNDS',
+      'Produits fournis \'en l\'état\'': 'Products provided \'as is\'',
+      'Licence personnelle uniquement': 'Personal license only',
+      'En acceptant, vous acceptez nos Conditions d\'Utilisation complètes.': 'By accepting, you agree to our complete Terms of Service.',
+
+      // Administration
+      'Administration': 'Administration',
+      'Secure access to admin panel': 'Secure access to admin panel',
+      'Username': 'Username',
+      'Password': 'Password',
+      'Sign In': 'Sign In',
+      'Connecting...': 'Connecting...',
+      '← Back to Home': '← Back to Home'
     },
     pt: {
       'Paramètres de traduction': 'Configurações de Tradução',
