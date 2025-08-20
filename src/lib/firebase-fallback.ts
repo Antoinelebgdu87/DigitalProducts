@@ -213,3 +213,27 @@ export const Timestamp = fsTimestamp;
 // Export de compatibilité
 export const isFirebaseAvailable = () => isFirebaseConnected;
 export { db, analytics };
+
+// Export default pour compatibilité avec les imports existants
+const FirebaseFallback = {
+  initializeFirebaseWithFallback,
+  getFirebaseStatus,
+  isFirebaseAvailable: () => isFirebaseConnected,
+  db: () => db,
+  analytics: () => analytics,
+  collection,
+  doc,
+  addDoc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  query,
+  where,
+  getDocs,
+  setDoc,
+  orderBy,
+  Timestamp
+};
+
+export default FirebaseFallback;
