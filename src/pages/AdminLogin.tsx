@@ -17,6 +17,9 @@ import { toast } from "sonner";
 import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 
 const AdminLogin: React.FC = () => {
+  // Activer la traduction automatique
+  useAutoTranslate();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
