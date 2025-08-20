@@ -5,6 +5,7 @@ import BackgroundAnimation from "@/components/BackgroundAnimation";
 import { Button } from "@/components/ui/button";
 import { Settings, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAutoTranslate } from "@/hooks/useAutoTranslate";
 
 const HomePage: React.FC = () => {
   const { products, loading } = useProducts();
