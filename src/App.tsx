@@ -65,7 +65,7 @@ const AppContent = () => {
     }
 
     return (
-      <>
+      <GlobalLayout>
         <DevToolsProtection />
         <FirebaseConnectionStatus />
         <Routes>
@@ -75,7 +75,7 @@ const AppContent = () => {
               isMaintenanceMode && !isAuthenticated ? (
                 <MaintenancePage message={maintenanceMessage} />
               ) : (
-                <ModernHomePage />
+                <Index />
               )
             }
           />
@@ -103,7 +103,7 @@ const AppContent = () => {
             }
           />
         </Routes>
-      </>
+      </GlobalLayout>
     );
   } catch (error) {
     console.error("Error in AppContent:", error);
