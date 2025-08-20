@@ -24,6 +24,7 @@ import TermsOfService from "./pages/TermsOfService";
 import NotFound from "./pages/NotFound";
 import DevToolsProtection from "./components/DevToolsProtection";
 import LanguageSettingsButton from "./components/LanguageSettingsButton";
+import { useAutoTranslate } from "./hooks/useAutoTranslate";
 
 const queryClient = new QueryClient();
 
