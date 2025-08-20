@@ -217,7 +217,7 @@ class HybridTranslationService {
       'Avertissements et Limitation de Responsabilité': 'Avisos e Limitação de Responsabilidade',
       'Résiliation de Compte': 'Encerramento de Conta',
       'Politique de Confidentialité': 'Política de Privacidade',
-      'Modifications des Conditions': 'Modifica��ões dos Termos',
+      'Modifications des Conditions': 'Modificações dos Termos',
       'Loi Applicable et Juridiction': 'Lei Aplicável e Jurisdição',
       'Ces Conditions seront interprétées et régies par les lois de la France': 'Estes Termos serão interpretados e regidos pelas leis da França',
       'Divisibilité': 'Divisibilidade',
@@ -264,15 +264,28 @@ class HybridTranslationService {
       '← Back to Home': '← Voltar ao Início'
     },
     es: {
+      // Interfaz de traducción
       'Paramètres de traduction': 'Configuración de Traducción',
+      'Configurez la langue d\'affichage et activez la traduction automatique avec IA.': 'Configure el idioma de visualización y active la traducción automática con IA.',
       'Traduction IA': 'Traducción IA',
+      'Gratuit': 'Gratis',
+      'Activez la traduction automatique de tous les textes avec OpenRouter AI': 'Active la traducción automática de todos los textos con OpenRouter AI',
+      'Traduction en cours...': 'Traduciendo...',
       'Langue d\'affichage': 'Idioma de Visualización',
       'Service de traduction': 'Servicio de Traducción',
+      'Traduction hybride avec dictionnaire intégré et API LibreTranslate gratuite.': 'Traducción híbrida con diccionario integrado y API LibreTranslate gratuita.',
+      'Les traductions sont mises en cache pour des performances optimales.': 'Las traducciones se almacenan en caché para un rendimiento óptimo.',
       'Textes traduits': 'Textos traducidos',
       'Mode actuel': 'Modo actual',
       'Original': 'Original',
       'Traduit': 'Traducido',
       'Fermer': 'Cerrar',
+      'Langue: ': 'Idioma: ',
+      'IA activée': 'IA activada',
+      'Langues': 'Idiomas',
+      'Paramètres avancés': 'Configuración avanzada',
+
+      // Página de inicio
       'DigitalHub': 'DigitalHub',
       'Digital Products': 'Productos Digitales',
       'Discover exceptional digital products with instant access.': 'Descubre productos digitales excepcionales con acceso instantáneo.',
@@ -289,9 +302,59 @@ class HybridTranslationService {
       'Secure Delivery': 'Entrega Segura',
       'Safe & reliable downloads': 'Descargas seguras y confiables',
       'Featured Products': 'Productos Destacados',
+      'Handpicked collection of premium digital assets, tools, and resources for creators and professionals.': 'Colección seleccionada de activos digitales premium, herramientas y recursos para creadores y profesionales.',
       'Loading Products': 'Cargando Productos',
+      'Fetching the latest digital products...': 'Obteniendo los productos digitales más recientes...',
       'Coming Soon': 'Próximamente',
-      'All rights reserved': 'Todos los derechos reservados'
+      'Amazing products are being curated for you. Stay tuned for something incredible!': '¡Productos increíbles están siendo seleccionados para ti. ¡Mantente atento para algo increíble!',
+      'All rights reserved': 'Todos los derechos reservados',
+
+      // Términos de servicio
+      'Conditions d\'Utilisation': 'Términos de Servicio',
+      'Accord Légal et Directives d\'Usage': 'Acuerdo Legal y Directrices de Uso',
+      'Date d\'entrée en vigueur :': 'Fecha de entrada en vigor:',
+      'Retour à l\'accueil': 'Volver al inicio',
+      'Imprimer les conditions': 'Imprimir términos',
+      'Tous droits réservés.': 'Todos los derechos reservados.',
+      'En utilisant DigitalHub, vous reconnaissez avoir lu, compris et accepté d\'être lié par ces Conditions d\'Utilisation.': 'Al usar DigitalHub, reconoces haber leído, entendido y aceptado estar sujeto a estos Términos de Servicio.',
+
+      // Modales de usuario
+      'Bienvenue !': '¡Bienvenido!',
+      'Créez votre nom d\'utilisateur pour accéder à la plateforme': 'Crea tu nombre de usuario para acceder a la plataforma',
+      'Nom d\'utilisateur': 'Nombre de usuario',
+      'Entrez votre pseudo': 'Ingresa tu apodo',
+      'Générer un nouveau pseudo': 'Generar nuevo apodo',
+      'Ou utilisez le pseudo généré automatiquement': 'O usa el apodo generado automáticamente',
+      'Création...': 'Creando...',
+      'Créer mon compte': 'Crear mi cuenta',
+      'Votre pseudo sera visible par les autres utilisateurs': 'Tu apodo será visible para otros usuarios',
+
+      // Avisos
+      'Nouvel avertissement': 'Nueva Advertencia',
+      'Nouveaux avertissements': 'Nuevas Advertencias',
+      'Avertissement :': 'Advertencia:',
+      'Veuillez respecter les règles de la plateforme pour éviter de futurs avertissements.': 'Por favor, respeta las reglas de la plataforma para evitar futuras advertencias.',
+      'Les avertissements répétés peuvent conduire à un bannissement.': 'Las advertencias repetidas pueden llevar a un baneo.',
+      'J\'ai compris': 'Entendido',
+
+      // Modal ToS
+      'Veuillez accepter nos Conditions pour continuer': 'Por favor acepta nuestros Términos para continuar',
+      'Accepter': 'Aceptar',
+      'Refuser': 'Rechazar',
+      'Lire les Conditions': 'Leer Términos',
+      'Ventes finales - AUCUN REMBOURSEMENT': 'Ventas finales - SIN REEMBOLSO',
+      'Produits fournis \'en l\'état\'': 'Productos proporcionados \'tal como están\'',
+      'Licence personnelle uniquement': 'Licencia personal únicamente',
+      'En acceptant, vous acceptez nos Conditions d\'Utilisation complètes.': 'Al aceptar, aceptas nuestros Términos de Servicio completos.',
+
+      // Administración
+      'Administration': 'Administración',
+      'Secure access to admin panel': 'Acceso seguro al panel de administración',
+      'Username': 'Nombre de usuario',
+      'Password': 'Contraseña',
+      'Sign In': 'Iniciar sesión',
+      'Connecting...': 'Conectando...',
+      '← Back to Home': '← Volver al Inicio'
     },
     de: {
       'Paramètres de traduction': 'Übersetzungseinstellungen',
